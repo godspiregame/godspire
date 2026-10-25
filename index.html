@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.10.3 (build 100). Fontes embutidas:
+<!-- GODSPIRE v0.10.5 (build 101). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -192,6 +192,23 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 -->
 <title>GODSPIRE</title><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f0d14"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" href="app-192.png">
+<script>/* v0.10.4 (Sábio, OBS 75: iPhone sem resposta aos toques): caixa de diagnóstico de erros de JavaScript. Fica ANTES de todos os scripts,
+   para apanhar também um erro ao interpretar um deles (sintaxe que um Safari antigo não conhece). Não depende de nada do jogo. Toca para fechar. */
+(function () {
+  var seen = {}, n = 0, NL = String.fromCharCode(10);
+  function show(msg) {
+    if (!msg || seen[msg] || n > 4) return; seen[msg] = 1; n++;
+    var put = function () {
+      var el = document.getElementById("errBox");
+      if (!el) { el = document.createElement("div"); el.id = "errBox"; el.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:9999;background:#141018;color:#f2c14e;font:12px/1.35 monospace;padding:8px 10px;border:2px solid #b07d22;white-space:pre-wrap;word-break:break-word"; el.addEventListener("click", function () { el.parentNode && el.parentNode.removeChild(el); }); document.body.appendChild(el); }
+      el.textContent = (el.textContent ? el.textContent + NL : "ERRO (manda uma captura) · v" + (window.GAME_SEMVER_TXT || "?") + NL) + msg + NL + navigator.userAgent.slice(0, 120);
+    };
+    if (document.body) put(); else document.addEventListener("DOMContentLoaded", put);
+  }
+  window.showErr = show;
+  window.addEventListener("error", function (e) { show(e.message + " @ " + String(e.filename || "").split("/").pop() + ":" + e.lineno + ":" + e.colno); });
+  window.addEventListener("unhandledrejection", function (e) { var r = e.reason; show("promise: " + (r && (r.stack || r.message) || r)); });
+})();</script>
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAACq0lEQVR4nN1VzU7bQBCemV07iQNqeuHcA0iV8gRICFUIKlVceuZUXqKPxLkXJAQIBZRXQJWqHsI5OZDE8d/+VeO0EkrtDQSQqk6ya6+9O9/O982ssd3qwGsavap3+B8A5MLYuWe5Q1wGAACfd96tDPCtP1jAwL+z6GEQV5f92WyW8C9JZnw7vy486fXP6iKo0ADx97/Sus2jyud1S3wiI8Le/k673W62mmEYSimJ6DY7sdYqrYs8T9Nsvv263VRrsGDnF6dpms0tTbM8y3hUtjTL8yzzL18O8PHgcMoWx/N+fn0w/PHz++p1gCVL6+vrUdQKGw0hRbd5ZIwpiiJJ0ziO/fysUmi32cmT5i+nCEoZyqTk1EznCVqmaJqkLwPw8eDwnm1ctvHDe78Aj6IISxk6nU47isIg6DaPVKGS2Wx8P14qwD+jAZQyTCbTCTfuJxNO0scsrDiLKs05PpcGg7u7wd28fww/q1DUrTmLngmANRrgC2iAQISknT6/OB0OR6PhaDjiHgAECuusA7u6BghEJAQGgoKkGF9d9q97N9e9m17/LArfGKuMU9YaD4afIiQkgYEUYShaC+9C0ZIiFBgQkocrH0WISCgEBQE1QxktAsgINDg2Y8G6mq+594MDHIAgKUUjlNHWxvbe/k6upr3+2dbGdigjKRqCJAdZ78cDgBwBEKHkIESjIdcA4MunrwDQkGsBew8IJQEhVwSuogHwUgYiFJKC3c3j9x/e7m4eS3YtmMJyjkcDP4BjjrlZ64y2qjDJ7uZxYRJtlXXGcY7ye575dJFZPgvWOm2sUibPdcwLaKqtynWsTG4YRv9RuBrDl0UOrLPGoNYmL1AAgLYFcXEZZfJCJ5oxtPPWgReAIzC8fUTQUPrNEMk5a6zSJlc2K4MwdTkKAL8AHDHSTUe1qvEAAAAASUVORK5CYII=">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -2418,7 +2435,9 @@ window.Sound = (() => {
 const LANGS = { pt: {} };
 const LANG_LIST = [['pt', 'PORTUGUÊS'], ['en', 'ENGLISH']];
 const T_MISS = new Set(); // textos sem tradução na língua atual (a consola e o ?teste leem-nos)
-const langNow = () => (typeof opts !== 'undefined' && opts.lang && LANGS[opts.lang]) ? opts.lang : 'pt';
+// v0.10.4 (Sábio, itch.io): sem escolha gravada, a língua vem do telemóvel ou do browser: português (pt-PT, pt-BR…) dá PT, o resto dá EN
+const LANG_AUTO = (() => { try { const L = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'pt']); return /^pt(-|_|$)/i.test(L[0] || '') ? 'pt' : 'en'; } catch (e) { return 'pt'; } })();
+const langNow = () => (typeof opts !== 'undefined' && opts.lang && LANGS[opts.lang]) ? opts.lang : (LANGS[LANG_AUTO] ? LANG_AUTO : 'pt');
 function _t(s, vars) {
   if (s == null) return '';
   const lg = langNow(), L = LANGS[lg];
@@ -2790,6 +2809,8 @@ LANGS.en = {
   // Imagem (Mestre da Imagem): cartão da passagem de andar e legendas do manual
   'EXPLORADO': 'EXPLORED', 'MONSTROS': 'MONSTERS', 'DANO SOFRIDO': 'DAMAGE TAKEN', 'BAÚS': 'CHESTS',
   'Cavaleiro': 'Knight', 'Bárbaro': 'Barbarian', 'Mago': 'Mage', 'Arqueiro': 'Archer', 'Arcano': 'Arcane', 'Assassino': 'Assassin', 'Ecos': 'Echoes', '+HP': '+HP',
+  'Luz simplificada para manter a fluidez.': 'Lighting simplified to keep the game smooth.',
+  'Constelação dos Núcleos': 'Constellation of Cores',
   // ===== fase 3: nomes próprios (FASE3-nomes.md, revisto pelo Sábio) =====
   'Cruzado': 'Crusader', 'Batedor': 'Scout', 'de Ferro': 'Iron', 'Selvagem': 'Savage', 'Sagrado': 'Holy',
   'Sombrio': 'Shadow', 'Errante': 'Wandering', 'Certeiro': 'Deadeye', 'Golpe esmagador': 'Crushing Blow', 'Muralha': 'Bulwark',
@@ -2933,6 +2954,44 @@ LANGS.en = {
   'Viu-te. No próximo turno ataca: prepara-te, não fujas a correr.': 'It saw you. Next turn it attacks: get ready, do not run.', 'Vês a alma por cima dele? Um golpe agora e ele cai de vez.': 'See the soul above it? One hit now and it falls for good.', 'As casas marcadas vão ser atingidas no próximo turno. Sai delas.': 'The marked tiles will be hit next turn. Get off them.', 'O do sino. Se te vir, toca-o e chama a guarda. Apanha-o antes, ou por trás.': 'The one with the bell. If it sees you, it rings it and calls the guard. Get it first, or from behind.', 'Largou o sino e pegou no machado. Tem escudo à frente: vai pelos lados.': 'It dropped the bell and took up the axe. It has a shield in front: go around the sides.',
   'Aqui descansas, enches o frasco e arrumas o herói (ARRUMAR). Os inimigos não vêm ao fogo.': 'Here you rest, refill the flask and sort out your hero (SORT OUT). Enemies do not come to the fire.', 'O frasco está seco. Enche-se nas fogueiras e com as poções que encontras. Come o que tiveres, fora de combate.': 'The flask is dry. It refills at campfires and with the potions you find. Eat what you have, out of combat.', 'Já conheces bem essa arma. Ela lembra-se de ti.': 'You know that weapon well now. It remembers you.', 'Uma relíquia. Só três cabem no peito; as outras vão para a bolsa.': 'A relic. Only three fit in the chest; the others go into the pouch.', 'Veneno: perdes 1 HP por turno. Comida, o frasco ou uma fogueira tiram-no.': 'Poison: you lose 1 HP per turn. Food, the flask or a campfire cure it.',
   'Toc, toc. Eles vêm ver de onde veio. Tu já não estás lá.': 'Knock, knock. They come to see where it came from. You are no longer there.', 'Caíste. A torre guarda o teu nome, e os Ecos ficam para quem vier.': 'You fell. The tower keeps your name, and the Echoes stay for whoever comes.',
+  // ===== inimigos com variante de bioma =====
+  'Gosma tóxica': 'Toxic Slime', 'Cogumelo-fantasma': 'Ghost Mushroom', 'Goblin das grutas': 'Cave Goblin', 'Gosma de magma': 'Magma Slime', 'Esqueleto chamuscado': 'Scorched Skeleton',
+  'Gosma gélida': 'Frost Slime', 'Morcego das neves': 'Snow Bat', 'Alma penada gélida': 'Frozen Lost Soul',
+  // ===== v0.10.5: descrição das peças (statTxt), afixos, barra da mestria e epitáfios =====
+  '+{v} HP máximo': '+{v} max HP', '+{v} ATQ': '+{v} ATK', '+{v} DEF': '+{v} DEF', '+{v}% crítico': '+{v}% critical',
+  'Poções e comida curam +{v} HP': 'Potions and food heal +{v} HP', '+{v}% ouro': '+{v}% gold', 'Poções e comida curam +{v}%': 'Potions and food heal +{v}%',
+  '-{v}% falhas': '-{v}% misses', '+{v}% esquiva': '+{v}% dodge', 'Recargas -{v} turno': 'Cooldowns -{v} turn', '+{v} ouro por cada baixa': '+{v} gold per kill',
+  '+{v}% EXP': '+{v}% EXP', '+{v} dano das habilidades': '+{v} ability damage', 'Críticos fazem +{v}% de dano': 'Critical hits deal +{v}% damage',
+  'MÁX.': 'MAX', 'Recupera 45% do HP': 'Restores 45% HP', 'Recupera 25% do HP': 'Restores 25% HP', '+1 carga máxima no frasco (até {n})': '+1 max flask charge (up to {n})',
+  '(falta: só metade do ATQ)': '(not met: only half the ATK)', 'Só para {w}': 'Only for {w}',
+  'Força': 'Strength', 'Agilidade': 'Agility', 'Inteligência': 'Intelligence',
+  'Alcance 5 · crítico 18% · +2 dano nas habilidades': 'Range 5 · critical 18% · +2 ability damage', 'Alcance 3 · +2 ATQ': 'Range 3 · +2 ATK',
+  'Alcance 4 · +1 ATQ · a flecha fere também o 2.º inimigo da linha (50%)': 'Range 4 · +1 ATK · the arrow also hits the 2nd enemy in line (50%)',
+  'Alcance 4 · habilidades recarregam 1 turno mais cedo': 'Range 4 · abilities recharge 1 turn sooner', 'Alcance 3 · +2 ATQ nos projéteis': 'Range 3 · +2 ATK on projectiles',
+  'Alcance 5 · −1 ATQ · +2 dano nas habilidades': 'Range 5 · −1 ATK · +2 ability damage', 'Alcance 3 · +2 DEF': 'Range 3 · +2 DEF',
+  'Crítico 25%': 'Critical 25%', 'Crítico 15% · ignora 2 de DEF': 'Critical 15% · ignores 2 DEF', 'Crítico 15% · o golpe faz sangrar 2 turnos': 'Critical 15% · the hit bleeds for 2 turns',
+  'Crítico 15% · +2 DEF': 'Critical 15% · +2 DEF', 'Crítico 12% · equilibrada': 'Critical 12% · balanced', 'Crítico 20% · −1 DEF': 'Critical 20% · −1 DEF',
+  '−1 ATQ · +8% esquiva': '−1 ATK · +8% dodge', '+2 ATQ · −1 DEF · fere também o inimigo atrás do alvo (50%)': '+2 ATK · −1 DEF · also hits the enemy behind the target (50%)',
+  '+1 ATQ · −1 DEF · fere também as 2 casas ao lado · sangramento 3 turnos': '+1 ATK · −1 DEF · also hits the 2 side tiles · bleeding 3 turns',
+  '+1 ATQ · fere também as 2 casas ao lado · sangramento 2 turnos': '+1 ATK · also hits the 2 side tiles · bleeding 2 turns',
+  '+3 ATQ · −2 DEF · sangramento 5 turnos (um só alvo)': '+3 ATK · −2 DEF · bleeding 5 turns (single target)',
+  '+2 ATQ · falha mais · empurra 1 (contra a parede, +50%)': '+2 ATK · misses more · pushes 1 (into a wall, +50%)',
+  '+1 ATQ · falha um pouco · empurra 1 (contra a parede, +50%)': '+1 ATK · misses a little · pushes 1 (into a wall, +50%)',
+  '+4 ATQ · falha muito · empurra 2 (contra a parede, +50%)': '+4 ATK · misses a lot · pushes 2 (into a wall, +50%)',
+  'Arremessa até 3 casas · volta no turno seguinte': 'Thrown up to 3 tiles · returns next turn', 'Arremessa até 4 casas · −1 ATQ': 'Thrown up to 4 tiles · −1 ATK',
+  'Arremessa até 3 casas · +2 ATQ no arremesso · demora 2 turnos a voltar': 'Thrown up to 3 tiles · +2 ATK when thrown · takes 2 turns to return',
+  '−1 DEF · +6% esquiva': '−1 DEF · +6% dodge', '−1 DEF · habilidades de Mago recarregam 1 turno mais cedo': '−1 DEF · Mage abilities recharge 1 turn sooner',
+  '+1 DEF · −3% esquiva': '+1 DEF · −3% dodge', '−1 DEF · +5% esquiva · +1 alcance com arco e machadinha': '−1 DEF · +5% dodge · +1 range with bow and hatchet',
+  'Quem te ataca encostado leva 1 de dano': 'Adjacent attackers take 1 damage', '+2 DEF · −5% esquiva · imune ao encontrão do Bruto': '+2 DEF · −5% dodge · immune to the Brute\'s charge',
+  'Lutou até ao fim.': 'Fought to the end.', 'Ninguém lhe cantou a canção.': 'No one sang their song.', 'A masmorra guarda o seu nome.': 'The dungeon keeps their name.',
+  'Desceu mais fundo do que muitos.': 'Went deeper than most.', 'Que a pedra lhe seja leve.': 'May the stone rest lightly.', 'Partiu de espada na mão.': 'Left with sword in hand.',
+  'O eco dos passos ainda se ouve.': 'The echo of their steps still lingers.', 'Desceu até ao trono e voltou.': 'Went down to the throne and came back.',
+  'A coroa apagou-se diante dele.': 'The crown went dark before them.', 'Onde os outros caíram, ficou de pé.': 'Where others fell, they stood.',
+  'Os sineiros da Guarda. O sino é a última ordem do Rei a que ainda obedecem: «Se alguém vier, chamai todos.»': 'The bell-ringers of the Guard. The bell is the last order of the King they still obey: «If anyone comes, call everyone.»',
+  'Os médicos da corte, que mantinham o Rei vivo antes da Ceia. Continuam a curar, mesmo quem não devia viver.': 'The court physicians, who kept the King alive before the Supper. They keep healing, even those who should not live.',
+  'Sabre': 'Sabre', 'ALTAR DE SANGUE': 'BLOOD ALTAR', 'Uma pedra manchada, ainda quente. Oferece sangue e o altar dá-te uma relíquia rara.': 'A stained stone, still warm. Offer blood and the altar gives you a rare relic.',
+  'FONTE': 'FOUNTAIN', 'Água límpida que corre de uma boca de pedra.': 'Clear water running from a stone mouth.', 'PRISIONEIRO': 'PRISONER', 'Alguém fechado numa cela pede ajuda.': 'Someone locked in a cell begs for help.',
+  'O Rei já não reina.': 'The King reigns no more.', 'A masmorra lembra-se de quem a venceu.': 'The dungeon remembers who beat it.',
 };
 
 </script>
@@ -3108,7 +3167,8 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.10.3', GAME_BUILD = 100;
+const GAME_SEMVER = '0.10.5', GAME_BUILD = 101;
+window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
   try {
@@ -3526,13 +3586,14 @@ const makeRune = id => ({ uid: uid(), t: 'rune', id, nome: RUNES[id].nome, v: 1 
 
 /* ---------- árvore de talentos ---------- */
 const STAT_TXT = {
-  hp: ['Vitalidade', v => `+${v} HP máximo`], atk: ['Força', v => `+${v} ATQ`], def: ['Robustez', v => `+${v} DEF`],
-  crit: ['Precisão', v => `+${Math.round(v * 100)}% crítico`], heal: ['Remédios', v => `Poções e comida curam +${v} HP`],
-  gold: ['Ganância', v => `+${Math.round(v * 100)}% ouro`], pot: ['Alquimia', v => `Poções e comida curam +${Math.round(v * 100)}%`],
-  acc: ['Mira', v => `-${Math.round(v * 100)}% falhas`], dodge: ['Reflexos', v => `+${Math.round(v * 100)}% esquiva`],
-  cdr: ['Foco', v => `Recargas -${v} turno`], gpk: ['Saque', v => `+${v} ouro por cada baixa`],
-  xp: ['Sabedoria', v => `+${Math.round(v * 100)}% EXP`], sdmg: ['Poder', v => `+${v} dano das habilidades`],
-  critdmg: ['Golpe brutal', v => `Críticos fazem +${Math.round(v * 100)}% de dano`],
+  // v0.10.5: os textos passam pelo _t (só se mostram)
+  hp: ['Vitalidade', v => _t('+{v} HP máximo', { v })], atk: ['Força', v => _t('+{v} ATQ', { v })], def: ['Robustez', v => _t('+{v} DEF', { v })],
+  crit: ['Precisão', v => _t('+{v}% crítico', { v: Math.round(v * 100) })], heal: ['Remédios', v => _t('Poções e comida curam +{v} HP', { v })],
+  gold: ['Ganância', v => _t('+{v}% ouro', { v: Math.round(v * 100) })], pot: ['Alquimia', v => _t('Poções e comida curam +{v}%', { v: Math.round(v * 100) })],
+  acc: ['Mira', v => _t('-{v}% falhas', { v: Math.round(v * 100) })], dodge: ['Reflexos', v => _t('+{v}% esquiva', { v: Math.round(v * 100) })],
+  cdr: ['Foco', v => _t('Recargas -{v} turno', { v })], gpk: ['Saque', v => _t('+{v} ouro por cada baixa', { v })],
+  xp: ['Sabedoria', v => _t('+{v}% EXP', { v: Math.round(v * 100) })], sdmg: ['Poder', v => _t('+{v} dano das habilidades', { v })],
+  critdmg: ['Golpe brutal', v => _t('Críticos fazem +{v}% de dano', { v: Math.round(v * 100) })],
 };
 const SMALL_V = { hp: 8, atk: 1, def: 1, crit: 0.03, heal: 2, gold: 0.1, pot: 0.08, acc: 0.04, critdmg: 0.15, dodge: 0.02, xp: 0.05, sdmg: 1 };
 const TREE_DEF = {
@@ -4190,12 +4251,12 @@ function domHud() {
   if (!p || !p.dom) { box.hidden = true; return; }
   const D = domInfo(p); box.hidden = false;
   box.classList.toggle('unarmed', !D);
-  if (!D) { $('domLbl').textContent = 'DESARMADO'; $('domBar').style.width = '0%'; $('domNum').textContent = ''; return; }
+  if (!D) { $('domLbl').textContent = _t('DESARMADO');$('domBar').style.width = '0%'; $('domNum').textContent = ''; return; }
 
   const ic = $('domIc'); if (ic && ICON_URL['i_' + D.d.kind]) ic.src = ICON_URL['i_' + D.d.kind];
-  $('domLbl').textContent = D.d.nome.toUpperCase();
+  $('domLbl').textContent = _t(D.d.nome).toUpperCase();
   $('domBar').style.width = D.pct + '%';
-  $('domNum').textContent = D.need ? `${D.n}/${D.need}` : `${D.n} · MÁX.`;
+  $('domNum').textContent = D.need ? `${D.n}/${D.need}` : `${D.n} · ${_t('MÁX.')}`;
 }
 
 /* ---------- efeitos dos traços (chamados nos ganchos do combate) ---------- */
@@ -4951,19 +5012,20 @@ function randomItem(tier, minRar = 0) {
 }
 const affTxt = it => (it.aff || []).map(a => STAT_TXT[a.k][1](a.v)).join(' · ');
 function statTxt(it) {
-  if (it.t === 'pot') return 'Recupera 45% do HP';
-  if (it.t === 'frag') return `+1 carga máxima no frasco (até ${FLASK_CAP})`;
-  if (it.t === 'food') return 'Recupera 25% do HP';
-  if (it.t === 'rune') return RUNES[it.id].d;
-  if (it.t === 'relic') return RELIC[it.id].d + (RELIC[it.id].custo ? ` · Mas: ${RELIC[it.id].custo}` : '');
-  const pre = it.rar ? `${RARITY[it.rar].n.toUpperCase()} · ` : '', post = it.aff && it.aff.length ? ' · ' + affTxt(it) : '';
+  // v0.10.5: tudo pelo _t (a descrição da peça ficava em PT com o jogo em EN)
+  if (it.t === 'pot') return _t('Recupera 45% do HP');
+  if (it.t === 'frag') return _t('+1 carga máxima no frasco (até {n})', { n: FLASK_CAP });
+  if (it.t === 'food') return _t('Recupera 25% do HP');
+  if (it.t === 'rune') return _t(RUNES[it.id].d);
+  if (it.t === 'relic') return _t(RELIC[it.id].d) + (RELIC[it.id].custo ? ' · ' + _t('Mas: {c}', { c: _t(RELIC[it.id].custo) }) : '');
+  const pre = it.rar ? `${_t(RARITY[it.rar].n).toUpperCase()} · ` : '', post = it.aff && it.aff.length ? ' · ' + affTxt(it) : '';
   let base; const v = it.v + (it.up || 0);
-  if (it.t === 'a') { const V = varOf(it); base = `DEF +${Math.max(0, v + (V.def || 0))} · ${WT_NOME[armorWt(it)]}${V.txt ? ' · ' + V.txt : ''}`; }
+  if (it.t === 'a') { const V = varOf(it); base = `DEF +${Math.max(0, v + (V.def || 0))} · ${_t(WT_NOME[armorWt(it)])}${V.txt ? ' · ' + _t(V.txt) : ''}`; }
   else if (it.t === 'h') base = `DEF +${Math.ceil(v / 2)}`;
-  else if (it.t === 'g') base = `ATQ +${Math.ceil(v / 2)}`;
-  else if (it.t === 'b') base = `${v >= 2 ? `DEF +${Math.floor(v / 2)} · ` : ''}+${v * 2}% esquiva`;
-  else { const r = reqOf(it), ok = !r || !st.p || meetsReq(st.p, it); base = `ATQ +${v + (wTrait(it).atk || 0)} · ${wTrait(it).txt}${r ? ` · Requer ${ATTR_NAME[r.k]} ${r.n}${ok ? '' : ' (falta: só metade do ATQ)'}` : ''}`; }
-  const mine = !st.cls || canUse(st.cls, it) ? '' : ` · Só para ${forWho(it)}`; // sem vermelho: não é perigo
+  else if (it.t === 'g') base = `${_t('ATQ')} +${Math.ceil(v / 2)}`;
+  else if (it.t === 'b') base = `${v >= 2 ? `DEF +${Math.floor(v / 2)} · ` : ''}${_t('+{v}% esquiva', { v: v * 2 })}`;
+  else { const r = reqOf(it), ok = !r || !st.p || meetsReq(st.p, it); base = `${_t('ATQ')} +${v + (wTrait(it).atk || 0)} · ${_t(wTrait(it).txt)}${r ? ` · ${_t('Requer {n}', { n: _t(ATTR_NAME[r.k]) + ' ' + r.n })}${ok ? '' : ' ' + _t('(falta: só metade do ATQ)')}` : ''}`; }
+  const mine = !st.cls || canUse(st.cls, it) ? '' : ' · ' + _t('Só para {w}', { w: forWho(it) }); // sem vermelho: não é perigo
   return pre + base + post + mine;
 }
 // v43: elmo, armadura, luvas e botas mostram o material da peça (pano, couro, ferro, aço, real, ancestral: i_a0..i_a5)
@@ -5527,7 +5589,7 @@ function damageFoe(f, d, quiet) {
   // Duelista: +30% contra um inimigo sozinho à vista, −20% quando há vários acordados à vista
   if (tal(st.p, 'ks_duel')) { const n = st.foes.filter(o => o.aware && vis[idx(o.x, o.y)]).length; d = Math.max(1, Math.round(d * (n <= 1 ? 1.3 : 0.8))); }
   if (st.fs && byHero && !f.executed) st.fs.maxHit = Math.max(st.fs.maxHit, d); // v67: cartão do andar (Bárbaro: maior golpe)
-  f.hp -= d; f.flash = performance.now() + 300; if (f.lock) f.hitT = f.flash; // v62: faíscas na fechadura if (!f.boss) f.aware = true;
+  f.hp -= d; f.flash = performance.now() + 300; if (f.lock) f.hitT = f.flash; if (!f.boss) f.aware = true; // v62: faíscas na fechadura. v0.10.5: o aware estava dentro do comentário desde a v62 (levar um golpe não acordava)
   if (f.hp > 0 && hasRelic('carrasco') && !f.boss && f.head == null && f.hp < f.max * 0.15) { f.hp = 0; relicPing('carrasco'); log(_t('A Manopla do carrasco acaba com {f}.', { f: fname(f) })); } // v55
   // v43: golpe crítico do herói destacado (número maior, dourado e com "!")
   // v65 (utilizador): o crítico diz CRÍTICO por cima do número
@@ -6071,6 +6133,14 @@ function foesAct() {
       const ddx = p.x - f.x, ddy = p.y - f.y, side = ddx ? [[p.x, p.y + 1], [p.x, p.y - 1]] : [[p.x + 1, p.y], [p.x - 1, p.y]], s2 = side.find(([x, y]) => walkable(x, y));
       f.capCd = 3; f.wind = true; faceTo(f, p.x, p.y);
       if (telegraph(f, s2 ? [[p.x, p.y], s2] : [[p.x, p.y]], 1, 1.5, _t('Golpe do Capitão'), { snd: 'smash', capt: true })) { float(f.x, f.y, '!', 'red'); log(_t('O Capitão do sino ergue o machado! Sai das casas marcadas.')); }
+      continue;
+    }
+    // v0.10.5 (OBS 76, utilizador e Sábio): Primeira Lei. Encostado e sem te ter visto (de costas o foeSees falha), não ataca nem se vira para ti:
+    // com a adaga na mão, sem armadura pesada e nas costas dele, fica parado; nos outros casos deteta-te e só ataca no turno seguinte
+    if (adj && !f.aware && !f.boss && !f.sentry && !f.lock && f.head == null && !f.passive && !f.feeder) {
+      const heavyA = getA(p) && armorWt(getA(p)) === 'pesada';
+      if ((getW(p) || {}).kind === 'adaga' && !heavyA && foeBack(f, p)) continue;
+      faceTo(f, p.x, p.y); f.aware = true; f.sus = 0; f.inv = null; f.lost = 0; float(f.x, f.y, '!', 'red'); st.detN = (st.detN || 0) + 1; Sound.play('detected'); log(_t('{f} viu-te!', { f: fname(f) })); tip('viu');
       continue;
     }
     if (adj && !veiled && !(f.erratic && rand() < 0.3)) {
@@ -10479,7 +10549,7 @@ const DEATHS = {
     if (!LOWS.t0) { LOWS.t0 = real; LOWS.n = 0; return; }
     LOWS.n++; if (real - LOWS.t0 < 3000) return;
     LOWS.bad = LOWS.n * 1000 / (real - LOWS.t0) < 45 ? LOWS.bad + 1 : 0;
-    if (LOWS.bad >= 2) { LOWS.on = true; try { log('Luz simplificada para manter a fluidez.'); ui(); } catch (e) { /* sem registo ainda */ } }
+    if (LOWS.bad >= 2) { LOWS.on = true; try { log(_t('Luz simplificada para manter a fluidez.')); ui(); } catch (e) { /* sem registo ainda */ } }
     LOWS.t0 = real; LOWS.n = 0;
   }
   function glowTex(col) {
@@ -11778,7 +11848,7 @@ function coreSky(p) {
   const cap = coreCap(p), c = p.core || {}, OV = '#b06ad0', W = 352, H = 300, cx = W / 2, cy = 150;
   const tot = cap * CORES.length, used = CORES.reduce((s, o) => s + (c[o.k] || 0), 0), over = coreOver(p);
   const w = Math.min(100, (used - over) / tot * 100), wo = Math.min(100 - w, over / tot * 100);
-  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Constelação dos Núcleos">`;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${_t('Constelação dos Núcleos')}">`;
   for (let i = 0; i < 40; i++) svg += `<rect x="${(i * 97) % W}" y="${(i * 53) % H}" width="1" height="1" fill="#3a4060"/>`;
   for (const o of CORES) {
     const L = CORE_LOOK[o.k] || CORE_LOOK.vida, v = c[o.k] || 0, a = L.ang * Math.PI / 180, N = Math.min(Math.max(cap, v) + (v >= cap ? 1 : 0), cap + 2);
@@ -11792,7 +11862,7 @@ function coreSky(p) {
       svg += `<circle cx="${x}" cy="${y}" r="${r + 5}" fill="${k}" opacity=".18"/><polygon points="${x},${y - r + 1} ${x + r - 2},${y} ${x},${y + r - 1} ${x - r + 2},${y}" fill="${k}" stroke="${ov ? '#4a2a66' : L.lo}" stroke-width="1.5"/><rect x="${x - 2}" y="${y - r + 4}" width="2" height="2" fill="#fff" opacity=".85"/>`;
       if (ov) svg += `<g class="crack" fill="none" stroke="${OV}" stroke-width="1.5"><polyline points="${x - 9},${y - 11} ${x - 4},${y - 6} ${x - 6},${y - 2}"/><polyline points="${x + 10},${y + 9} ${x + 5},${y + 6} ${x + 7},${y + 2}"/></g>`;
     }
-    const up = L.ang < 0, [lx, ly] = pos(N - 1), lab = `${o.n} ${v}/${cap}`, tw = lab.length * 9, left = Math.cos(a) < 0; // v77: o rótulo cresce para fora (esquerda/direita), sem tocar no do outro ramo
+    const up = L.ang < 0, [lx, ly] = pos(N - 1), lab = `${_t(o.n)} ${v}/${cap}`, tw = lab.length * 9, left = Math.cos(a) < 0; // v77: o rótulo cresce para fora (esquerda/direita), sem tocar no do outro ramo
     const tx = left ? Math.max(lx + 10, tw + 4) : Math.min(lx - 10, W - tw - 4);
     svg += `<text x="${tx}" y="${up ? ly - 16 : ly + 22}" fill="${v > cap ? '#e0b8f0' : L.col}" font-family="Departure Mono, monospace" font-size="9" text-anchor="${left ? 'end' : 'start'}">${lab}</text>`;
   }
@@ -11810,7 +11880,7 @@ function coreMini(p) {
     let [px, py] = [cx + Math.cos(a) * 14, cy + Math.sin(a) * 9];
     for (let i = 0; i < N; i++) { const [x, y] = pos(i), on = i < v, k = i >= cap ? '#b06ad0' : L.col; s += `<line x1="${px}" y1="${py}" x2="${x}" y2="${y}" stroke="${on ? k : '#2c3046'}" stroke-width="${on ? 1.5 : 1}"/>`; [px, py] = [x, y]; }
     for (let i = 0; i < N; i++) { const [x, y] = pos(i), on = i < v, k = i >= cap ? '#b06ad0' : L.col; s += `<circle cx="${x}" cy="${y}" r="6" fill="#0b0a12" stroke="#3a3d47" stroke-width="1.5"/>`; if (on) s += `<circle cx="${x}" cy="${y}" r="9" fill="${k}" opacity=".15"/><polygon points="${x},${y - 4} ${x + 3},${y} ${x},${y + 4} ${x - 3},${y}" fill="${k}" stroke="${L.lo}"/>`; }
-    const [lx, ly] = pos(N - 1), left = Math.cos(a) < 0, lab = `${o.n} ${v}/${cap}`, tw = lab.length * 8.5; // v77: rótulo para fora, sem tocar no do outro ramo
+    const [lx, ly] = pos(N - 1), left = Math.cos(a) < 0, lab = `${_t(o.n)} ${v}/${cap}`, tw = lab.length * 8.5; // v77: rótulo para fora, sem tocar no do outro ramo
     const tx = left ? Math.max(lx + 6, tw + 3) : Math.min(lx - 6, W - tw - 3);
     s += `<text x="${tx}" y="${ly + (Math.sin(a) < 0 ? -9 : 16)}" fill="${v > cap ? '#e0b8f0' : L.col}" font-family="Departure Mono, monospace" font-size="8.5" text-anchor="${left ? 'end' : 'start'}">${lab}</text>`;
   }
@@ -12737,9 +12807,9 @@ function renderOverlay() {
   } else if (st.screen === 'chars') {
     const crypt = app.tab === 'crypt', hall = app.tab === 'hall', W8 = acct.winners || [];
     const grid = crypt
-      ? (acct.fallen.length ? acct.fallen.map(f => `<div class="char-card fallen">${prevCanvas('f:' + f.id)}<b>${esc(f.nome.toUpperCase())}</b><small>${esc(buildTxt(f.build || CLASSES[f.cls].nome))} · ${_t('nível {n}', { n: f.lvl })} · ${_t('andar {n}', { n: f.floor })}</small><small>${_t('Morto por {k}', { k: esc((f.killer ? fname({ nome: f.killer }) : _t('a escuridão'))) })}</small><small class="epi">“${esc(f.epitaph)}”</small></div>`).join('')
+      ? (acct.fallen.length ? acct.fallen.map(f => `<div class="char-card fallen">${prevCanvas('f:' + f.id)}<b>${esc(f.nome.toUpperCase())}</b><small>${esc(buildTxt(f.build || CLASSES[f.cls].nome))} · ${_t('nível {n}', { n: f.lvl })} · ${_t('andar {n}', { n: f.floor })}</small><small>${_t('Morto por {k}', { k: esc((f.killer ? fname({ nome: f.killer }) : _t('a escuridão'))) })}</small><small class="epi">“${esc(_t(f.epitaph || ''))}”</small></div>`).join('')
         : `<p class="empty">${_t('A Cripta está vazia. Ainda nenhum herói caiu.')}</p>`)
-      : hall ? (W8.length ? `<div class="codex">${W8.map(w => `<div class="opt ic cdx-row win">${prevCanvas('w:' + w.id)}<span><b>${esc(w.nome.toUpperCase())}</b><small>${esc(buildTxt(w.build || CLASSES[w.cls].nome))} · ${_t('nível {n}', { n: w.lvl })} · ${_t('{n} baixas', { n: w.kills })} · ${_t('{n} turnos', { n: w.turns })}${w.fell ? ` · ${_t('caiu no andar {n}', { n: w.fell })}` : ''}</small><small class="epit">${esc(w.epitaph)}</small></span></div>`).join('')}</div>`
+      : hall ? (W8.length ? `<div class="codex">${W8.map(w => `<div class="opt ic cdx-row win">${prevCanvas('w:' + w.id)}<span><b>${esc(w.nome.toUpperCase())}</b><small>${esc(buildTxt(w.build || CLASSES[w.cls].nome))} · ${_t('nível {n}', { n: w.lvl })} · ${_t('{n} baixas', { n: w.kills })} · ${_t('{n} turnos', { n: w.turns })}${w.fell ? ` · ${_t('caiu no andar {n}', { n: w.fell })}` : ''}</small><small class="epit">${esc(_t(w.epitaph || ''))}</small></span></div>`).join('')}</div>`
         : `<p class="empty">${_t('O Salão está vazio. Ainda ninguém venceu o Rei.')}</p>`)
       : chars.map(heroCard).join('') + (chars.length < MAX_CHARS ? `<button class="hcard new" data-create="1"><span>+</span>${_t('NOVO HERÓI')}</button>` : '');
     html = `<div class="ov-in car-wrap">
@@ -12834,7 +12904,7 @@ function renderOverlay() {
     const n = st.npcs[st.graveAt], f = n && acct.fallen.find(x => x.id === n.fid);
     html = `<div class="ov-in">
       <div class="box ov-head"><h2>${_t('AQUI JAZ {n}', { n: esc((f ? f.nome : '???').toUpperCase()) })}</h2><p>${f ? `${_t(CLASSES[f.cls].nome)} · ${_t('L{n}', { n: f.lvl })} · ${_t('morto por {k}', { k: esc((f.killer ? fname({ nome: f.killer }) : _t('a escuridão'))) })}` : ''}</p></div>
-      <div class="box"><p class="lead">“${esc(f ? f.epitaph : '')}”</p></div>
+      <div class="box"><p class="lead">“${esc(f && f.epitaph ? _t(f.epitaph) : '')}”</p></div>
       <p class="foot">${esc(st.graveMsg || _t(n && n.used ? 'Já não resta nada aqui.' : 'A terra parece remexida.'))}</p>
       <div class="btn-row">${n && !n.used ? `<button class="box again go" data-dig="1">${_t('PROCURAR')}</button>` : ''}<button class="box again" data-graveleave="1">${_t('CONTINUAR')}</button></div>
     </div>`;
@@ -13187,7 +13257,7 @@ function renderOverlay() {
     html = `<div class="ov-in">
       <div class="dead-card">${prevCanvas('dead')}<b>${HERO()}</b><small>${esc(hybridLabel(st.p))}</small><i class="crack"></i></div>
       <p class="you-died">${_t('MORRESTE')}</p>
-      <div class="box ov-head"><h2>${_t('{h} CAIU', { h: HERO() })}</h2><p>${_t('Morto por {k} no andar {n}.', { k: esc((st.killer ? fname({ nome: st.killer }) : _t('a escuridão'))), n: st.floor })} ${_t(st.endless ? 'Já venceu o Rei: fica no Salão dos Vencedores.' : 'Vai descansar na Cripta.')}</p><p class="epi">“${esc(r.epitaph || '')}”</p></div>
+      <div class="box ov-head"><h2>${_t('{h} CAIU', { h: HERO() })}</h2><p>${_t('Morto por {k} no andar {n}.', { k: esc((st.killer ? fname({ nome: st.killer }) : _t('a escuridão'))), n: st.floor })} ${_t(st.endless ? 'Já venceu o Rei: fica no Salão dos Vencedores.' : 'Vai descansar na Cripta.')}</p><p class="epi">“${esc(r.epitaph ? _t(r.epitaph) : '')}”</p></div>
       <div class="box summary">
         <span>${_t('NÍVEL')}</span><span>${p.lvl}</span>
         <span>${_t('BAIXAS')}</span><span>${p.kills}</span>
