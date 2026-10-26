@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.10.7 (build 103). Fontes embutidas:
+<!-- GODSPIRE v0.10.8 (build 104). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -2992,6 +2992,7 @@ LANGS.en = {
   'Sabre': 'Sabre', 'ALTAR DE SANGUE': 'BLOOD ALTAR', 'Uma pedra manchada, ainda quente. Oferece sangue e o altar dá-te uma relíquia rara.': 'A stained stone, still warm. Offer blood and the altar gives you a rare relic.',
   'FONTE': 'FOUNTAIN', 'Água límpida que corre de uma boca de pedra.': 'Clear water running from a stone mouth.', 'PRISIONEIRO': 'PRISONER', 'Alguém fechado numa cela pede ajuda.': 'Someone locked in a cell begs for help.',
   'Adaga na mão e armadura leve: chega-te às costas deles sem seres visto. Com o Sexto sentido, executas.': 'Dagger in hand and light armour: you can reach their backs unseen. With Sixth Sense, you execute.',
+  'Vês a coroa vermelha? É um feroz: a execução não o mata, dá-lhe um golpe furtivo ×3. Acaba com ele depressa.': 'See the red crown? That one is fierce: an execution does not kill it, it takes a ×3 sneak attack instead. Finish it quickly.',
   'Fragmento de frasco': 'Flask shard', 'Ração de viagem': 'Travel ration',
   'O Rei já não reina.': 'The King reigns no more.', 'A masmorra lembra-se de quem a venceu.': 'The dungeon remembers who beat it.',
 };
@@ -3169,7 +3170,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.10.7', GAME_BUILD = 103;
+const GAME_SEMVER = '0.10.8', GAME_BUILD = 104;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -4731,7 +4732,7 @@ const strikeDot = f => canStrikeNow(f);
 // golpe do herói que executa: devolve o dano a aplicar (ou null se não for execução)
 function execDmg(f, d) {
   if (!canExecute(f)) return null;
-  if (f.elite) { st.p.shadowT = hasT('ass_escuridao') ? 3 : 2; float(f.x, f.y, _t('GOLPE FURTIVO ×3'), 'crit'); Sound.play('crit'); return Math.max(1, d) * 3; } // v94: num feroz não é execução (não mata nem queima), é um golpe furtivo ×3
+  if (f.elite) { st.p.shadowT = hasT('ass_escuridao') ? 3 : 2; float(f.x, f.y, _t('GOLPE FURTIVO ×3'), 'crit'); Sound.play('crit'); tip('feroz'); return Math.max(1, d) * 3; } // v94: num feroz não é execução (não mata nem queima), é um golpe furtivo ×3
   f.executed = true; st.execN = (st.execN || 0) + 1; if (st.fs) st.fs.execs++; Sound.play('execute');
   st.p.shadowT = hasT('ass_escuridao') ? 3 : 2; // Sombra: 1 turno (2 com Da escuridão) em que não contas para os cones
   float(f.x, f.y, _t('EXECUÇÃO'), 'crit');
@@ -7415,6 +7416,7 @@ function npcOnce(who, id, once, t) { acct.said = acct.said || {}; st.said = st.s
    com a opção DICAS em Opções › JOGO e um link para a secção certa do manual. Textos confirmados contra as regras atuais
    (fogueira: ARRUMAR em vez de "mexes nos Núcleos"; frasco: também as poções enchem; veneno: tira 1 HP por turno e cura-se com comida, frasco ou fogo) */
 const TIPS = {
+  feroz: ['Vês a coroa vermelha? É um feroz: a execução não o mata, dá-lhe um golpe furtivo ×3. Acaba com ele depressa.', 4], // v0.10.8 (utilizador): a regra dos ferozes (v94)
   adaga: ['Adaga na mão e armadura leve: chega-te às costas deles sem seres visto. Com o Sexto sentido, executas.', 4], // v0.10.7 (Sábio, aprovado pelo utilizador): a regra da OBS 78
   arma: ['Essa arma escolhe por ti. Machado, adaga, arco: cada uma faz de ti outra coisa.', 2],
   desconfia: ['Ele ouviu-te, mas não te viu. Sai do cone dele e espera.', 4],
