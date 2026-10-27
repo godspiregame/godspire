@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.14.2 (build 115). Fontes embutidas:
+<!-- GODSPIRE v0.14.3 (build 116). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -818,6 +818,12 @@ html:not(.compact) #coopMate { margin-top: 6px; }
 .ar2 .chips button[aria-pressed="true"] { color: var(--a2ink); border-color: var(--a2gold); } .ar2 .chips img, .ar2 .wpn img { width: 16px; height: 16px; image-rendering: pixelated; }
 .ar2 .podium { display: grid; grid-template-columns: 1fr 1.12fr 1fr; gap: 6px; align-items: end; flex: none; }
 .ar2 .pod { padding: 6px 4px 7px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+/* v0.14.3 (Imagem): o teu cartão no pódio. Fundo dourado escuro como a .lrow.me, nome a ouro e um bico dourado por cima; o aro dourado continua só do 1.º */
+.ar2 .pod.me { position: relative; background: #2a2312 !important; box-shadow: inset 0 0 0 1px #6b5420; }
+.ar2 .pod.me .nm { color: var(--a2gold); }
+.ar2 .pod.me::before { content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: var(--a2gold); border-bottom: 0; }
+.ar2 .pod.me .pod-tu { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); font-family: var(--display); font-size: 8px; letter-spacing: .08em; color: #1a1208; background: var(--a2gold); border-radius: 3px; padding: 1px 5px; line-height: 1.3; }
+.ar2 .pod.me:has(.pod-tu)::before { content: none; }
 .ar2 .pod.p1 { border-color: var(--a2gold); padding-top: 9px; } .ar2 .pod.p2 { border-color: #6e6a80; } .ar2 .pod.p3 { border-color: #7a5634; }
 .ar2 .pod .medal { width: 18px; height: 18px; image-rendering: pixelated; } .ar2 .pod .avs { display: flex; justify-content: center; }
 .ar2 .pod .av { zoom: 2; } .ar2 .pod.p1 .av { zoom: 3; } .ar2 .pod .avs .av + .av { zoom: 2; margin-left: -3px; }
@@ -3565,7 +3571,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.14.2', GAME_BUILD = 115;
+const GAME_SEMVER = '0.14.3', GAME_BUILD = 116;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -14179,6 +14185,7 @@ const rkScore = (w, t) => w * 100000 + 99999 - Math.min(99999, t); // vaga prime
 const rkWeek = () => Math.floor((Date.now() / 86400000 + 3) / 7); // n.º da semana UTC (a 1970-01-01 foi quinta: +3 põe o início à segunda)
 const rkAcct = () => (acct.fb = acct.fb || {}); // on: undefined/true = no ranking; false = desligado nas Opções
 const RK = { cache: {}, busy: {}, down: false, sendT: 0 };
+const RK_TTL = 60000; // v0.14.3 (utilizador): o ranking lido fica 1 min em cache (era 5)
 
 // ---------- valores tipados do Firestore (REST) ----------
 function fbVal(v) {
@@ -14296,7 +14303,7 @@ const rkBackAt = () => (rkAcct().outAt || 0) + RK_BACK;
 const rkField = w => w && w !== 'todas' ? `byWeapon.${w}.score` : 'score';
 async function rkLoad(mode, w, per) {
   const key = [mode, w, per].join('|'), c = RK.cache[key];
-  if (c && Date.now() - c.at < 300000) return c;
+  if (c && Date.now() - c.at < RK_TTL) return c;
   if (RK.busy[key]) return RK.busy[key];
   const run = (async () => {
     const path = rkPath(mode, per), f = rkField(mode === 'coop' ? 'todas' : w), F = rkAcct();
@@ -14323,7 +14330,7 @@ const rkOnline = () => !RK.down || Date.now() - RK.down > 60000;
 // tenta a rede em segundo plano e redesenha o ecrã quando os dados chegam (só se ainda estiver no mesmo ecrã)
 function rkKick(mode, w, per) {
   const scr = st.screen, key = [mode, w, per].join('|');
-  if (RK.cache[key] && Date.now() - RK.cache[key].at < 300000) return RK.cache[key];
+  if (RK.cache[key] && Date.now() - RK.cache[key].at < RK_TTL) return RK.cache[key];
   rkLoad(mode, w, per).then(() => { RK.down = false; RK.err = null; if (st.screen === scr) ui(); }).catch(e => { if (!e.status) RK.down = Date.now(); RK.err = e.message; if (st.screen === scr) ui(); });
   return null;
 }
@@ -14357,14 +14364,15 @@ function arenaRankHtml() {
   const w = coop ? 'todas' : R.w, name = x => esc(x.nick) + (x.nick2 != null ? ' + ' + esc(x.nick2) : '');
   const avs = (x, cls) => arAv(x.av, x.av && x.av.k, cls) + (x.av2 ? arAv(x.av2, x.av2.k, cls) : '');
   const top = S.top.map(d => rkRow(d, w)).filter(x => x.wave);
-  const pod = (x, n) => x ? `<div class="box pod p${n}">${typeof medalURL === 'function' ? `<img class="medal" src="${medalURL(n)}" alt="">` : ''}<div class="avs">${avs(x, 'av')}</div><span class="nm">${name(x)}</span><span class="wv">${_t('VAGA {n}', { n: x.wave })}</span><span class="tu">${_t('{n} turnos', { n: x.turns })}</span></div>` : '<div></div>';
+  const pod = (x, n) => x ? `<div class="box pod p${n}${x.uid === F.uid ? ' me' : ''}">${typeof medalURL === 'function' ? `<img class="medal" src="${medalURL(n)}" alt="">` : ''}<div class="avs">${avs(x, 'av')}</div><span class="nm">${name(x)}</span><span class="wv">${_t('VAGA {n}', { n: x.wave })}</span><span class="tu">${_t('{n} turnos', { n: x.turns })}</span></div>` : '<div></div>';
   const row = (x, pos, me) => `<div class="lrow${me ? ' me' : ''}"><span class="pos">${_t('{n}.º', { n: pos })}</span><div class="who">${avs(x, 'av')}<div><div class="nm">${name(x)}</div>${arWpn(x.used)}</div></div><span class="wv r">${x.wave}</span><span class="tu r">${x.turns}</span></div>`;
   let list = '', bar = '';
   const mine = S.mine && S.myS ? rkRow(S.mine, w) : null;
   if (mine) {
     const ab = S.above.map(d => rkRow(d, w)), be = S.below.map(d => rkRow(d, w));
-    const p0 = S.pos - ab.length; // quem já está no pódio (1.º a 3.º) não se repete na lista; o jogador fica sempre
-    list = (p0 > 4 ? '<div class="gap">· · ·</div>' : '') + ab.map((x, i) => p0 + i > 3 ? row(x, p0 + i, false) : '').join('') + row(mine, S.pos, true) + be.map((x, i) => S.pos + 1 + i > 3 ? row(x, S.pos + 1 + i, false) : '').join('') + (be.length === 4 ? '<div class="gap">· · ·</div>' : '');
+    // v0.14.3 (utilizador): quem está no pódio (1.º a 3.º, o jogador também) não se repete na lista; o pódio destaca o jogador
+    const p0 = S.pos - ab.length, rows = ab.map((x, i) => [x, p0 + i, false]).concat([[mine, S.pos, true]], be.map((x, i) => [x, S.pos + 1 + i, false])).filter(r => r[1] > 3);
+    list = (rows.length && rows[0][1] > 4 ? '<div class="gap">· · ·</div>' : '') + rows.map(r => row(r[0], r[1], r[2])).join('') + (be.length === 4 ? '<div class="gap">· · ·</div>' : '');
     bar = `<div class="mebar"><div class="lbl">${_t(week ? 'ÉS O {p}.º ESTA SEMANA · DE {n}' : 'ÉS O {p}.º DE SEMPRE · DE {n}', { p: S.pos, n: S.total.toLocaleString(langNow() === 'en' ? 'en-GB' : 'pt-PT') })}</div>${row(mine, S.pos, true)}</div>`;
   } else list = S.below.map(d => rkRow(d, w)).filter(x => x.wave).map((x, i) => row(x, 4 + i, false)).join('');
   const cut = S.cut ? rkRow(S.cut, w) : null;
@@ -14387,7 +14395,7 @@ function rkJoin() {
 // a posição desta semana para os cartões da entrada e o ecrã do modo (da cache; se o jogador está no ranking, pede-a em segundo plano)
 function rkWeekPos(mode) {
   const c = RK.cache[mode + '|todas|semana'];
-  if (rkOnline() && (!c || Date.now() - c.at > 300000)) rkKick(mode, 'todas', 'semana');
+  if (rkOnline() && (!c || Date.now() - c.at > RK_TTL)) rkKick(mode, 'todas', 'semana');
   return c && c.pos ? c.pos : null;
 }
 
