@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.14.1 (build 114). Fontes embutidas:
+<!-- GODSPIRE v0.14.2 (build 115). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -1209,6 +1209,25 @@ html.compact.menu .controls, html.compact.menu .chud, html.compact.menu .fopts {
 .opts-grid .opt-item.opt-danger { border-top: 2px solid var(--r2); margin-top: 18px; padding-top: 12px; }
 .opts-grid .opt-item.opt-danger .lbl { color: var(--r1); }
 .ov-in:has(.opt-tabs) .opts-grid { min-height: min(520px, calc(100dvh - 260px)); align-content: start; }
+/* v0.14.2 PRIVACIDADE (Imagem): com 5 abas cada uma fica da largura do seu nome, numa só linha; o LER parece um botão do .seg */
+.opt-tabs:has(> :nth-child(5)) { display: flex; gap: 4px; }
+.opt-tabs:has(> :nth-child(5)) button { flex: 1 1 auto; min-width: 0; padding-left: 3px; padding-right: 3px; white-space: nowrap; }
+.seg a.opt-priv { display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: clamp(8px, 2vw, 9px); color: inherit; text-decoration: none; border: 3px solid var(--g3); border-radius: 5px; padding: 8px 4px; background: var(--g0); min-height: 30px; box-sizing: border-box; }
+html.remake .seg a.opt-priv { border: 2px solid #3a3d47; border-radius: 3px; background: linear-gradient(#1f1c27, #121017); color: #e8dcc4; box-shadow: inset 1px 1px 0 #626873, inset -1px -1px 0 #050407, 0 2px 0 #050407; }
+.seg a.opt-priv:hover { color: #f2c14e; }
+.seg a.opt-priv::after { content: " ↗"; }
+/* Aviso do ranking na entrada da arena: cartão fixo ao fundo, por cima do ecrã escurecido, e só sai com o OK */
+.ov-in.ar2:has(.ar-note)::after { content: ""; position: fixed; inset: 0; z-index: 60; background: rgba(5, 4, 8, .62); }
+.ar2 .ar-note { position: fixed; z-index: 61; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); width: min(calc(100vw - 24px), 400px); box-sizing: border-box;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; padding: 12px; border: 2px solid var(--a2gold) !important; background: #1b1610 !important; box-shadow: 0 0 0 1px #050407, 0 6px 24px rgba(0, 0, 0, .7) !important; animation: arNoteIn .25s ease-out both; }
+.ar2 .ar-note b { grid-column: 1 / -1; font-family: var(--display); font-size: 12px; letter-spacing: .08em; color: var(--a2gold); text-align: center; }
+.ar2 .ar-note p { grid-column: 1 / -1; margin: 0; font-size: 13px; line-height: 1.45; color: var(--a2ink); text-align: center; }
+.ar2 .ar-note a.opt-priv { display: flex; align-items: center; justify-content: center; min-height: 40px; font-family: var(--display); font-size: 10px; letter-spacing: .04em; color: var(--a2ink); text-decoration: none; border: 2px solid var(--a2line); border-radius: 8px; background: var(--a2box); padding: 6px; text-align: center; }
+.ar2 .ar-note a.opt-priv::after { content: " ↗"; }
+.ar2 .ar-note .btn { min-height: 40px; }
+@keyframes arNoteIn { from { opacity: .6; transform: translateX(-50%) translateY(10px); } }
+@media (prefers-reduced-motion: reduce) { .ar2 .ar-note { animation: none; } }
+.ar2 .sub.ar-pub { font-size: 11px; color: #c9b88a; line-height: 1.35; }
 /* OBS41 (Mestre da Imagem): barra HERÓI · MAPA · DIÁRIO e o selo dourado com o que há por fazer */
 .menu-row .hx-big { flex: 1 1 0; font-size: 9px; }
 .hx-badge { position: absolute; top: -8px; right: -6px; z-index: 1; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: #f2c14e; color: #1a1208; border: 2px solid #000; font-family: var(--display); font-size: 9px; line-height: 14px; text-align: center; pointer-events: none; }
@@ -3361,7 +3380,7 @@ LANGS.en = {
   'Câmara: {e}': 'Camera: {e}', 'A ligar…': 'Connecting…', 'A preparar a resposta…': 'Preparing the reply…', 'Mostra este código ao anfitrião, para ele o ler.': 'Show this code to the host so they can scan it.',
   'Código errado: {e}': 'Wrong code: {e}', 'Ligados! Escolhe a tua arma.': 'Connected! Choose your weapon.', 'ARENA CO-OP': 'CO-OP ARENA', '{a} e {b}': '{a} and {b}',
   'Entram os dois na arena. Cada um escolhe a sua ação; o turno passa quando os dois tiverem escolhido.': 'You both enter the arena. Each one picks an action; the turn passes when both have chosen.',
-  'O teu melhor neste aparelho. O ranking global chega quando houver servidor.': 'Your best on this device. The global ranking arrives once there is a server.', 'RANK': 'RANK', 'Escolhe o modo.': 'Choose the mode.', 'ARENA SOLO': 'SOLO ARENA', 'Vagas sem fim, a arma que escolheres': 'Endless waves, the weapon you choose', 'O teu melhor: vaga {n} · {w}': 'Your best: wave {n} · {w}', 'A dois, na mesma rede Wi-Fi': 'Two players, same Wi-Fi network', 'O teu melhor: vaga {n} com {p}': 'Your best: wave {n} with {p}', 'A TUA PERSONAGEM': 'YOUR CHARACTER', 'a tua arma mais usada: {w}': 'your most used weapon: {w}', 'EDITAR': 'EDIT', 'É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).': 'This is how others see you on the podium, in the ranking and in the arena (your co-op partner too).', 'ALCUNHA (3 a 16)': 'NICKNAME (3 to 16)', 'GUARDAR': 'SAVE', 'A alcunha precisa de 3 a 16 letras.': 'The nickname needs 3 to 16 letters.', 'MELHOR VAGA': 'BEST WAVE', 'NO RANKING': 'IN THE RANKING', 'MESMA REDE': 'SAME NETWORK', 'ECOS HOJE': 'ECHOES TODAY', 'JOGAR': 'PLAY', 'TODAS': 'ALL', 'ESTA SEMANA': 'THIS WEEK', '{n}.º': '#{n}', 'AINDA SEM SERVIDOR': 'NO SERVER YET', 'O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.': 'The global ranking is coming soon. For now you only see your records on this device.', 'DUPLA · ARMAS': 'DUO · WEAPONS', 'VAGA': 'WAVE', 'Ainda sem recordes esta semana.': 'No records yet this week.', 'Ainda sem recordes.': 'No records yet.', 'ABANDONAR PARTIDA': 'ABANDON RUN', 'Como queres sair?': 'How do you want to leave?', 'GUARDAR E SAIR': 'SAVE AND QUIT', 'A partida fica gravada; continuas onde estavas.': 'The run is saved; you continue where you left off.', 'DESISTIR': 'GIVE UP', 'Sais da arena; o teu colega continua sozinho.': 'You leave the arena; your partner carries on alone.', 'A partida acaba aqui; o recorde conta até à última vaga.': 'The run ends here; your record counts up to the last wave.', 'A partida acaba como uma morte: o herói vai para a Cripta.': 'The run ends like a death: the hero goes to the Crypt.', 'a desistência': 'giving up', 'Desististe no andar {n}.': 'You gave up on floor {n}.', 'DESISTIR?': 'GIVE UP?', 'Desistir mata {h} para sempre. Tens a certeza?': 'Giving up kills {h} for good. Are you sure?', 'SIM, DESISTIR': 'YES, GIVE UP', 'Desistiu': 'Gave up', 'desistiu no andar {n}': 'gave up on floor {n}', '{n}.º esta semana': '#{n} this week', 'A alcunha precisa de 3 a 16 letras ou números (espaço, _ e - também), sem palavrões.': 'The nickname needs 3 to 16 letters or numbers (space, _ and - too), no swear words.', 'RANKING GLOBAL': 'GLOBAL RANKING', 'Entra para apareceres no ranking de todos os jogadores com a tua alcunha ({n}). Aparece em público: não uses o teu nome verdadeiro.': 'Join to appear in the ranking of all players with your nickname ({n}). It is public: do not use your real name.', 'ENTRAR NO RANKING': 'JOIN THE RANKING', 'MUDAR ALCUNHA': 'CHANGE NICKNAME', 'SEM LIGAÇÃO AO SERVIDOR': 'NO CONNECTION TO THE SERVER', 'Não deu para ler o ranking global (sem internet, ou nesta versão de testes). Por agora vês só os teus recordes neste aparelho.': 'Could not read the global ranking (no internet, or in this test version). For now you only see your records on this device.', 'A carregar o ranking…': 'Loading the ranking…', 'ÉS O {p}.º ESTA SEMANA · DE {n}': 'YOU ARE #{p} THIS WEEK · OF {n}', 'ÉS O {p}.º DE SEMPRE · DE {n}': 'YOU ARE #{p} ALL-TIME · OF {n}', 'Fora do top 100 desta semana: precisas da vaga {n} para entrar.': 'Outside this week\'s top 100: you need wave {n} to get in.', 'Fora do top 100 de sempre: precisas da vaga {n} para entrar.': 'Outside the all-time top 100: you need wave {n} to get in.', 'Ainda ninguém esta semana. Sê o primeiro!': 'Nobody yet this week. Be the first!', 'Ainda ninguém no ranking. Sê o primeiro!': 'Nobody in the ranking yet. Be the first!', 'ALCUNHA · ARMAS': 'NICKNAME · WEAPONS', 'SAIR DO RANKING': 'LEAVE THE RANKING', 'Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).': 'First choose a valid nickname (3 to 16 letters or numbers, no swear words).', 'Colega': 'Partner', 'PARTIDA A MEIO': 'RUN IN PROGRESS', 'Tens uma partida na vaga {n} ({w}). Começar outra apaga-a.': 'You have a run on wave {n} ({w}). Starting another deletes it.', 'CONTINUAR A GRAVADA': 'CONTINUE SAVED RUN', 'COMEÇAR NOVA': 'START NEW', 'NOVA PARTIDA': 'NEW RUN', 'Saíste do ranking há pouco: podes voltar a partir de {d}.': 'You left the ranking recently: you can come back from {d}.', 'Tens {n} s; depois o jogo escolhe por ti e avança.': 'You have {n} s; then the game picks for you and moves on.', 'O tempo acabou: o jogo escolheu por ti.': 'Time is up: the game picked for you.', 'No co-op, o equipamento muda-se no descanso entre vagas.': 'In co-op, gear is changed during the rest between waves.', 'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
+  'O teu melhor neste aparelho. O ranking global chega quando houver servidor.': 'Your best on this device. The global ranking arrives once there is a server.', 'RANK': 'RANK', 'Escolhe o modo.': 'Choose the mode.', 'ARENA SOLO': 'SOLO ARENA', 'Vagas sem fim, a arma que escolheres': 'Endless waves, the weapon you choose', 'O teu melhor: vaga {n} · {w}': 'Your best: wave {n} · {w}', 'A dois, na mesma rede Wi-Fi': 'Two players, same Wi-Fi network', 'O teu melhor: vaga {n} com {p}': 'Your best: wave {n} with {p}', 'A TUA PERSONAGEM': 'YOUR CHARACTER', 'a tua arma mais usada: {w}': 'your most used weapon: {w}', 'EDITAR': 'EDIT', 'É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).': 'This is how others see you on the podium, in the ranking and in the arena (your co-op partner too).', 'ALCUNHA (3 a 16)': 'NICKNAME (3 to 16)', 'GUARDAR': 'SAVE', 'A alcunha precisa de 3 a 16 letras.': 'The nickname needs 3 to 16 letters.', 'MELHOR VAGA': 'BEST WAVE', 'NO RANKING': 'IN THE RANKING', 'MESMA REDE': 'SAME NETWORK', 'ECOS HOJE': 'ECHOES TODAY', 'JOGAR': 'PLAY', 'TODAS': 'ALL', 'ESTA SEMANA': 'THIS WEEK', '{n}.º': '#{n}', 'AINDA SEM SERVIDOR': 'NO SERVER YET', 'O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.': 'The global ranking is coming soon. For now you only see your records on this device.', 'DUPLA · ARMAS': 'DUO · WEAPONS', 'VAGA': 'WAVE', 'Ainda sem recordes esta semana.': 'No records yet this week.', 'Ainda sem recordes.': 'No records yet.', 'ABANDONAR PARTIDA': 'ABANDON RUN', 'Como queres sair?': 'How do you want to leave?', 'GUARDAR E SAIR': 'SAVE AND QUIT', 'A partida fica gravada; continuas onde estavas.': 'The run is saved; you continue where you left off.', 'DESISTIR': 'GIVE UP', 'Sais da arena; o teu colega continua sozinho.': 'You leave the arena; your partner carries on alone.', 'A partida acaba aqui; o recorde conta até à última vaga.': 'The run ends here; your record counts up to the last wave.', 'A partida acaba como uma morte: o herói vai para a Cripta.': 'The run ends like a death: the hero goes to the Crypt.', 'a desistência': 'giving up', 'Desististe no andar {n}.': 'You gave up on floor {n}.', 'DESISTIR?': 'GIVE UP?', 'Desistir mata {h} para sempre. Tens a certeza?': 'Giving up kills {h} for good. Are you sure?', 'SIM, DESISTIR': 'YES, GIVE UP', 'Desistiu': 'Gave up', 'desistiu no andar {n}': 'gave up on floor {n}', '{n}.º esta semana': '#{n} this week', 'A alcunha precisa de 3 a 16 letras ou números (espaço, _ e - também), sem palavrões.': 'The nickname needs 3 to 16 letters or numbers (space, _ and - too), no swear words.', 'RANKING GLOBAL': 'GLOBAL RANKING', 'Entra para apareceres no ranking de todos os jogadores com a tua alcunha ({n}). Aparece em público: não uses o teu nome verdadeiro.': 'Join to appear in the ranking of all players with your nickname ({n}). It is public: do not use your real name.', 'ENTRAR NO RANKING': 'JOIN THE RANKING', 'MUDAR ALCUNHA': 'CHANGE NICKNAME', 'SEM LIGAÇÃO AO SERVIDOR': 'NO CONNECTION TO THE SERVER', 'Não deu para ler o ranking global (sem internet, ou nesta versão de testes). Por agora vês só os teus recordes neste aparelho.': 'Could not read the global ranking (no internet, or in this test version). For now you only see your records on this device.', 'A carregar o ranking…': 'Loading the ranking…', 'ÉS O {p}.º ESTA SEMANA · DE {n}': 'YOU ARE #{p} THIS WEEK · OF {n}', 'ÉS O {p}.º DE SEMPRE · DE {n}': 'YOU ARE #{p} ALL-TIME · OF {n}', 'Fora do top 100 desta semana: precisas da vaga {n} para entrar.': 'Outside this week\'s top 100: you need wave {n} to get in.', 'Fora do top 100 de sempre: precisas da vaga {n} para entrar.': 'Outside the all-time top 100: you need wave {n} to get in.', 'Ainda ninguém esta semana. Sê o primeiro!': 'Nobody yet this week. Be the first!', 'Ainda ninguém no ranking. Sê o primeiro!': 'Nobody in the ranking yet. Be the first!', 'ALCUNHA · ARMAS': 'NICKNAME · WEAPONS', 'SAIR DO RANKING': 'LEAVE THE RANKING', 'Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).': 'First choose a valid nickname (3 to 16 letters or numbers, no swear words).', 'Colega': 'Partner', 'Saíste do ranking há pouco: voltas a aparecer quando o servidor deixar (até 7 dias depois de saíres).': 'You left the ranking recently: you will show up again when the server allows it (up to 7 days after leaving).', 'OK': 'OK', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro. Podes desligar isto em Opções › Privacidade.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name. You can turn this off in Options › Privacy.', 'PRIVACIDADE': 'PRIVACY', 'Mostra a tua alcunha e os teus recordes da arena no ranking de todos os jogadores. Com NÃO, os teus recordes saem do ranking (ficam só neste aparelho); para voltar, espera 7 dias.': 'Shows your nickname and your arena records in the ranking of all players. With NO, your records leave the ranking (they stay only on this device); to come back, wait 7 days.', 'POLÍTICA DE PRIVACIDADE': 'PRIVACY POLICY', 'LER': 'READ', 'O que o jogo guarda, onde e os teus direitos. Para apagar os teus dados do ranking, escreve para godspire.game@gmail.com.': 'What the game stores, where, and your rights. To delete your ranking data, write to godspire.game@gmail.com.', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name.', 'Versões diferentes: este aparelho tem a {a} e o outro a {b}. Fechem e abram o jogo nos dois para atualizar.': 'Different versions: this device has {a} and the other has {b}. Close and reopen the game on both to update.', 'O outro aparelho tem uma versão antiga do jogo. Fechem e abram o jogo nos dois para atualizar.': 'The other device has an old version of the game. Close and reopen the game on both to update.', 'PARTIDA A MEIO': 'RUN IN PROGRESS', 'Tens uma partida na vaga {n} ({w}). Começar outra apaga-a.': 'You have a run on wave {n} ({w}). Starting another deletes it.', 'CONTINUAR A GRAVADA': 'CONTINUE SAVED RUN', 'COMEÇAR NOVA': 'START NEW', 'NOVA PARTIDA': 'NEW RUN', 'Saíste do ranking há pouco: podes voltar a partir de {d}.': 'You left the ranking recently: you can come back from {d}.', 'Tens {n} s; depois o jogo escolhe por ti e avança.': 'You have {n} s; then the game picks for you and moves on.', 'O tempo acabou: o jogo escolheu por ti.': 'Time is up: the game picked for you.', 'No co-op, o equipamento muda-se no descanso entre vagas.': 'In co-op, gear is changed during the rest between waves.', 'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
   'Dois jogadores na mesma rede Wi-Fi. Um cria a sala, o outro entra lendo o código com a câmara.': 'Two players on the same Wi-Fi network. One creates the room, the other joins by scanning the code with the camera.',
   'CRIAR SALA': 'CREATE ROOM', 'És o anfitrião: mostras o código ao teu colega.': 'You are the host: you show the code to your partner.', 'Lês o código do anfitrião com a câmara.': 'You scan the host\'s code with the camera.',
   'A câmara só funciona na app (no site do jogo).': 'The camera only works in the app (on the game\'s website).', 'A TUA SALA': 'YOUR ROOM', 'A TUA RESPOSTA': 'YOUR REPLY', 'código de ligação': 'connection code',
@@ -3546,7 +3565,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.14.1', GAME_BUILD = 114;
+const GAME_SEMVER = '0.14.2', GAME_BUILD = 115;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -5467,7 +5486,7 @@ function truceBreak() {
 }
 const inArena = (x, y) => { const a = st.arena; return !!a && x >= a.x && x < a.x + a.w && y >= a.y && y < a.y + a.h; };
 const HERO = () => (st.nome || _t(CLASSES[st.cls].nome)).toUpperCase();
-function log(m) { st.log.unshift(m); st.log.length = Math.min(st.log.length, 40); }
+function log(m) { if (!st.log) st.log = []; st.log.unshift(m); st.log.length = Math.min(st.log.length, 40); } // v0.14.2: também fora de uma partida (ex.: no ecrã do ranking)
 function float(x, y, txt, col) { const t = performance.now(); floats.push({ x, y, txt, col, t, n: floats.filter(o => o.x === x && o.y === y && t - o.t < 500).length }); } // v65: n = quantos números já estão nesta casa (para subirem uns acima dos outros)
 
 /* ---------- geração do andar ---------- */
@@ -13431,7 +13450,8 @@ const arCmp = (x, y) => y.wave - x.wave || x.turns - y.turns;
 function arRec(a) { if (!st.av || st.mode !== 'arena' || st.heroes || st.coopHold || st.av.over) return; const L = st.av.acts = st.av.acts || []; if (L.length < 20000) L.push([st.turn, a]); }
 function arenaMe() {
   const a = arenaAcct();
-  if (!a.me || !a.me.look) a.me = { nick: _t('Gladiador'), look: { skin: 0, hair: 0, cloth: 0, style: Object.keys(A.HAIR)[0] } };
+  // v0.14.2 (Sábio, minimização): a alcunha por defeito é ao acaso («Anon-1234»), para ninguém aparecer com um nome que não escolheu
+  if (!a.me || !a.me.look) a.me = { nick: 'Anon-' + String(1000 + Math.floor(Math.random() * 9000)), look: { skin: 0, hair: 0, cloth: 0, style: Object.keys(A.HAIR)[0] } };
   return a.me;
 }
 // segunda-feira desta semana (a semana do ranking começa à segunda, como combinado para o servidor)
@@ -13476,14 +13496,16 @@ function arenaHubHtml() {
     <button class="box mode-card" data-arsolo="1"><div class="mc-av">${arAv(me.look, mk, 'av me-av')}</div><b>${_t('ARENA SOLO')}</b>${arenaSaved() ? `<span class="tag">${_t('PARTIDA A MEIO')}</span>` : ''}<small>${arenaSaved() ? _t('Vaga {n} · {w}', { n: Math.max(1, arenaSaved().av.wave), w: _t(TRAITS[arenaSaved().av.kind].nome) }) : _t('Vagas sem fim, a arma que escolheres')}</small><span class="me">${a.best ? _t('O teu melhor: vaga {n} · {w}', { n: a.best.wave, w: _t(TRAITS[a.best.kind].nome) }) + (typeof rkWeekPos === 'function' && rkWeekPos('solo') ? ' · ' + _t('{n}.º esta semana', { n: rkWeekPos('solo') }) : '') : _t('Ainda sem recorde.')}</span><em>›</em></button>
     <button class="box mode-card" data-arcoop="1"><div class="mc-av">${arAv(me.look, cb ? cb.mk : mk, 'av me-av')}${cb ? arAv(cb.plook, cb.pk) : ''}</div><b>${_t('ARENA CO-OP')}</b><small>${_t('A dois, na mesma rede Wi-Fi')}</small><span class="me">${cb ? _t('O teu melhor: vaga {n} com {p}', { n: cb.wave, p: esc(cb.partner) }) + (typeof rkWeekPos === 'function' && rkWeekPos('coop') ? ' · ' + _t('{n}.º esta semana', { n: rkWeekPos('coop') }) : '') : _t('Ainda sem recorde.')}</span><em>›</em></button>
     <div class="box hero-panel grow"><span class="hp-lbl">${_t('A TUA PERSONAGEM')}</span>${arAv(me.look, mk, 'hero-big me-big')}<div class="hero-floor"></div><span class="nick">${esc(me.nick)}</span><span class="nick-sub">${arIcon(mk)} ${_t('a tua arma mais usada: {w}', { w: _t(TRAITS[mk].nome) })}</span><button class="btn" data-aredit="1">${_t('EDITAR')}</button></div>
-    <button class="btn" data-tomenu="1">‹ ${_t('MENU')}</button></div></div>`;
+    <button class="btn" data-tomenu="1">‹ ${_t('MENU')}</button>
+    ${typeof rkAcct === 'function' && !rkAcct().seen ? `<div class="box ar-note"><b>${_t('RANKING GLOBAL')}</b><p>${_t('A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro. Podes desligar isto em Opções › Privacidade.')}</p>
+      <a class="opt-priv" href="https://godspiregame.github.io/godspire/privacy.html#${langNow()}" target="_blank" rel="noopener">${_t('Política de privacidade')}</a><button class="btn go" data-rknote="1">${_t('OK')}</button></div>` : ''}</div></div>`;
 }
 // 2. editar a personagem (o rascunho fica em st.ed até GUARDAR)
 function arenaEditHtml() {
   const E = st.ed, L = E.look, mk = arenaMainKind();
   const sw = (k, list) => `<div class="sw">${list.map((c, i) => `<button title="${esc(_t(c[0]))}" style="background:${c[1]}" data-arlook="${k}:${i}" aria-pressed="${L[k] === i}"></button>`).join('')}</div>`;
   return `<div class="ov-in ar2 ar2-editar"><div class="scr">
-    <h2>${_t('A TUA PERSONAGEM')}</h2><p class="sub">${_t('É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).')}</p>
+    <h2>${_t('A TUA PERSONAGEM')}</h2><p class="sub">${_t('É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).')}</p><p class="sub ar-pub">${_t('A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro.')}</p>
     <div class="ed-prev">${arAv(L, mk, 'hero-big')}</div>
     <label class="field"><span>${_t('ALCUNHA (3 a 16)')}</span><input id="arNick" type="text" maxlength="16" autocomplete="off" value="${esc(E.nick)}"><span class="count" id="arCnt">${E.nick.length}/16</span></label>
     <div class="field"><span>${_t('PELE')}</span>${sw('skin', SKINS)}</div>
@@ -13503,7 +13525,7 @@ function arenaEditSave() {
   const E = st.ed, nick = String(E.nick || '').replace(/[<>&"]/g, '').trim().replace(/ {2,}/g, ' '); // v0.14.0: sem espaços duplos (as regras do ranking recusam-nos)
   if (!(typeof rkNickOk === 'function' ? rkNickOk(nick) : nick.length >= 3)) { E.msg = _t('A alcunha precisa de 3 a 16 letras ou números (espaço, _ e - também), sem palavrões.'); Sound.play('error'); ui(); return; }
   const a = arenaAcct(); a.me = { nick: nick.slice(0, 16), look: { ...E.look } }; saveAcct(); Sound.play('menu'); openArenaPick();
-  if (typeof rkSync === 'function' && rkAcct().on) { rkAcct().sent = {}; rkSync().catch(() => {}); } // v0.14.0: a alcunha e o aspeto novos vão para o ranking
+  if (typeof rkSync === 'function') { rkAcct().sent = {}; rkSync().catch(() => {}); } // v0.14.0: a alcunha e o aspeto novos vão para o ranking
 }
 // 3. o ecrã de cada modo: JOGAR, RANK e VOLTAR
 function arenaModeHtml(mode) {
@@ -13926,19 +13948,23 @@ function coopConnected(ch) {
   clearInterval(coopS.hb); coopS.hb = setInterval(coopBeat, 2000); clearInterval(coopS.rt); coopS.rt = setInterval(coopRestTick, 1000); coopS.restAt = 0;
   if (coopS.scan) { coopS.scan.stop(); coopS.scan = null; }
   const me = arenaMe(); coopS.looks[coopS.local] = { ...me.look }; coopS.names[coopS.local] = me.nick; // v0.12.3: a personagem da arena
+  coopS.peerV = null; coopTx({ t: 'hello', v: GAME_BUILD }); // v0.14.2 (OBS 89): a versão (as antigas não mandam: ficam sem par)
   st = { screen: 'cooppick' }; coopS.msg = _t('Ligados! Escolhe a tua arma.'); Sound.play('menu'); ui();
 }
+// v0.14.2 (OBS 89): o aviso das versões diferentes (sem resposta: a do outro é anterior à 0.14.2)
+const coopVerMsg = () => coopS.peerV > 0 ? _t('Versões diferentes: este aparelho tem a {a} e o outro a {b}. Fechem e abram o jogo nos dois para atualizar.', { a: GAME_BUILD, b: coopS.peerV }) : _t('O outro aparelho tem uma versão antiga do jogo. Fechem e abram o jogo nos dois para atualizar.');
 function coopReset() { if (coopS.scan) coopS.scan.stop(); clearInterval(coopS.hb); clearInterval(coopS.rt); if (coopS.ch) coopS.ch.close(); Object.assign(coopS, { ch: null, role: null, kinds: [null, null], looks: [null, null], H: null, J: null, scan: null, code: '', msg: '', paused: false, q: [], begun: false, lastTurn: null, restPend: null }); }
 const coopTx = m => { if (coopS.ch) coopS.ch.send(m); };
 // ---------- escolha da arma e início ----------
 function coopPickKind(k) {
   if (!TRAITS[k] || !coopS.ch) return;
-  coopS.kinds[coopS.local] = k; coopTx({ t: 'kind', k, look: coopS.looks[coopS.local], nick: coopS.names[coopS.local] });
+  if (coopS.peerV !== GAME_BUILD) { coopS.msg = coopVerMsg(); Sound.play('error'); ui(); return; } // v0.14.2 (OBS 89): versões diferentes não jogam juntas
+  coopS.kinds[coopS.local] = k; coopTx({ t: 'kind', k, look: coopS.looks[coopS.local], nick: coopS.names[coopS.local], v: GAME_BUILD });
   coopS.msg = _t('À espera do teu colega…'); ui(); coopMaybeStart();
 }
 function coopMaybeStart() {
-  if (coopS.role !== 'host' || !coopS.kinds.every(Boolean)) return;
-  const seed = newSeed(); coopTx({ t: 'start', seed, kinds: coopS.kinds, looks: coopS.looks, names: coopS.names }); coopBegin(seed, coopS.kinds, coopS.looks, coopS.names);
+  if (coopS.role !== 'host' || !coopS.kinds.every(Boolean) || coopS.peerV !== GAME_BUILD) return;
+  const seed = newSeed(); coopTx({ t: 'start', seed, kinds: coopS.kinds, looks: coopS.looks, names: coopS.names, v: GAME_BUILD }); coopBegin(seed, coopS.kinds, coopS.looks, coopS.names);
 }
 function coopBegin(seed, kinds, looks, names) {
   coopS.begun = true; // v0.12.3 (OBS 87): o que chegar durante a transição de entrada fica na fila (coopS.q) e corre no fim
@@ -14011,7 +14037,8 @@ function coopValidAct(a) {
   if (a.k === 'pot') return a.kind == null || a.kind === 'pot' || a.kind === 'food';
   const dir = coopInt(a.dx == null ? 0 : a.dx, -1, 1) && coopInt(a.dy == null ? 0 : a.dy, -1, 1), fid = a.fid == null || coopInt(a.fid, 0, 1e6);
   if (a.k === 'move') return dir && fid && (a.dx || a.dy) && !(a.dx && a.dy);
-  if (a.k === 'skill') return coopInt(a.slot, 0, 3) && dir && fid;
+  // v0.14.2 (OBS 89): a habilidade apontada tocando numa casa leva a distância inteira (o castArmed normaliza), não só -1..1
+  if (a.k === 'skill') return coopInt(a.slot, 0, 3) && coopInt(a.dx == null ? 0 : a.dx, -30, 30) && coopInt(a.dy == null ? 0 : a.dy, -30, 30) && fid;
   return false;
 }
 function coopValidRest(acts) {
@@ -14024,9 +14051,12 @@ function coopOnMsg(m) {
   coopS.lastSeen = coopNow(); if (coopS.paused) coopResume();
   if (!m || !m.t) return;
   if (m.t === 'ping') return;
+  if (m.t === 'hello') { if (!m.re) coopTx({ t: 'hello', v: GAME_BUILD, re: 1 }); coopS.peerV = coopInt(m.v, 0, 1e6) ? m.v : -1; // responde: o meu 1.º hello pode ter-se perdido
+    coopS.msg = coopS.peerV !== GAME_BUILD ? coopVerMsg() : (isCoop() ? coopS.msg : _t('Ligados! Escolhe a tua arma.')); ui(); return; }
   const look = o => !o || (typeof o === 'object' && ['skin', 'hair', 'cloth'].every(k => coopInt(o[k], 0, 99)) && (o.style == null || (typeof o.style === 'string' && o.style.length <= 20)));
-  if (m.t === 'kind') { if (!TRAITS[m.k] || !look(m.look)) return coopBad(m, 'kind'); coopS.kinds[1 - coopS.local] = m.k; coopS.looks[1 - coopS.local] = m.look || null; if (typeof m.nick === 'string' && m.nick.trim().length && m.nick.length <= 16) coopS.names[1 - coopS.local] = m.nick.replace(/[<>&"]/g, '').trim() || coopS.names[1 - coopS.local]; ui(); coopMaybeStart(); return; }
+  if (m.t === 'kind') { if (!TRAITS[m.k] || !look(m.look)) return coopBad(m, 'kind'); if (m.v !== GAME_BUILD) { coopS.peerV = coopInt(m.v, 0, 1e6) ? m.v : -1; coopS.msg = coopVerMsg(); ui(); return; } coopS.kinds[1 - coopS.local] = m.k; coopS.looks[1 - coopS.local] = m.look || null; if (typeof m.nick === 'string' && m.nick.trim().length && m.nick.length <= 16) coopS.names[1 - coopS.local] = m.nick.replace(/[<>&"]/g, '').trim() || coopS.names[1 - coopS.local]; ui(); coopMaybeStart(); return; }
   if (m.t === 'start' && coopS.role === 'guest') {
+    if (m.v !== GAME_BUILD) { coopS.peerV = coopInt(m.v, 0, 1e6) ? m.v : -1; coopS.msg = coopVerMsg(); ui(); return coopBad(m, 'versão'); }
     if (!coopInt(m.seed, 0, 0xFFFFFFFF) || !Array.isArray(m.kinds) || m.kinds.length !== 2 || !m.kinds.every(k => TRAITS[k]) || !Array.isArray(m.looks) || !m.looks.every(look)) return coopBad(m, 'start');
     const names = Array.isArray(m.names) && m.names.length === 2 && m.names.every(n => typeof n === 'string' && n.length <= 16) ? m.names : ['J1', 'J2'];
     coopS.kinds = m.kinds; coopS.looks = m.looks; coopBegin(m.seed, m.kinds, m.looks, names); return;
@@ -14038,7 +14068,7 @@ function coopOnMsg(m) {
   else if (m.t === 'act' && coopS.role === 'host') { if (!coopValidAct(m.a)) return coopBad(m, 'act'); if (m.turn === st.coop.turn) coopGotAct(1, m.a); else if (coopS.lastTurn && m.turn === coopS.lastTurn.turn) coopTx(coopS.lastTurn); else coopTx({ t: 'state', s: coopStateJSON() }); } // v0.12.3: o J2 não recebeu o último turno
   else if (m.t === 'chose') { st.coop.peerChose = true; ui(); }
   else if (m.t === 'turn' && coopS.role === 'guest') {
-    if (!Array.isArray(m.acts) || m.acts.length !== 2 || !m.acts.every(coopValidAct) || !Array.isArray(m.order) || m.order.slice().sort().join() !== '0,1' || typeof m.hash !== 'string') return coopBad(m, 'turn');
+    if (!Array.isArray(m.acts) || m.acts.length !== 2 || !m.acts.every(coopValidAct) || !Array.isArray(m.order) || m.order.slice().sort().join() !== '0,1' || typeof m.hash !== 'string') { coopBad(m, 'turn'); if (typeof coopResync === 'function') coopResync('turno recusado'); return; } // v0.14.2 (OBS 89): não fica preso
     coopApplyTurn(m);
   }
   else if (m.t === 'desync' && coopS.role === 'host') coopTx({ t: 'state', s: coopStateJSON() });
@@ -14051,6 +14081,7 @@ function coopOnMsg(m) {
 // ---------- sinal de vida, pausa e saída ----------
 function coopBeat() {
   if (!coopS.ch) return; coopTx({ t: 'ping' });
+  if (coopS.peerV == null) coopTx({ t: 'hello', v: GAME_BUILD }); // v0.14.2: o 1.º pode perder-se se o outro ainda não estava a ouvir
   // v0.12.3 (OBS 87): a ação escolhida pelo J2 volta a ir enquanto o turno não chega (o J1 ignora as repetidas)
   if (coopS.role === 'guest' && isCoop() && st.coop.mine && !st.av.rest && !coopS.paused) coopTx({ t: 'act', turn: st.coop.turn, a: st.coop.mine });
   const gap = coopNow() - coopS.lastSeen;
@@ -14146,7 +14177,7 @@ const FB_DOCS = `https://firestore.googleapis.com/v1/projects/${FB.project}/data
 const RK_W = ['adaga', 'espada', 'machado', 'martelo', 'machadinha', 'cajado', 'arco'];
 const rkScore = (w, t) => w * 100000 + 99999 - Math.min(99999, t); // vaga primeiro, menos turnos desempata (1 só campo: os índices automáticos chegam)
 const rkWeek = () => Math.floor((Date.now() / 86400000 + 3) / 7); // n.º da semana UTC (a 1970-01-01 foi quinta: +3 põe o início à segunda)
-const rkAcct = () => (acct.fb = acct.fb || { on: false });
+const rkAcct = () => (acct.fb = acct.fb || {}); // on: undefined/true = no ranking; false = desligado nas Opções
 const RK = { cache: {}, busy: {}, down: false, sendT: 0 };
 
 // ---------- valores tipados do Firestore (REST) ----------
@@ -14234,7 +14265,7 @@ async function rkPut(path, doc) {
 }
 // envia o que mudou desde o último envio (chamado no fim da arena e ao entrar no ranking); falhas não estragam nada: tenta-se na próxima
 async function rkSync() {
-  const F = rkAcct(); if (!F.on || RK.down || !rkNickOk(arenaMe().nick)) return;
+  const F = rkAcct(); if (!F.seen || F.on === false || RK.down || !rkNickOk(arenaMe().nick)) return; // nada vai antes de o aviso ser visto (Sábio) // v0.14.2 (utilizador): automático; só fica de fora quem o desligou em Opções › PRIVACIDADE
   const a = arenaAcct(), wk = arenaWeek(a), W = rkWeek(), sent = F.sent = F.sent || {};
   const jobs = [['solo', rkSoloDoc(a.byWeapon)], [`weeks/${W}/solo`, rkSoloDoc(wk.byWeapon)], ['coop', rkCoopDoc(a.coopList)], [`weeks/${W}/coop`, rkCoopDoc(wk.coop)]];
   for (const [path, doc] of jobs) {
@@ -14242,11 +14273,11 @@ async function rkSync() {
     if (sent[path] === sig) continue;
     const at = F.putAt = F.putAt || {}; if (Date.now() - (at[path] || 0) < 25000) continue; // as regras só deixam reescrever 20 s depois: fica para o próximo envio
     at[path] = Date.now();
-    try { await rkPut(path, doc); sent[path] = sig; RK.cache = {}; saveAcct(); }
-    catch (e) { if (!e.status) { RK.down = Date.now(); return; } console.warn('ranking:', path, e.message); sent[path] = sig; saveAcct(); } // recusado pelas regras (pior que o do servidor): não insistir
+    try { await rkPut(path, doc); sent[path] = sig; F.outAt = 0; RK.cache = {}; saveAcct(); }
+    catch (e) { if (!e.status) { RK.down = Date.now(); return; } console.warn('ranking:', path, e.message); if (!F.outAt) { sent[path] = sig; saveAcct(); } } // recusado pelas regras (pior que o do servidor): não insistir
   }
 }
-// sair do ranking (Sábio): as regras não deixam apagar; o documento fica out == true e a zero, por isso some das tabelas (as queries pedem score > 0).
+// (sem botão desde a v0.14.2: retirar alguém faz-se a pedido, pela consola) sair do ranking (Sábio): as regras não deixam apagar; o documento fica out == true e a zero, por isso some das tabelas (as queries pedem score > 0).
 // Só se volta 7 dias depois. O apagamento a sério (RGPD) é a pedido, por email.
 const RK_BACK = 7 * 86400000;
 async function rkLeave() {
@@ -14309,7 +14340,7 @@ function rkRow(d, w) {
 // ---------- o ecrã do RANK (o aprovado: pódio em cartas, janela de ±4, a linha do jogador fixa em baixo) ----------
 function rkJoinBox() {
   return `<div class="box nosrv"><b>${_t('RANKING GLOBAL')}</b>${_t('Entra para apareceres no ranking de todos os jogadores com a tua alcunha ({n}). Aparece em público: não uses o teu nome verdadeiro.', { n: esc(arenaMe().nick) })}
-    <div class="row2" style="margin-top:6px"><button class="btn go" data-rkjoin="1">${_t('ENTRAR NO RANKING')}</button><button class="btn" data-aredit="1">${_t('MUDAR ALCUNHA')}</button></div></div>`;
+    ${st.rkMsg ? `<p class="foot">${esc(st.rkMsg)}</p>` : ''}<div class="row2" style="margin-top:6px"><button class="btn go" data-rkjoin="1">${_t('ENTRAR NO RANKING')}</button><button class="btn" data-aredit="1">${_t('MUDAR ALCUNHA')}</button></div></div>`;
 }
 function arenaRankHtml() {
   if (st.rk && st.rk.k !== [st.rk.mode, st.rk.w, st.rk.per].join('|')) { st.rk.k = [st.rk.mode, st.rk.w, st.rk.per].join('|'); RK.err = null; } // outra tabela: tenta de novo
@@ -14340,24 +14371,23 @@ function arenaRankHtml() {
   const foot = cut ? `<p class="foot">${_t(week ? 'Fora do top 100 desta semana: precisas da vaga {n} para entrar.' : 'Fora do top 100 de sempre: precisas da vaga {n} para entrar.', { n: cut.wave })}</p>` : '';
   const empty = !top.length ? `<p class="foot">${_t(week ? 'Ainda ninguém esta semana. Sê o primeiro!' : 'Ainda ninguém no ranking. Sê o primeiro!')}</p>` : '';
   return `<div class="ov-in ar2 ar2-rank"><div class="scr">${head}
-    ${F.on ? '' : rkJoinBox()}
     ${top.length ? `<div class="podium">${pod(top[1], 2)}${pod(top[0], 1)}${pod(top[2], 3)}</div>` : empty}
     ${list ? `<div class="thead"><span>#</span><span>${_t(coop ? 'DUPLA · ARMAS' : 'ALCUNHA · ARMAS')}</span><span class="r">${_t('VAGA')}</span><span class="r">${_t('TURNOS')}</span></div><div class="box list">${list}</div>` : ''}
-    ${foot}${F.on ? `<p class="foot"><button class="btn" data-rkleave="1">${_t('SAIR DO RANKING')}</button></p>` : ''}
+    ${foot}
     ${back}</div>${bar}</div>`;
 }
 // entrar: a alcunha tem de passar no filtro; depois envia logo os recordes deste aparelho
 function rkJoin() {
   const me = arenaMe();
-  if (!rkNickOk(me.nick)) { log(_t('Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).')); arenaEditOpen(); return; }
-  if (Date.now() < rkBackAt()) { log(_t('Saíste do ranking há pouco: podes voltar a partir de {d}.', { d: new Date(rkBackAt()).toLocaleDateString(langNow() === 'en' ? 'en-GB' : 'pt-PT') })); Sound.play('error'); ui(); return; }
+  if (!rkNickOk(me.nick)) { arenaEditOpen(); st.ed.msg = _t('Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).'); ui(); return; }
+  if (Date.now() < rkBackAt()) st.rkMsg = _t('Saíste do ranking há pouco: voltas a aparecer quando o servidor deixar (até 7 dias depois de saíres).'); // o servidor decide; o jogo vai tentando
   rkAcct().on = true; saveAcct(); Sound.play('menu');
   rkSync().then(() => { RK.cache = {}; ui(); }).catch(() => ui()); ui();
 }
 // a posição desta semana para os cartões da entrada e o ecrã do modo (da cache; se o jogador está no ranking, pede-a em segundo plano)
 function rkWeekPos(mode) {
   const c = RK.cache[mode + '|todas|semana'];
-  if (rkAcct().on && rkOnline() && (!c || Date.now() - c.at > 300000)) rkKick(mode, 'todas', 'semana');
+  if (rkOnline() && (!c || Date.now() - c.at > 300000)) rkKick(mode, 'todas', 'semana');
   return c && c.pos ? c.pos : null;
 }
 
@@ -14741,7 +14771,7 @@ function renderOverlay() {
     </div>`;
   } else if (st.screen === 'opts') {
     // v85 (utilizador): as opções em 4 grupos com abas, como nos outros jogos (Som · Imagem · Controlos · Jogo); o perigo fica no fim do Jogo
-    const tab = ['som', 'imagem', 'controlos', 'jogo'].includes(st.optsTab) ? st.optsTab : 'imagem';
+    const tab = ['som', 'imagem', 'controlos', 'jogo', 'priv'].includes(st.optsTab) ? st.optsTab : 'imagem';
     const item = (lbl, body, desc) => `<div class="opt-item"><span class="lbl">${_t(lbl)}</span>${body}${desc ? `<p>${_t(desc)}</p>` : ''}</div>`; // v95: línguas (_t)
     const seg = (list, key, cur) => `<div class="seg">${list.map(([k, n]) => `<button data-${key}="${k}" aria-pressed="${cur(k)}">${_t(n)}</button>`).join('')}</div>`;
     const G = {
@@ -14756,6 +14786,10 @@ function renderOverlay() {
         ${fsOK() ? item('ECRÃ INTEIRO', `<div class="seg"><button data-full="1" aria-pressed="${!!fsEl()}">${_t(fsEl() ? 'SAIR DO ECRÃ INTEIRO' : 'LIGAR')}</button></div>`, 'Esconde as barras do navegador. O jogo fica na vertical.') : ''}`,
       controlos: `${item('TECLAS DE MOVIMENTO', seg([['normal', 'NORMAIS'], ['grande', 'GRANDES'], ['enorme', 'ENORMES']], 'pad', k => opts.pad === k) + `<div style="margin-top:6px">${seg([['esquerda', 'À ESQUERDA'], ['direita', 'À DIREITA']], 'padside', k => opts.padSide === k)}</div>`, 'Tamanho das setas e o lado do ecrã onde ficam. As habilidades passam para o outro lado.')}
 `,
+      // v0.14.2 (utilizador): a secção PRIVACIDADE; o ranking global é automático e desliga-se aqui
+      priv: `${item('RANKING GLOBAL', seg([['1', 'SIM'], ['0', 'NÃO']], 'rkopt', k => k === '1' ? rkAcct().on !== false : rkAcct().on === false), 'Mostra a tua alcunha e os teus recordes da arena no ranking de todos os jogadores. Com NÃO, os teus recordes saem do ranking (ficam só neste aparelho); para voltar, espera 7 dias.')}
+        ${st.rkMsg ? `<p class="foot">${esc(st.rkMsg)}</p>` : ''}
+        ${item('POLÍTICA DE PRIVACIDADE', `<div class="seg"><a class="opt-priv" href="https://godspiregame.github.io/godspire/privacy.html#${langNow()}" target="_blank" rel="noopener">${_t('LER')}</a></div>`, 'O que o jogo guarda, onde e os teus direitos. Para apagar os teus dados do ranking, escreve para godspire.game@gmail.com.')}`,
       jogo: `${item('LÍNGUA', seg(LANG_LIST, 'lang', k => langNow() === k), 'A língua do jogo. Os textos que ainda não estiverem traduzidos aparecem em português.')}
         ${item('DICAS', seg([['1', 'SIM'], ['0', 'NÃO']], 'tips', k => k === '1' ? opts.tips !== false : opts.tips === false), 'A Velha das Brasas explica cada coisa nova uma vez, num cartão pequeno no topo.')}
         ${item('PASSAGEM DE ANDAR', seg([['completa', 'COMPLETA'], ['curta', 'CURTA']], 'passagem', k => k === 'curta' ? opts.passagem === 'curta' : opts.passagem !== 'curta'), opts.passagem === 'curta' ? 'Só a escada, depressa.' : 'A escada e o resumo do andar (explorado, baixas, ouro, dano). Um toque salta.')}
@@ -14767,7 +14801,7 @@ function renderOverlay() {
     };
     html = `<div class="ov-in">
       <div class="box ov-head"><h2>${_t('OPÇÕES')}</h2></div>
-      <div class="tabs opt-tabs">${[['som', 'SOM'], ['imagem', 'IMAGEM'], ['controlos', 'CONTROLOS'], ['jogo', 'JOGO']].map(([k, n]) => `<button data-otab="${k}" aria-pressed="${tab === k}">${_t(n)}</button>`).join('')}</div>
+      <div class="tabs opt-tabs">${[['som', 'SOM'], ['imagem', 'IMAGEM'], ['controlos', 'CONTROLOS'], ['jogo', 'JOGO'], ['priv', 'PRIVACIDADE']].map(([k, n]) => `<button data-otab="${k}" aria-pressed="${tab === k}">${_t(n)}</button>`).join('')}</div>
       <div class="box opts-grid">${G[tab]}
       </div>
       <p class="foot">GODSPIRE v${GAME_SEMVER} (${GAME_BUILD})<br>${_t('Forjado por Rune Weaver · design: Sábio · som: Mestre do Som')}<br>${_t('Fontes: Departure Mono (Helena Zhang) e Pixelify Sans (Stefie Justprince), licença SIL OFL 1.1')}<br><a class="opt-priv" href="https://godspiregame.github.io/godspire/privacy.html#${langNow()}" target="_blank" rel="noopener">${_t('Política de privacidade')}</a></p>
@@ -15384,6 +15418,8 @@ function ovAct(d) {
   else if (d.arrkp) { if (st.rk) { st.rk.per = d.arrkp === 'semana' ? 'semana' : 'sempre'; Sound.play('menu'); ui(); } }
   else if (d.aredit) arenaEditOpen();
   else if (d.rkjoin) rkJoin(); // v0.14.0: ranking global
+  else if (d.rknote) { rkAcct().seen = true; saveAcct(); Sound.play('menu'); ui(); rkSync().catch(() => {}); } // v0.14.2 (Sábio): o aviso do ranking, visto 1 vez
+  else if (d.rkopt) { st.rkMsg = ''; if (d.rkopt === '0') { if (rkAcct().on !== false) rkLeave().finally(() => ui()); Sound.play('menu'); ui(); } else rkJoin(); } // v0.14.2: Opções › PRIVACIDADE
   else if (d.rkleave) { rkLeave().finally(() => ui()); Sound.play('menu'); ui(); }
   else if (d.arlook) { if (st.ed) arenaEditLook(d.arlook); }
   else if (d.aredsave) { if (st.ed) arenaEditSave(); }
