@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.10.9 (build 105). Fontes embutidas:
+<!-- GODSPIRE v0.11.0 (build 107). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -719,6 +719,29 @@ html.compact .sk .skCd:empty { display: none; }
    ficava por baixo da camara/notch). OBS 82: no computador, a barra de deslizar dos menus fica visivel e fina, para se ver que ha mais */
 html.compact .overlay:not(:has(> .title-scr)):not(:has(> .ov-in.tk)) { padding-top: max(4%, calc(env(safe-area-inset-top, 0px) + 6px)); }
 @media (pointer: fine) { .overlay { scrollbar-width: thin; scrollbar-color: #5a5068 transparent; } }
+/* v0.11.0 ARENA (Imagem): escolha da arma, descanso entre vagas e resultado. As cartas do 1-de-3 levam a cor do tipo em cima
+   (nunca vermelho). No resultado os numeros revelam-se um a um (o visual.js pos as classes .rv/.rv-in por relogio; opacidade so por classe)
+   e o NOVO RECORDE entra com um salto; os botoes so ficam ativos depois dele */
+.ar-list .ar-w .ico { width: 32px; height: 32px; image-rendering: pixelated; }
+.ar-offer .ar-card { border-top: 3px solid var(--ar-c, var(--g1)); }
+.ar-card.ar-relic { --ar-c: #b48cf0; } .ar-card.ar-piece { --ar-c: #f2c14e; } .ar-card.ar-heal { --ar-c: #6fcf8a; } .ar-card.ar-gold { --ar-c: #e8b04a; }
+.ar-card > small { color: var(--ar-c); letter-spacing: .08em; font-family: var(--display); }
+.ar-card > b { color: var(--g3); } .ar-card > span { color: var(--g2); font-size: 13px; }
+.ar-res { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; }
+.ar-res[data-best] { box-shadow: inset 0 0 0 2px rgba(242, 193, 78, .4); }
+.ar-num { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0; }
+.ar-num span { font-family: var(--display); color: var(--g2); font-size: 13px; letter-spacing: .06em; }
+.ar-num b { font-family: var(--display); font-size: 30px; line-height: 1; color: var(--g3); text-align: right; }
+.ar-new { margin: 2px 0; text-align: center; font-family: var(--display); font-size: min(16px, 4.1vw); max-width: 100%; overflow-wrap: anywhere; color: #f2c14e; letter-spacing: .1em; text-shadow: 0 0 8px rgba(242, 193, 78, .45); }
+.ar-res.rv > .ar-num, .ar-res.rv > .ar-new, .ar-res.rv > .foot { opacity: 0; }
+.ar-res.rv > .rv-in { opacity: 1; animation: arIn .32s ease-out; } .ar-res.rv > .ar-new.rv-in { animation: arBest .7s ease-out; }
+@keyframes arIn { from { transform: translateY(6px); } to { transform: none; } }
+@keyframes arBest { 0% { transform: scale(.55); } 65% { transform: scale(1.04); } 100% { transform: scale(1); } } /* entra pequeno e nunca passa da caixa (com o painel escondido a animacao pode parar no 1.o fotograma) */
+.ar-end > .btn-row.rv-wait { pointer-events: none; opacity: .45; }
+.ar-res > .foot { font-size: 11px; line-height: 1.5; color: var(--g2); margin-top: 2px; } /* a 375 px os 8 px da .foot geral nao se liam */
+.ar-used { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 8px; margin: 6px 0 0; font-size: 12px; color: var(--g2); }
+.ar-used .ar-u { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; } .ar-used img.mic { width: 16px; height: 16px; image-rendering: pixelated; }
+.ar-used .ar-u:first-child { color: #f2c14e; } .ar-used .ar-u:first-child img.mic { filter: drop-shadow(0 0 2px rgba(242, 193, 78, .55)); } .ar-used > i { font-style: normal; opacity: .5; }
 html.compact .sk.rng.off { opacity: .55; }
 html.compact .sk kbd { display: none; }
 html.compact .dpad { grid-area: dpad; grid-template-columns: repeat(3, var(--pad, 48px)); grid-template-rows: repeat(3, var(--pad, 48px)); gap: 4px; }
@@ -3203,6 +3226,21 @@ LANGS.en = {
   'SEMPRE': 'ALWAYS', 'CAPACIDADE': 'CAPACITY', 'Véu: invisível': 'Veil: invisible', '(último turno)': '(last turn)', 'Relíquias ativas': 'Active relics',
   'Abre depois do chefe do andar 15': 'Opens after the floor 15 boss', 'Espaço vazio': 'Empty slot', 'Mas:': 'But:',
   'Fechadura': 'Lock',
+  // ===== v0.11.0: modo ARENA =====
+  'Gladiador': 'Gladiator', '{w} · vagas sem fim': '{w} · endless waves', 'Entras na arena. As grades fecham-se: daqui só se sai a lutar.': 'You enter the arena. The gates close: the only way out is to fight.',
+  'Gasta os pontos de Núcleo e escolhe as peças de Domínio antes da 1.ª vaga.': 'Spend your Core points and pick your Mastery pieces before the 1st wave.', 'Vaga {n}': 'Wave {n}',
+  'Do fumo saem {n} inimigos!': '{n} enemies come out of the smoke!', 'Do fumo sai 1 inimigo!': '1 enemy comes out of the smoke!', 'Vaga {n} superada!': 'Wave {n} cleared!',
+  'A mochila está cheia: larga alguma coisa em ARRUMAR.': 'Your bag is full: drop something in ORGANIZE.', 'Guardas {n} na mochila.': 'You put {n} in your bag.', '+{n} de ouro.': '+{n} gold.',
+  'Recuperas {n} HP e 1 carga do frasco.': 'You recover {n} HP and 1 flask charge.', 'Escolhe primeiro as peças de Domínio.': 'Pick your Mastery pieces first.', 'Vaga {n}! Os portais de fumo abrem-se.': 'Wave {n}! The smoke portals open.',
+  'arena: {n} vagas': 'arena: {n} waves', '{h} caiu na arena.': '{h} fell in the arena.', 'vaga {n} · {t} turnos': 'wave {n} · {t} turns', 'sem recorde': 'no record',
+  'Escolhe a arma: ela decide a disciplina. O herói é temporário e nunca vai para a Cripta.': 'Choose your weapon: it decides your discipline. The hero is temporary and never goes to the Crypt.',
+  'Vaga {n} · {w}': 'Wave {n} · {w}', 'Melhor: vaga {n} com {w} ({t} turnos).': 'Best: wave {n} with {w} ({t} turns).', 'Ainda sem recorde.': 'No record yet.', 'Ecos de hoje: {n}/{m}': 'Echoes today: {n}/{m}',
+  'PEÇA': 'PIECE', 'Não há relíquias novas para ti.': 'There are no new relics for you.', '+40% HP e +1 carga do frasco': '+40% HP and +1 flask charge', 'frasco': 'flask',
+  'VAGA {n} SUPERADA': 'WAVE {n} CLEARED', 'PREPARA-TE': 'GET READY', 'Escolhe 1 de 3. Depois arruma o herói e segue para a vaga {n}.': 'Choose 1 of 3. Then organize your hero and go on to wave {n}.',
+  'Gasta os pontos de Núcleo em ARRUMAR e escolhe as peças de Domínio.': 'Spend your Core points in ORGANIZE and pick your Mastery pieces.', 'VAGA {n}': 'WAVE {n}',
+  'CAÍSTE NA ARENA': 'YOU FELL IN THE ARENA', '{w} · {k} baixas': '{w} · {k} kills', 'VAGAS SUPERADAS': 'WAVES CLEARED', 'TURNOS': 'TURNS', 'NOVO RECORDE GERAL': 'NEW OVERALL RECORD',
+  'NOVO RECORDE COM {w}': 'NEW RECORD WITH {w}', 'o teto de hoje já chegou': 'today\'s cap is reached', 'DE NOVO': 'AGAIN', 'OUTRA ARMA': 'ANOTHER WEAPON',
+  'Continuar: vaga {n}': 'Continue: wave {n}', 'Nv {n}': 'Lv {n}', 'VAGA {n} · faltam {m}': 'WAVE {n} · {m} left',
   'Fragmento de frasco': 'Flask shard', 'Ração de viagem': 'Travel ration',
   'O Rei já não reina.': 'The King reigns no more.', 'A masmorra lembra-se de quem a venceu.': 'The dungeon remembers who beat it.',
 };
@@ -3380,7 +3418,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.10.9', GAME_BUILD = 105;
+const GAME_SEMVER = '0.11.0', GAME_BUILD = 107;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -3401,7 +3439,7 @@ function idbRestore() {
     return n > 0;
   }).catch(() => false);
 }
-const KEY = { opts: 'tower-god-opts', chars: 'tower-god-chars', acct: 'tower-god-conta', camp: id => 'tower-god-camp-' + id, susp: id => 'tower-god-susp-' + id };
+const KEY = { opts: 'tower-god-opts', chars: 'tower-god-chars', acct: 'tower-god-conta', camp: id => 'tower-god-camp-' + id, susp: id => 'tower-god-susp-' + id, arena: 'tower-god-arena' }; // v0.11.0: a partida da arena grava à parte
 /* conta: o que fica de herói para herói. A morte é permanente; os Ecos, a Cripta e o codex ficam. */
 const acct = { ecos: 0, unlocks: {}, fallen: [], codex: { foes: {}, bosses: {} }, ...(store.get(KEY.acct) || {}) };
 const saveAcct = () => store.set(KEY.acct, acct);
@@ -4397,7 +4435,7 @@ function chooseDomPiece(k) {
     if (e >= 0) { p.tslots[e] = info.id; log(_t('Traço {n} equipado ({s}).', { n: info.n, s: _t(TSLOT_NAME[info.t]) })); }
     else log(_t('Traço {n} entra na coleção. Equipa-o numa fogueira (COLEÇÃO).', { n: info.n }));
   }
-  delete p.talC;   if (!P.gift) p.domQ.shift(); st.domPick = null; st.screen = 'play'; Sound.play('learn'); // v62: o presente do prisioneiro não gasta a fila
+  delete p.talC;   if (!P.gift) p.domQ.shift(); st.domPick = null; st.screen = isArena() && st.av.rest ? 'camp' : 'play'; Sound.play('learn'); // v62: o presente do prisioneiro não gasta a fila
   if (!(p.domQ.length && openDomPick())) ui();
 }
 
@@ -4551,6 +4589,7 @@ function bellReinforce(v) {
 // no turno seguinte ao sino, os reforços saem do fumo (se a casa estiver ocupada ou o herói em cima, esse falha)
 function reinfSpawn() {
   const R = st.reinfPend; if (!R || st.turn <= R.turn) return; st.reinfPend = null;
+  if (R.arena) { arenaSpawn(R); return; } // v0.11.0: as vagas da arena usam o mesmo portal de fumo
   const p = st.p; let made = 0, at = null;
   for (const c of R.cells) {
     if (st.foes.filter(o => o.reinf).length >= reinfMax()) break;
@@ -5911,7 +5950,7 @@ function killFoe(f) {
 function gainXp(n) {
   const p = st.p;
   p.xp += Math.round(n * (1 + tal(p, 'xp')));
-  while (p.xp >= p.next) {
+  while (p.xp >= p.next && !(isArena() && p.lvl >= ARENA_MAXLVL)) { // v0.11.0 (Sábio): na arena o nível vai até ao 20
     p.xp -= p.next; p.lvl++; p.next = Math.round(p.next * 1.38) + 3; // v62: chegar ao Rei por volta do nível 15
     p.max += 2; p.hp += 2; // v59 (Sábio): +2 HP por nível; o resto da vida vem do Núcleo Vida e da árvore
     if (p.mpMax) { p.mpMax += 2; p.mp = p.mpMax; }
@@ -6282,6 +6321,7 @@ function musicPrep() {
   const nb = BIOMES[biomeOf(st.floor + 1)]; if (nb && nb.track && st.floor < KING_FLOOR) Sound.prerender(nb.track);
 }
 function floorTrack() {
+  if (isArena()) return 'duelo'; // v0.11.0: a faixa da arena (Mestre do Som)
   if (st.trial && !st.trial.done) return 'provacao'; // v0.10.9 (músicas v2, Mestre do Som): faixas novas
   if (st.arena && st.arena.locked && st.floor === KING_FLOOR) { const k = st.foes.find(o => o.btype === 'king'); return 'rei' + ((k && k.phase) || 1) + 'n'; }
   if (st.arena && st.arena.locked && st.floor === 20) return 'desperto2'; // v62: o chefe desperto tem faixa própria
@@ -6441,7 +6481,7 @@ function foesAct() {
 
 /* ---------- ações do jogador ---------- */
 function endTurn() {
-  const p = st.p;
+  const p = st.p; st.endPending = false;
   st.turn++;
   p.cds = p.cds.map(c => Math.max(0, c - 1));
   // mana: fora de combate (sem inimigos acordados à vista) enche logo; em combate sobe 1 por turno
@@ -6473,20 +6513,20 @@ function endTurn() {
   if (p.knockCd > 0) p.knockCd--; // v67: recarga do bater na parede
   anchorTick(p); // v74: janela da Âncora de sombra
   if (p.hp <= 0) { p.hp = 0; die(); return; }
-  checkTrial();
+  checkTrial(); checkArena(); // v0.11.0: fim da vaga da arena
   const live = st.attacks.filter(a => !a.frozen); // v66: os avisos parados (chefe congelado) não tocam
   if (live.some(a => a.t === 1)) {
     if (live.some(a => a.t === 1 && a.warn === 'decree')) { Sound.play('decree', 2); buzz([60, 60, 60]); } else buzz([15]);
     Sound.play('tick', 1);
   } else if (live.length) Sound.play('tick', 2); // v54: acelera no último turno
   // subiu de nível: o ecrã de subir de nível abre sozinho quando não há perigo à vista; em combate fica para depois
-  if (st.lvlDue && st.screen === 'play' && !inCombat() && !st.attacks.length) { // v72 (utilizador): ~0,7 s para se ver o inimigo a morrer antes do ecrã do nível
+  if (st.lvlDue && st.screen === 'play' && !isArena() && !inCombat() && !st.attacks.length) { // na arena, o nível e o Domínio tratam-se no descanso entre vagas // v72 (utilizador): ~0,7 s para se ver o inimigo a morrer antes do ecrã do nível
     st.lvlDue = false; walk.stop(); const run = st; busyUntil = performance.now() + 700;
     lvlWait = () => { clearTimeout(lvlWait.t); lvlWait = null; if (st === run && st.p && st.p.hp > 0 && st.screen === 'play') openLevel(true); else if (st === run) st.lvlDue = true; };
     lvlWait.t = setTimeout(() => lvlWait && lvlWait(), 700); return; }
   if (!inCombat()) { p.alcOff = false; p.corrente = 0; } // Alcance certeiro volta e a Corrente de ferro esvazia quando o combate acaba
   domPendingCheck(); // v60: a 1.ª escolha pendente abre quando houver arma na mão
-  if (p.domQ && p.domQ.length && st.screen === 'play' && !inCombat() && !st.attacks.length && openDomPick()) return; // escolha do Domínio
+  if (p.domQ && p.domQ.length && st.screen === 'play' && !isArena() && !inCombat() && !st.attacks.length && openDomPick()) return; // escolha do Domínio
   ui();
 }
 function attackFoe(f, dx, dy) {
@@ -7174,7 +7214,7 @@ function useAbility(slot) {
   if (tal(p, 'ks_echo') && rand() < 0.25) log(_t('Eco arcano! A habilidade não gastou recarga.'));
   else p.cds[i] = Math.max(1, skCd(p, a) - (tr.cd || 0) - tal(p, 'cdr') + (tal(p, 'ks_guard') ? 1 : 0) + ((R1 && R1.cd) || 0)) + 1;
   // v83 (utilizador): num dash, os inimigos só agem depois de o salto do herói acabar de se ver (antes parecia tudo ao mesmo tempo)
-  if (cast.dash) { const run = st, D = 180; busyUntil = performance.now() + D; ui(); setTimeout(() => { if (st === run && st.p && !st.dying) endTurn(); }, D); return; }
+  if (cast.dash) { const run = st, D = 180; st.endPending = true; busyUntil = performance.now() + D; ui(); setTimeout(() => { if (st === run && st.p && !st.dying && st.endPending) endTurn(); }, D); return; } // v0.11.0 (Sábio): endPending, para uma gravação a meio acabar o turno ao carregar
   endTurn();
 }
 // efeitos das runas depois da habilidade; o dano extra já não volta a passar pela runa (st.cast está a null)
@@ -7673,7 +7713,7 @@ function openCrone(i) {
   st.screen = 'crone'; Sound.play('crone'); ui();
 }
 function openCamp(i) { tip('fogueira'); st.screen = 'camp'; st.campAt = i; st.campMsg = st.p && st.p.relicHint ? _t('Agora tens 3 espaços de relíquia: escolhe-as aqui, em RELÍQUIAS.') : ''; Sound.play('menu'); Sound.music('camp'); ui(); }
-function closeCamp() { st.screen = 'play'; Sound.play('back'); Sound.music(floorTrack()); ui(); }
+function closeCamp() { if (isArena()) { arenaNextWave(); return; } st.screen = 'play'; Sound.play('back'); Sound.music(floorTrack()); ui(); }
 function restCamp() {
   musicPrep(); // v0.10.9 (Sábio): a fogueira é um momento morto: pré-grava a faixa do chefe e a do andar seguinte
   const p = st.p, fire = st.npcs[st.campAt]; if (!fire) return;
@@ -7782,7 +7822,7 @@ function updateBest() {
   const ch = charOf(st.charId);
   if (ch && st.floor > (ch.best || 0)) { ch.best = st.floor; saveChars(); }
 }
-function snapshot() { const s = JSON.parse(JSON.stringify(st)); s.screen = 'play'; s.cart = null; s.savedAt = Date.now(); return s; }
+function snapshot() { const s = JSON.parse(JSON.stringify(st)); s.screen = 'play'; s.cart = null; s.savedAt = Date.now(); if (typeof lvlWait !== 'undefined' && lvlWait) s.lvlDue = true; return s; } // v0.11.0: o nível à espera volta a abrir
 function saveCamp() {
   if (!st.charId) return;
   store.set(KEY.camp(st.charId), snapshot());
@@ -7955,6 +7995,7 @@ function loadRun(s) {
   applyBiome(biomeOf(st.floor));
   fov();
   Sound.music(floorTrack());
+  if (st.endPending && st.p && st.p.hp > 0) endTurn(); // v0.11.0 (Sábio): gravado a meio de uma investida: o turno dos inimigos acaba agora
 }
 function continueRun(id) {
   const a = store.get(KEY.camp(id)), b = store.get(KEY.susp(id));
@@ -7965,6 +8006,7 @@ function continueRun(id) {
 // morte permanente: o herói passa para a Cripta, as gravações apagam-se, os Ecos ficam
 function die() {
   if (st.screen === 'dead' || st.dying) return;
+  if (isArena()) { if (!st.av.over) arenaDie(); return; } // v0.11.0: a arena não vai para a Cripta
   updateBest();
   const ch = charOf(st.charId), p = st.p;
   if (st.floor >= 3) earnEcos(Math.floor(st.floor / (st.floor >= 16 ? 2 : 3)), _t('coragem de descer fundo')); // v62: andar/2 a partir do 16
@@ -8049,7 +8091,7 @@ function toMenu() {
   const wait = busyUntil - performance.now();
   if (st.p && st.screen !== 'dead' && !st.dying && wait > 0) { clearTimeout(toMenuT); toMenuT = setTimeout(toMenu, wait + 20); return; }
   clearTimeout(toMenuT); toMenuT = null;
-  if (st.p && st.screen !== 'dead' && !st.dying) saveSuspend();
+  if (st.p && st.screen !== 'dead' && !st.dying) { if (isArena()) arenaSave(); else saveSuspend(); }
   st = { screen: 'menu' }; app.ask = null; app.tab = 'heroes';
   Sound.music('title'); ui();
 }
@@ -11158,6 +11200,33 @@ const DEATHS = {
         if (lit && !n.scared) lights.push({ x: px + 24, y: py + 6, r: 26, int: .7, col: '#ff8a2a', tint: .25, fire: 1, s: 3 });
       } else draws.push({ y: py + 12, f: () => spr((lit ? CACHE : DARK)[n.k], px, py) });
     }
+    /* v0.11.0 (Arena, Imagem): braseiro de pé no centro da sala (st.av.brazier: a casa é chão normal, só decoração e luz) */
+    if (st.av && st.av.brazier && vis[idx(st.av.brazier.x, st.av.brazier.y)]) {
+      const B = st.av.brazier, [px, py] = at(B.x, B.y);
+      lights.push({ x: px + 8, y: py + 3, r: 66, int: 1, col: '#ff9a3c', tint: .34, fire: 1, s: B.x });
+      draws.push({ y: py + 13, f: () => {
+        const t = calm ? 0 : now, P = (x, y, w, h, col, a) => { ctx.globalAlpha = a == null ? 1 : a; ctx.fillStyle = col; ctx.fillRect(px + x, py + y, w, h); };
+        P(3, 14, 10, 1, '#000000', .35); P(4, 10, 1, 5, '#2a1e18'); P(11, 10, 1, 5, '#2a1e18'); P(7, 11, 2, 4, '#2a1e18'); /* sombra e os três pés de ferro */
+        P(2, 7, 12, 3, '#3a2a1c'); P(2, 7, 12, 1, '#877858'); P(3, 10, 10, 1, '#241a14'); P(4, 8, 8, 1, '#7a3418'); /* a taça com as brasas */
+        for (let i = 0; i < 6; i++) { const h = Math.max(1, Math.round(3 + 2.5 * Math.sin(t / 90 + i * 1.9) + (i === 2 || i === 3 ? 3 : 0))); for (let y = 0; y < h; y++) { const u = y / h; P(5 + i, 7 - y, 1, 1, u < .35 ? '#d8742e' : u < .7 ? '#ff9a3c' : '#ffd27a'); } }
+        if (!calm) for (let k = 0; k < 3; k++) { const q = ((t / 900) + k / 3) % 1; P(6 + ((k * 3 + Math.floor(t / 400)) % 5), 4 - Math.round(q * 10), 1, 1, '#ffc65a', 1 - q); } /* faúlhas */
+        ctx.globalAlpha = 1;
+      } });
+    }
+    /* v0.11.0 (Arena, Imagem): setas na borda para os portais da vaga que nascem fora do ecrã (as 4 mais perto do herói),
+       em lilás claro com contorno escuro, por cima do escuro (S.marks); com movimento reduzido não pulsam */
+    if (st.av && st.av.spawns && st.av.spawns.length) draws.push({ y: 1e9, f: () => {
+      const top = 26, bot = isCompact() ? Math.round(cv.height * 0.66) : cv.height - 8, hx = (pr.x + .5 - cx) * TS, hy = (pr.y + .5 - cy) * TS;
+      const out = st.av.spawns.map(([x, y]) => { const [px, py] = at(x, y); return { x: px + 8, y: py + 8, d: Math.abs(x - pr.x) + Math.abs(y - pr.y) }; })
+        .filter(s => s.x < 0 || s.x > cv.width || s.y < top || s.y > bot).sort((a, b) => a.d - b.d).slice(0, 4);
+      const al = calm ? 1 : .65 + .35 * Math.sin(now / 160), mk = (x, y, col, a) => { ctx.globalAlpha = a; ctx.fillStyle = col; ctx.fillRect(x, y, 1, 1); S.marks.push([x, y, 1, 1, col, a]); };
+      for (const s of out) {
+        const dx = s.x - hx, dy = s.y - hy, kx = Math.abs(dx) > .01 ? ((dx > 0 ? cv.width - 6 : 6) - hx) / dx : Infinity, ky = Math.abs(dy) > .01 ? ((dy > 0 ? bot - 6 : top + 6) - hy) / dy : Infinity, k = Math.min(kx, ky, 1);
+        const ax = hx + dx * k, ay = hy + dy * k, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+        for (const [grow, col, a] of [[1, '#0a0810', .9 * al], [0, '#e8ddff', al]]) for (let r = 0; r <= 4; r++) { const hw = r * .6 + grow; for (let w = -Math.ceil(hw); w <= Math.ceil(hw); w++) { if (Math.abs(w) > hw) continue; mk(Math.round(ax - ux * (r - grow) - uy * w), Math.round(ay - uy * (r - grow) + ux * w), col, a); } }
+      }
+      ctx.globalAlpha = 1;
+    } });
     // v87 (OBS 45): portal de fumo onde vão nascer os reforços do sino (st.reinfPend, durante 1 turno). Um poço escuro no chão com
     // um anel de fumo que roda e faíscas que sobem (cinza-lilás; douradas nos ferozes). Nunca vermelho; com movimento reduzido fica parado.
     if (st.reinfPend && st.reinfPend.cells) for (const c of st.reinfPend.cells) {
@@ -11973,8 +12042,31 @@ const TITLE = (() => {
   return { start };
 })();
 function titleDecorate() { if (typeof st !== 'undefined' && st.screen === 'title') { const ov = document.getElementById('ov'); TITLE.start(ov && ov.querySelector('.title-scr')); } }
+/* v0.11.0 (Arena, Imagem): resultado da Arena. Revela as linhas uma a uma e conta os numeros para cima (tudo por relogio, nunca rAF);
+   um toque salta a contagem, mas o NOVO RECORDE entra sempre com o seu salto e os botoes so acordam ~0,7 s depois dele.
+   Com movimento reduzido ou o separador escondido mostra logo o final */
+function arenaEndDecorate() {
+  const ov = document.getElementById('ov'), res = ov && !ov.hidden && ov.querySelector('.ar-end .ar-res');
+  const u = ov && ov.querySelector('.ar-end .ar-used'); /* armas usadas: cada uma num span (icone + nome), separadas por um ponto; a 1.a (a do recorde) fica em destaque no CSS */
+  if (u && !u._w && !u.querySelector('.ar-u')) { u._w = 1; const nodes = [...u.childNodes]; u.textContent = ''; let cur = document.createElement('span'); cur.className = 'ar-u'; u.append(cur);
+    for (const n of nodes) { if (n.nodeType === 3 && n.textContent.includes(' · ')) n.textContent.split(' · ').forEach((t, i) => { if (i) { const s = document.createElement('i'); s.textContent = '·'; u.append(s); cur = document.createElement('span'); cur.className = 'ar-u'; u.append(cur); } if (t) cur.append(t); }); else cur.append(n); } }
+  if (!res || res._rv) return; res._rv = 1;
+  if (reduceMotion() || document.hidden) return;
+  const items = [...res.querySelectorAll(':scope > .ar-num, :scope > .ar-new, :scope > .foot')], btns = ov.querySelector('.ar-end > .btn-row'), timers = [];
+  const nums = items.map(e => { const b = e.matches('.ar-num') && e.querySelector('b'), m = b && b.textContent.match(/^(\D*)(\d+)$/); return m ? { b, pre: m[1], n: +m[2] } : null; });
+  res.classList.add('rv'); if (btns) btns.classList.add('rv-wait');
+  const wake = d => timers.push(setTimeout(() => btns && btns.classList.remove('rv-wait'), d));
+  const count = (o, dur) => { const t0 = performance.now(); o.b.textContent = o.pre + '0'; const step = () => { const k = Math.min(1, (performance.now() - t0) / dur); o.b.textContent = o.pre + Math.round(o.n * (1 - Math.pow(1 - k, 3))); if (k < 1 && !res._skip) timers.push(setTimeout(step, 30)); else o.b.textContent = o.pre + o.n; }; step(); };
+  let at = 250, newAt = -1;
+  items.forEach((e, i) => { const d = at; if (e.matches('.ar-new')) newAt = d; timers.push(setTimeout(() => { e.classList.add('rv-in'); if (nums[i] && !res._skip) count(nums[i], 520); }, d)); at += e.matches('.ar-num') ? 620 : e.matches('.ar-new') ? 900 : 300; });
+  wake(newAt >= 0 ? newAt + 700 : at);
+  res.addEventListener('click', () => { if (res._skip) return; res._skip = 1; const nb = res.querySelector(':scope > .ar-new'); const nbOn = nb && nb.classList.contains('rv-in');
+    timers.forEach(clearTimeout); items.forEach((e, i) => { if (nums[i]) nums[i].b.textContent = nums[i].pre + nums[i].n; if (e !== nb) e.classList.add('rv-in'); });
+    if (nb && !nbOn) { nb.classList.add('rv-in'); wake(700); } else if (nb) wake(Math.max(0, newAt + 700 - (performance.now() - res._t0))); else wake(0); });
+  res._t0 = performance.now();
+}
 function relDecorate() {
-  croneDecorate(); talkDecorate(); titleDecorate();
+  croneDecorate(); talkDecorate(); titleDecorate(); arenaEndDecorate();
   const ov = document.getElementById('ov'); if (!ov || ov.hidden || ov.querySelector('.rel-medals') || typeof RELIC === 'undefined' || !st || !st.p) return;
   const p = st.p, act = (p.relics || []).filter(id => RELIC[id] && !RELIC[id].conta), slots = typeof relicSlots === 'function' ? relicSlots() : 3;
   if (st.screen === 'relics') { const b = ov.querySelector('[data-reloff], .box.menu'); const menu = b && b.closest('.box.menu'); if (menu) { const f = menu.querySelector('.foot'); (f || menu.firstChild).after(relMedals(act, slots, 'data-reloff')); menu.classList.add('rel-act'); } }
@@ -12791,6 +12883,243 @@ const crValCol = k => { const L = CR_LISTS[k](); return (L[app.cr[k]] || L[0])[1
 
 </script>
 <script>
+/* GODSPIRE · js/arena.js (v0.11.0): modo ARENA, vagas sem fim numa sala fechada. Regras do Sábio (PROPOSTA-modos §1), aprovadas pelo utilizador.
+   - Herói temporário (st.mode = 'arena', st.charId = null): nunca toca nos heróis, na Cripta, nas gravações da torre nem no Domínio da conta.
+   - Gravação à parte (KEY.arena), feita no início de cada vaga e no descanso entre vagas (recarregar volta ao mesmo ponto, com o mesmo st.rng).
+   - Entre vagas usa o ecrã da fogueira ('camp') com outro conteúdo: assim o ARRUMAR, os Núcleos, as relíquias e as runas voltam todos para aqui.
+   - As vagas nascem pelo portal de fumo dos reforços do sino (st.reinfPend com arena: true): aviso de 1 turno e stun 1 (Primeira Lei). */
+const ARENA_N = 11, ARENA_LVL = 8, ARENA_MAXLVL = 20, ARENA_ECOS_DIA = 10;
+const isArena = () => !!(typeof st !== 'undefined' && st && st.mode === 'arena');
+const dayLocal = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+// recordes e Ecos do dia (o dia conta pela data local)
+function arenaAcct() {
+  const a = acct.arena = acct.arena || {};
+  a.byWeapon = a.byWeapon || {};
+  if (!a.day || a.day.d !== dayLocal()) a.day = { d: dayLocal(), n: 0 };
+  return a;
+}
+const arenaBetter = (w, t, r) => !r || w > r.wave || (w === r.wave && t < r.turns);
+const arenaSaved = () => { const s = store.get(KEY.arena); return s && s.mode === 'arena' && s.p ? s : null; };
+// armadura da arma inicial: leve para quem vive da furtividade e da distância, média para os outros
+const arenaWt = kind => ['adaga', 'arco', 'cajado', 'machadinha'].includes(kind) ? 'leve' : 'media';
+
+function openArenaPick() { st = { screen: 'arenapick' }; Sound.play('menu'); ui(); }
+function startArena(kind) {
+  if (!TRAITS[kind]) return;
+  store.del(KEY.arena);
+  const c = CLASSES.heroi, seed = RNG_FORCE != null ? RNG_FORCE : newSeed();
+  // aspeto ao acaso pelo gerador livre (o st ainda não tem rng), para não mexer no gerador da partida
+  const look = { skin: rnd(0, SKINS.length - 1), hair: rnd(0, HAIRS.length - 1), cloth: rnd(0, CLOTHS.length - 1), style: pick(Object.keys(A.HAIR)) };
+  st = { ver: SAVE_VER, mode: 'arena', seed, rng: rngSeed(seed), screen: 'play', charId: null, nome: _t('Gladiador'), look, cls: 'heroi', floor: 1, turn: 0, boss: false, killer: null, log: [], uidN: 0, fidN: 0, npcs: [], attacks: [], foes: [], items: [], map: null,
+    p: { x: 0, y: 0, hp: c.hp, max: c.hp, atk: c.atk, def: c.def, lvl: 1, xp: 0, next: 10, gold: 0, pot: 3, food: 1,
+      cds: SK.map(() => 0), slots: [null, null, null], alloc: [], pts: 0, buffT: 0, rollT: 0, dir: 'd', streak: 0,
+      eq: { w: null, h: null, a: null, g: null, b: null }, kills: 0, inv: [], relics: [], relicBag: [], vida4: true, extra: {}, omenFx: {} },
+    av: { kind, wave: 0, done: 0, rest: true, offer: null, firstPiece: false } };
+  const p = st.p; st.pacts = {}; st.ecoLog = []; st.startAt = Date.now(); st.potFloor = 0;
+  discInit(p, 'heroi');
+  // nível 8 (poder de meio do ato 2), com os Núcleos desses níveis para gastar antes da 1.ª vaga
+  for (let k = 2; k <= ARENA_LVL; k++) {
+    p.lvl = k; p.max += 2; p.hp += 2; p.corePts = (p.corePts || 0) + coreGain(k); p.next = Math.round(p.next * 1.38) + 3;
+    if (k >= SLOT4_LVL && p.slots.length < 4) p.slots.push(null);
+  }
+  // uma peça comum por espaço, a arma escolhida e o Domínio dela no nível 3 (3 escolhas de peças para começar)
+  const tier = 2, gear = [makeWeapon(kind, tier), makeArmor(tier, arenaWt(kind)), makeGear('h', tier), makeGear('g', tier), makeGear('b', tier)];
+  for (const it of gear) { p.inv.push(it); p.eq[it.t] = it.uid; }
+  const d = discOf(kind).id; p.dom[d] = DOM_STEPS[2]; p.domLv[d] = 3; p.domQ.push(d, d, d);
+  delete p.talC; syncGearHp(p); p.hp = p.max; p.pot = flaskMax(p);
+  st.av.dom0 = { ...p.dom }; // o Domínio de partida não conta para o recorde por arma (só o que se ganha nas vagas)
+  transitionTo(_t('ARENA'), _t('{w} · vagas sem fim', { w: _t(TRAITS[kind].nome) }), () => {
+    buildArena();
+    log(_t('Entras na arena. As grades fecham-se: daqui só se sai a lutar.'));
+    log(_t('Gasta os pontos de Núcleo e escolhe as peças de Domínio antes da 1.ª vaga.'));
+    arenaRest();
+  }, { load: true });
+}
+function arenaLoad() {
+  const s = arenaSaved(); if (!s) return;
+  transitionTo(_t('ARENA'), _t('Vaga {n}', { n: Math.max(1, s.av.wave) }), () => { loadRun(s); if (st.av.rest) { st.screen = 'camp'; Sound.music('duelo'); ui(); } }, { load: true });
+}
+function arenaSave() {
+  if (!isArena() || !st.p || st.av.over || st.dying || !st.map) return;
+  const s = snapshot(); s.screen = st.av.rest ? 'camp' : 'play'; store.set(KEY.arena, s);
+}
+// a sala: 11×11 ao centro do mapa, 4 pilares (cortam a linha de vista e dão cobertura ao assassino) e o braseiro ao centro (a Imagem desenha-o em st.av.brazier)
+function buildArena() {
+  const map = new Array(W * H).fill(0), n = ARENA_N, x0 = (W - n) >> 1, y0 = (H - n) >> 1;
+  for (let y = y0; y < y0 + n; y++) for (let x = x0; x < x0 + n; x++) map[idx(x, y)] = 1;
+  for (const x of [x0 + 3, x0 + n - 4]) for (const y of [y0 + 3, y0 + n - 4]) map[idx(x, y)] = 0;
+  st.map = map; st.arena = null; st.trial = null; st.bookShelves = []; st.reinfPend = null; st.reinfN = 0; st.reinfAt = null; st.traps = [];
+  st.rooms = [{ x: x0, y: y0, w: n, h: n }];
+  st.av.room = { x: x0, y: y0, w: n, h: n }; st.av.brazier = { x: x0 + (n >> 1), y: y0 + (n >> 1) };
+  st.seen = new Array(W * H).fill(false); st.souls = {};
+  for (let y = y0 - 1; y <= y0 + n; y++) for (let x = x0 - 1; x <= x0 + n; x++) st.seen[idx(x, y)] = true; // a sala vê-se toda
+  st.foes = []; st.items = []; st.npcs = []; st.attacks = []; st.safe = []; st.boss = false;
+  st.p.x = x0 + (n >> 1); st.p.y = y0 + n - 2;
+  applyBiome(biomeOf(st.floor));
+  ANIM.delete(st.p); cam.snap = true;
+  fov();
+}
+// vaga N: 2 + floor(N/2) inimigos do bioma do ato de min(5, 1 + floor((N-1)/5)); um feroz a cada 5 vagas; o Capitão do sino a cada 10
+function arenaWave(N) {
+  const R = st.av.room, p = st.p, B = BIOMES[biomeOf(st.floor)] || BIOMES.prisao;
+  const bad = ['sentry', 'mimic'];
+  let pool = FOES.filter(f => B.foes[f.id] && f.min <= st.floor + 2 && !bad.includes(f.id));
+  if (pool.length < 2) pool = FOES.filter(f => f.min <= st.floor + 2 && !bad.includes(f.id));
+  const n = 2 + Math.floor(N / 2), cells = [];
+  for (let tries = 0; cells.length < n + (N % 10 === 0 ? 1 : 0) && tries < 300; tries++) {
+    const x = rnd(R.x, R.x + R.w - 1), y = rnd(R.y, R.y + R.h - 1);
+    if (st.map[idx(x, y)] !== 1 || Math.max(Math.abs(x - p.x), Math.abs(y - p.y)) < 3 || cells.some(c => c.x === x && c.y === y)) continue;
+    cells.push({ x, y, t: pick(pool).id, elite: false });
+  }
+  if (N % 5 === 0 && cells.length) cells[cells.length - 1].elite = true;
+  if (N % 10 === 0 && cells.length) { const c = cells[0]; c.t = 'sentry'; c.cap = true; c.elite = false; }
+  st.reinfPend = { turn: st.turn, cells, arena: true };
+  st.av.spawns = cells.map(c => [c.x, c.y]); // para as setas da Imagem (os que nascem fora de vista)
+}
+// chamado no reinfSpawn quando o st.reinfPend é da arena: dão EXP, Domínio e saque (não são reforços do sino)
+function arenaSpawn(R) {
+  const p = st.p; let made = 0;
+  for (const c of R.cells) {
+    let moved = false;
+    if (foeAt(c.x, c.y) || (c.x === p.x && c.y === p.y)) { const alt = arenaFree(c); if (!alt) continue; c.x = alt[0]; c.y = alt[1]; moved = true; }
+    const t = FOES.find(o => o.id === c.t); if (!t) continue;
+    const o = makeFoe(t, c.x, c.y, c.elite ? { forceElite: true } : { noElite: true });
+    o.aware = true; o.provoked = true; o.stun = 1; o.arenaFoe = true;
+    if (c.cap) { o.sentry = false; o.captain = true; o.nome = 'Capitão do sino'; o.max *= 2; o.hp = o.max; o.fdx = 1; o.fdy = 0; o.capCd = 1; }
+    st.foes.push(o); made++; if (moved) float(c.x, c.y, '!', 'red'); // Sábio: a casa marcada estava ocupada; o «!» mostra de onde veio (nasce atordoado na mesma)
+    if (typeof fxBurst === 'function') fxBurst(c.x, c.y, 0.7, performance.now(), made * 40);
+  }
+  st.av.spawns = null;
+  if (made) { log(_t(made > 1 ? 'Do fumo saem {n} inimigos!' : 'Do fumo sai 1 inimigo!', { n: made })); Sound.play('vigia_bell', 2); }
+}
+function arenaFree(c) {
+  const R = st.av.room, p = st.p;
+  for (let r = 1; r < 4; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+    const x = c.x + dx, y = c.y + dy;
+    if (x < R.x || y < R.y || x >= R.x + R.w || y >= R.y + R.h || st.map[idx(x, y)] !== 1 || foeAt(x, y)) continue;
+    if (Math.max(Math.abs(x - p.x), Math.abs(y - p.y)) <= 1) continue;
+    return [x, y];
+  }
+  return null;
+}
+const arenaLeft = () => (st.foes || []).filter(f => !f.ally).length + (st.reinfPend && st.reinfPend.arena ? st.reinfPend.cells.length : 0);
+// no fim de cada turno (endTurn): sem inimigos nem portais, a vaga acabou
+function checkArena() {
+  if (!isArena() || st.dying || !st.p || st.p.hp <= 0) return;
+  const A = st.av; if (A.rest || !A.wave || A.over || arenaLeft()) return;
+  A.done = A.wave;
+  log(_t('Vaga {n} superada!', { n: A.wave })); Sound.play('level');
+  arenaRest();
+}
+// descanso entre vagas (e antes da 1.ª): o 1-de-3, o Domínio pendente e o ARRUMAR
+function arenaRest() {
+  const A = st.av; A.rest = true; st.lvlDue = false; st.attacks = [];
+  if (A.wave && !A.offer) A.offer = arenaOffer();
+  st.heroEdit = false; st.screen = 'camp'; st.campAt = -1; st.campMsg = '';
+  Sound.prerender('duelo'); Sound.music('duelo'); // só a faixa da arena (o musicPrep da torre prepararia chefes e biomas que aqui não tocam)
+  arenaSave(); ui();
+}
+// as 3 escolhas: uma relíquia, uma peça e curar 40% + 1 carga do frasco. Na 1.ª, a peça é uma arma de outro tipo (da raridade da vaga, nunca melhor do que uma peça normal)
+function arenaOffer() {
+  const A = st.av, p = st.p, own = [...(p.relics || []), ...(p.relicBag || [])], N = A.wave;
+  const rars = ['comum', 'incomum'].concat(N >= 5 ? ['rara'] : [], N >= 10 ? ['chefe'] : []);
+  const rel = shuffle(RELICS.filter(r => rars.includes(r.rar) && !own.includes(r.id)))[0];
+  let piece;
+  if (!A.firstPiece) { A.firstPiece = true; piece = applyRarity(makeWeapon(pick(KINDS.filter(k => k !== A.kind)), tierRoll()), rollRarity(0)); }
+  else piece = randomItem(tierRoll());
+  return [rel ? { k: 'relic', id: rel.id } : { k: 'gold', v: 20 + 5 * N }, { k: 'piece', it: piece }, { k: 'heal' }];
+}
+function arenaPick(i) {
+  const A = st.av, p = st.p, o = A.offer && A.offer[i]; if (!o || !A.rest) return;
+  if (o.k === 'piece' && p.inv.length >= BAG) { st.campMsg = _t('A mochila está cheia: larga alguma coisa em ARRUMAR.'); Sound.play('error'); ui(); return; }
+  if (o.k === 'relic') addRelic(o.id);
+  else if (o.k === 'piece') { p.inv.push(o.it); log(_t('Guardas {n} na mochila.', { n: itemTxt(o.it) })); }
+  else if (o.k === 'gold') { p.gold += o.v; log(_t('+{n} de ouro.', { n: o.v })); }
+  else { const h = Math.ceil(p.max * 0.4); p.hp = Math.min(p.max, p.hp + h); p.pot = Math.min(flaskMax(p), p.pot + 1); log(_t('Recuperas {n} HP e 1 carga do frasco.', { n: h })); }
+  A.offer = null; Sound.play('relic_pick'); arenaSave(); ui();
+}
+function arenaNextWave() {
+  const A = st.av, p = st.p; if (!A.rest || A.offer) return;
+  if (p.domQ && p.domQ.length) { st.campMsg = _t('Escolhe primeiro as peças de Domínio.'); Sound.play('error'); ui(); return; }
+  A.rest = false; A.wave++;
+  const old = biomeOf(st.floor); st.floor = Math.min(24, A.wave); if (biomeOf(st.floor) !== old) applyBiome(biomeOf(st.floor));
+  st.heroEdit = false; st.screen = 'play'; st.campMsg = '';
+  arenaWave(A.wave);
+  arenaSave(); // o início da vaga (com os portais já marcados): recarregar a meio volta aqui, com o mesmo st.rng
+  log(_t('Vaga {n}! Os portais de fumo abrem-se.', { n: A.wave })); Sound.play('roar'); Sound.music('duelo');
+  ui();
+}
+// morte na arena: recordes, Ecos do dia (floor(vagas/3), até 10 por dia) e o ecrã de resultado. Nada vai para a Cripta
+function arenaDie() {
+  const A = st.av, p = st.p, a = arenaAcct(), w = A.done, t = st.turn, used = arenaUsed();
+  const kind = used.length ? used[0].kind : A.kind; // v0.11.0 (utilizador): o recorde vai para a arma com que mais se lutou (mais Domínio ganho), não para a inicial
+  A.over = true; store.del(KEY.arena);
+  const newW = arenaBetter(w, t, a.byWeapon[kind]), newB = arenaBetter(w, t, a.best);
+  if (w > 0 && newW) a.byWeapon[kind] = { wave: w, turns: t };
+  if (w > 0 && newB) a.best = { wave: w, turns: t, kind };
+  const due = Math.floor(w / 3), give = Math.max(0, Math.min(due, ARENA_ECOS_DIA - a.day.n));
+  if (give) { a.day.n += give; earnEcos(give, _t('arena: {n} vagas', { n: w })); }
+  A.res = { wave: w, turns: t, kind, start: A.kind, used, newW: w > 0 && newW, newB: w > 0 && newB, ecos: give, capped: due > give, day: a.day.n, kills: p.kills };
+  acct.runs = (acct.runs || []).concat({ at: Date.now(), mode: 'arena', wave: w, turns: t, kind, start: A.kind, used: used.map(u => u.kind + ':' + u.lv), ecos: give }).slice(-50);
+  reportRun({ at: Date.now(), ver: GAME_VER, mode: 'arena', kind, start: A.kind, wave: w, lvl: p.lvl, kills: p.kills, killer: st.killer || '', turns: t, relics: (p.relics || []).slice(), dom: { ...(p.dom || {}) }, execN: st.execN || 0, detN: st.detN || 0 });
+  saveAcct();
+  log(_t('{h} caiu na arena.', { h: HERO() }));
+  const wait = reduceMotion() ? 600 : 1700, run = st;
+  st.dying = true; st.deathAt = performance.now(); busyUntil = st.deathAt + wait;
+  walk.stop(); Sound.music(null); buzz([60, 50, 160]); ui();
+  setTimeout(() => { if (st !== run) return; st.dying = false; st.screen = 'arenaend'; Sound.play('died'); ui(); }, wait);
+}
+// armas usadas na partida, pela ordem do Domínio ganho nas vagas: [{ kind, lv, gain }]
+function arenaUsed() {
+  const p = st.p, d0 = st.av.dom0 || {};
+  return Object.keys(p.dom || {}).filter(d => DISC_BY[d] && DISC_BY[d].kind).map(d => ({ kind: DISC_BY[d].kind, lv: (p.domLv || {})[d] || 0, gain: (p.dom[d] || 0) - (d0[d] || 0) }))
+    .filter(u => u.gain > 0).sort((x, y) => y.gain - x.gain || KINDS.indexOf(x.kind) - KINDS.indexOf(y.kind));
+}
+// ---------- ecrãs ----------
+function arenaPickHtml() {
+  const a = arenaAcct(), s = arenaSaved();
+  const rec = r => r ? _t('vaga {n} · {t} turnos', { n: r.wave, t: r.turns }) : _t('sem recorde');
+  return `<div class="ov-in ar-pick">
+      <div class="box ov-head"><h2>${_t('ARENA')}</h2><p>${_t('Escolhe a arma: ela decide a disciplina. O herói é temporário e nunca vai para a Cripta.')}</p></div>
+      ${s ? `<div class="box menu"><button class="opt mm-go" data-arenaload="1"><span><b>${_t('CONTINUAR')}</b><small>${_t('Vaga {n} · {w}', { n: Math.max(1, s.av.wave), w: _t(TRAITS[s.av.kind].nome) })}</small></span><em>›</em></button></div>` : ''}
+      <div class="box menu ar-list">${KINDS.map(k => `<button class="opt ic ar-w" data-arenago="${k}">${ICON_URL['i_' + k] ? `<img class="ico" src="${ICON_URL['i_' + k]}" alt="">` : ''}<span><b>${_t(TRAITS[k].nome).toUpperCase()}</b><small>${_t(discOf(k).nome)} · ${rec(a.byWeapon[k])}</small></span><em>›</em></button>`).join('')}</div>
+      <p class="foot">${a.best ? _t('Melhor: vaga {n} com {w} ({t} turnos).', { n: a.best.wave, w: _t(TRAITS[a.best.kind].nome), t: a.best.turns }) : _t('Ainda sem recorde.')} ${_t('Ecos de hoje: {n}/{m}', { n: a.day.n, m: ARENA_ECOS_DIA })}</p>
+      <div class="btn-row"><button class="box again" data-tomenu="1">‹ ${_t('MENU')}</button></div>
+    </div>`;
+}
+function arenaCampHtml() {
+  const A = st.av, p = st.p, todo = typeof heroTodo === 'function' ? heroTodo(p) : 0;
+  const card = (o, i) => {
+    const t = o.k === 'relic' ? [_t('RELÍQUIA'), _t(RELIC[o.id].nome), statTxt({ t: 'relic', id: o.id })] : o.k === 'piece' ? [_t('PEÇA'), itemTxt(o.it), statTxt(o.it)]
+      : o.k === 'gold' ? [_t('OURO'), `+${o.v}$`, _t('Não há relíquias novas para ti.')] : [_t('CURA'), _t('+40% HP e +1 carga do frasco'), `HP ${p.hp}/${p.max} · ${_t('frasco')} ${p.pot}/${flaskMax(p)}`];
+    return `<button class="box relic-card pick ar-card ar-${o.k}" data-arpick="${i}"><small>${t[0]}</small><b>${esc(t[1])}</b><span>${esc(t[2])}</span></button>`;
+  };
+  const head = A.wave ? _t('VAGA {n} SUPERADA', { n: A.wave }) : _t('PREPARA-TE');
+  const sub = A.wave ? _t('Escolhe 1 de 3. Depois arruma o herói e segue para a vaga {n}.', { n: A.wave + 1 }) : _t('Gasta os pontos de Núcleo em ARRUMAR e escolhe as peças de Domínio.');
+  return `<div class="ov-in ar-rest">
+      <div class="box ov-head"><h2>${head}</h2><p>${sub}</p></div>
+      ${A.offer ? `<div class="relic-cards ar-offer">${A.offer.map(card).join('')}</div>` : ''}
+      <p class="foot">${esc(st.campMsg || `HP ${p.hp}/${p.max} · ${_t('NÍVEL {n}', { n: p.lvl })}`)}</p>
+      <div class="btn-row hx-camp">${p.domQ && p.domQ.length ? `<button class="box again go" data-arenadom="1">${_t('DOMÍNIO')} (${p.domQ.length})</button>` : ''}<button class="box again hx-arr${todo ? ' go' : ''}" data-arrumar="1">${_t('ARRUMAR')}${todo ? ` (${todo})` : ''}</button><button class="box again" data-tomenu="1">${_t('MENU')}</button><button class="box again go" data-campleave="1" aria-disabled="${!!(A.offer || (p.domQ && p.domQ.length))}">${_t('VAGA {n}', { n: A.wave + 1 })} ›</button></div>
+    </div>`;
+}
+function arenaEndHtml() {
+  const R = st.av.res || {}, a = arenaAcct(), wn = _t(TRAITS[R.kind] ? TRAITS[R.kind].nome : '');
+  return `<div class="ov-in ar-end">
+      <div class="box ov-head"><h2>${_t('CAÍSTE NA ARENA')}</h2><p>${_t('{w} · {k} baixas', { w: wn, k: R.kills || 0 })}</p>${(R.used || []).length ? `<p class="ar-used">${R.used.map(u => `<span class="ar-u">${ICON_URL['i_' + u.kind] ? `<img class="mic" src="${ICON_URL['i_' + u.kind]}" alt="">` : ''}${_t(TRAITS[u.kind].nome)} ${_t('Nv {n}', { n: u.lv })}</span>`).join('<i>·</i>')}</p>` : ''}</div>
+      <div class="box ar-res"${R.newW || R.newB ? ' data-best="1"' : ''}>
+        <p class="ar-num"><span>${_t('VAGAS SUPERADAS')}</span><b>${R.wave || 0}</b></p>
+        <p class="ar-num"><span>${_t('TURNOS')}</span><b>${R.turns || 0}</b></p>
+        ${R.newB ? `<p class="ar-new new-best">${_t('NOVO RECORDE GERAL')}</p>` : R.newW ? `<p class="ar-new new-best">${_t('NOVO RECORDE COM {w}', { w: wn.toUpperCase() })}</p>` : ''}
+        <p class="ar-num"><span>${_t('ECOS')}</span><b>+${R.ecos || 0}</b></p>
+        <p class="foot">${_t('Ecos de hoje: {n}/{m}', { n: a.day.n, m: ARENA_ECOS_DIA })}${R.capped ? ' · ' + _t('o teto de hoje já chegou') : ''}</p>
+      </div>
+      <div class="btn-row"><button class="box again go" data-arenago="${R.start || R.kind}">${_t('DE NOVO')}</button><button class="box again" data-arena="1">${_t('OUTRA ARMA')}</button><button class="box again" data-tomenu="1">${_t('MENU')}</button></div>
+    </div>`;
+}
+
+</script>
+<script>
 /* Tower of God · js/ui.js: HUD e barra (ui), cartões de herói.
    Scripts normais (não módulos), carregados por ordem no index.html; partilham o âmbito global. */
 /* ---------- interface ---------- */
@@ -12832,7 +13161,7 @@ function ui() {
   if (inRun) {
     const p = st.p, c = CLASSES[st.cls];
     const hpPct = (100 * Math.max(0, p.hp) / p.max) + '%', xpPct = (100 * p.xp / p.next) + '%';
-    const where = st.trial ? _t('PROVAÇÃO') : _t('ANDAR {n}', { n: st.floor });
+    const where = isArena() ? (st.av.rest ? _t('ARENA') : _t('VAGA {n} · faltam {m}', { n: st.av.wave, m: arenaLeft() })) : st.trial ? _t('PROVAÇÃO') : _t('ANDAR {n}', { n: st.floor });
     $('floorLbl').textContent = where;
     $('clsLbl').textContent = `${HERO()} · ${hybridLabel(p).toUpperCase()}`; // disciplinas: o nome do híbrido
     if (st.relicNew && st.screen === 'play' && !st.dying && !inCombat()) st.screen = 'relicfull'; // v71: cartão do relicário cheio
@@ -13032,7 +13361,7 @@ function renderOverlay() {
       <div class="box ov-head"><h2 class="logo-h"><img class="logo" src="data:image/png;base64,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" alt="GODSPIRE" width="300" height="156"></h2><p>${_t('A morte é permanente. Os Ecos ficam para quem vier a seguir.')}</p></div>
       <div class="box menu mm-list">
         <button class="opt mm-go" data-totower="1"><span><b>${_t('TORRE')}</b><small>${_t('Desce os 25 andares até ao Rei com os teus heróis.')}</small></span><em>›</em></button>
-        ${mode('arena', 'ARENA', 'Vagas sem fim numa sala fechada.')}${mode('daily', 'DESAFIO DIÁRIO', 'A mesma torre para todos, durante um dia.')}${mode('train', 'TREINO', 'Um andar seguro para experimentar armas e habilidades.')}
+        <button class="opt mm-go" data-arena="1"><span><b>${_t('ARENA')}</b><small>${arenaSaved() ? _t('Continuar: vaga {n}', { n: Math.max(1, arenaSaved().av.wave) }) : _t('Vagas sem fim numa sala fechada.')}</small></span><em>›</em></button>${mode('daily', 'DESAFIO DIÁRIO', 'A mesma torre para todos, durante um dia.')}${mode('train', 'TREINO', 'Um andar seguro para experimentar armas e habilidades.')}
       </div>
       <div class="btn-row"><button class="box again go" data-altar="1">${_t('ALTAR DOS ECOS')} · ${acct.ecos}</button><button class="box again" data-crypt="1">${_t('CRIPTA')}</button><button class="box again" data-codex="1">${_t('CODEX')}</button><button class="box again" data-manual="1">${_t('COMO JOGAR')}</button><button class="box again" data-openopts="1">${_t('OPÇÕES')}</button></div>
     </div>`;
@@ -13092,7 +13421,7 @@ function renderOverlay() {
       <p class="foot">${_t('Os pactos ativos aplicam-se à próxima partida que começares.')}</p>`
         : `<div class="box"><p class="lead">${_t('Vence o chefe do andar 10 para abrir os Pactos: regras mais duras, à tua escolha, em troca de mais Ecos.')}</p></div>`}
       ${(() => { // registo das últimas partidas, para medir o ritmo
-        const R = (acct.runs || []).slice(-5); if (!R.length) return '';
+        const R = (acct.runs || []).filter(r => r.mode !== 'arena').slice(-5); if (!R.length) return ''; // v0.11.0 (Sábio): as partidas da arena não entram na média da torre
         const avg = k => Math.round(R.reduce((a, r) => a + r[k], 0) / R.length * 10) / 10;
         return `<p class="foot">${_t('Últimas {n} partidas: morreste em média no andar {f} e ganhaste {e} Ecos por partida.', { n: R.length, f: avg('floor'), e: avg('ecos') })}</p>`;
       })()}
@@ -13313,6 +13642,9 @@ function renderOverlay() {
       <div class="box"><p class="lead">${_t('O fogo trata do corpo; ela guarda a memória: o que as armas te ensinaram e o que carregas.')}</p></div>
       <div class="btn-row"><button class="box again go" data-coll="1">${_t('COLEÇÃO')}</button><button class="box again" data-croneback="1">${_t('VOLTAR')}</button></div>
     </div>`;
+  } else if (st.screen === 'arenapick') { html = arenaPickHtml();
+  } else if (st.screen === 'arenaend') { html = arenaEndHtml();
+  } else if (st.screen === 'camp' && isArena()) { html = arenaCampHtml(); // v0.11.0: descanso entre vagas
   } else if (st.screen === 'camp') {
     const fire = st.npcs[st.campAt], used = fire && fire.used;
     html = `<div class="ov-in">
@@ -13784,7 +14116,12 @@ $('ov').addEventListener('click', e => {
   else if (d.equn) { const it = getEq(st.p, st.eqSlot || 'w'); if (it) { st.eqPrev = null; equip(it.uid); } }
   else if (d.closemap) closePanel();
   else if (d.tochars) toChars();
-  else if (d.tomenu) toMenu(); // v96: menu principal
+  else if (d.arena) openArenaPick(); // v0.11.0: modo ARENA
+  else if (d.arenago) startArena(d.arenago);
+  else if (d.arenaload) arenaLoad();
+  else if (d.arpick) arenaPick(+d.arpick);
+  else if (d.arenadom) { if (!openDomPick()) ui(); }
+  else if (d.tomenu) menuAsk('#ov [data-tomenu]'); // v96: menu principal. v0.10.10 (OBS 85, Sábio): com partida, pede o 2.º toque
   else if (d.totower) toTower();
   else if (d.attrs) { openLevel(false); }
   else if (d.wipe) { app.wipeAsk = true; Sound.play('error'); ui(); }
@@ -13976,15 +14313,17 @@ $('bMap').addEventListener('click', () => st.screen === 'map' ? closePanel() : o
 $('bPot').addEventListener('click', () => { walk.stop(); consume(); });
 $('bWait').addEventListener('click', () => act(0, 0));
 // v96: a barra de cima volta ao menu principal. v0.10.9 (OBS 81, tester): a meio de uma partida pede um 2.º toque e diz que fica gravada
+// v0.10.10 (OBS 85): a mesma regra no MENU da fogueira (sel = o botão a marcar; o ui() redesenha o #ov, por isso procura-se de novo)
 let menuAskT = 0;
-$('bMenu').addEventListener('click', () => {
-  const b = $('bMenu'), reset = () => { b.textContent = _t('MENU'); b.style.outline = ''; };
-  if (st.p && st.screen === 'play' && !st.dying && performance.now() > menuAskT) { // Sábio: a confirmação vê-se no próprio botão durante os 3 s
+function menuAsk(sel) {
+  const mark = (txt, ol) => { const b = document.querySelector(sel); if (b) { b.textContent = txt; b.style.outline = ol; } };
+  if (st.p && !st.dying && !['dead', 'victory'].includes(st.screen) && performance.now() > menuAskT) { // em todos os ecrãs da partida; a confirmação vê-se no próprio botão durante os 3 s (Sábio)
     menuAskT = performance.now() + 3000; log(_t('A partida fica gravada: toca outra vez em MENU para sair.')); ui();
-    b.textContent = _t('SAIR?'); b.style.outline = '2px solid #f2c14e'; setTimeout(() => { if (performance.now() >= menuAskT) reset(); }, 3050); return;
+    mark(_t('SAIR?'), '2px solid #f2c14e'); setTimeout(() => { if (performance.now() >= menuAskT) mark(_t('MENU'), ''); }, 3050); return;
   }
-  menuAskT = 0; reset(); toMenu();
-});
+  menuAskT = 0; mark(_t('MENU'), ''); toMenu();
+}
+$('bMenu').addEventListener('click', () => menuAsk('#bMenu'));
 $('bOpts').addEventListener('click', () => st.screen === 'opts' ? closeOpts() : openOpts());
 $('bOpts2').addEventListener('click', () => st.screen === 'opts' ? closeOpts() : openOpts());
 $('bRange').addEventListener('click', () => knockMode() ? knockAct() : toggleRange()); // v67: com a adaga (sem arma de distância), o botão bate na parede
@@ -14066,8 +14405,11 @@ cv.addEventListener('click', e => {
 const isTyping = e => { const t = e.target && (e.target.nodeType === 1 ? e.target : e.target.parentElement); return !!(t && t.closest && t.closest('input, textarea, [contenteditable]')); };
 ['selectstart', 'contextmenu', 'dragstart'].forEach(ev => document.addEventListener(ev, e => { if (!isTyping(e)) e.preventDefault(); }));
 // trocar de app ou fechar o separador guarda a partida exatamente onde estava
-document.addEventListener('visibilitychange', () => { if (document.hidden) saveSuspend(); });
-window.addEventListener('pagehide', saveSuspend);
+// v0.11.0 (Sábio, pergunta de um jogador no Reddit): ao trocar de app a meio de uma animação a gravação era saltada (sem force). O estado lógico
+// do turno já está resolvido (a investida fica em st.endPending e acaba ao carregar); só não se grava a meio de uma passagem de andar (transRun)
+function hideSave() { try { if (!st || !st.p || st.dying || (typeof transRun !== 'undefined' && transRun)) return; if (isArena()) { if (st.av.rest) arenaSave(); return; } saveSuspend({ force: true }); } catch (e) {} }
+document.addEventListener('visibilitychange', () => { if (document.hidden) hideSave(); });
+window.addEventListener('pagehide', hideSave);
 
 const KEYS = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0], ' ': [0, 0], '.': [0, 0] };
 const PANEL_KEY = { bag: 'i', map: 'm', equip: 'e', log: 'l', runes: 'Escape', disc: 't' };
