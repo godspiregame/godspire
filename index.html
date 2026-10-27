@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.10.8 (build 104). Fontes embutidas:
+<!-- GODSPIRE v0.10.9 (build 105). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -709,6 +709,16 @@ html.compact .sk .skic { width: 30px; height: 30px; }
 html.compact .sk .skName { display: none; }
 html.compact .sk .skCd { position: absolute; right: -4px; bottom: -4px; min-width: 20px; height: 20px; display: grid; place-items: center; border-radius: 10px; background: var(--g3); color: var(--g0); font-family: var(--display); font-size: 8px; padding: 0 4px; }
 html.compact .sk .skCd:empty { display: none; }
+/* OBS 77 (utilizador): em recarga o icone fica a cinzento e mais escuro, o numero de turnos fica bem legivel; ao ficar pronta volta a cor com um brilho curto
+   (a animacao comeca quando o botao deixa de estar [disabled]; so filter, para nao depender de transicoes com o painel escondido) */
+.sk[disabled] { opacity: .9; } .sk[disabled] .skic { opacity: 1; filter: grayscale(1) brightness(.55); }
+.sk:not([disabled]):not(.empty) .skic { animation: skReady .5s ease-out; }
+@keyframes skReady { 0% { filter: brightness(1.9) drop-shadow(0 0 4px #ffe6a0); } 100% { filter: none; } }
+@media (prefers-reduced-motion: reduce) { .sk:not([disabled]):not(.empty) .skic { animation: none; } }
+/* OBS 84 (Imagem): com viewport-fit=cover, no compacto os menus nao respeitavam o recorte do ecra em cima (o titulo do HEROI / ARRUMAR
+   ficava por baixo da camara/notch). OBS 82: no computador, a barra de deslizar dos menus fica visivel e fina, para se ver que ha mais */
+html.compact .overlay:not(:has(> .title-scr)):not(:has(> .ov-in.tk)) { padding-top: max(4%, calc(env(safe-area-inset-top, 0px) + 6px)); }
+@media (pointer: fine) { .overlay { scrollbar-width: thin; scrollbar-color: #5a5068 transparent; } }
 html.compact .sk.rng.off { opacity: .55; }
 html.compact .sk kbd { display: none; }
 html.compact .dpad { grid-area: dpad; grid-template-columns: repeat(3, var(--pad, 48px)); grid-template-rows: repeat(3, var(--pad, 48px)); gap: 4px; }
@@ -2235,6 +2245,97 @@ window.Sound = (() => {
   SONGS.antecamara = variant2(SONGS.title, -5, 70, 'none', { organ: true });
   SONGS.desperto = variant2(SONGS.boss2, -2, 150, 'boss', { organ: true });
   SONGS.salao = variant2(SONGS.camp, 0, 72, 'none', { major: true }); // Salão dos Vencedores
+  // ---- propostas do Mestre do Som (2026-10-26): chefes mais épicos e escuros, e o desafio do portal ----
+  // Chefe "Trono de Cinza": Dó frígio/menor harmónico, lento e pesado, coro escuro, bateria de guerra, melodia áspera
+  SONGS.boss1n = { bpm: 96, drums: 'war', arp: false, pad: 'choir', bass: 'pump', lead: 'saw',
+    ch: [[48, 51, 55], [49, 53, 56], [48, 51, 55], [46, 50, 53], [44, 48, 51], [49, 53, 56], [47, 50, 55], [47, 50, 55]],
+    mel: [[72, 0, 0, 0, 73, 0, 72, 0], [73, 0, 0, 0, 77, 0, 0, 0], [75, 0, 73, 0, 72, 0, 0, 0], [70, 0, 0, 0, 0, 0, 0, 0],
+          [68, 0, 0, 0, 72, 0, 75, 0], [77, 0, 0, 0, 73, 0, 0, 0], [71, 0, 74, 0, 77, 0, 74, 0], [71, 0, 0, 0, 0, 0, 0, 0]] };
+  // Chefe "Carne e Ferro": Si frígio dominante, rápido e agressivo, arpejo em semicolcheias, melodia áspera
+  SONGS.boss2n = { bpm: 152, drums: 'boss', arp: 'fast', pad: 'choir', lead: 'saw',
+    ch: [[59, 63, 66], [60, 64, 67], [59, 63, 66], [57, 60, 64], [55, 59, 62], [60, 64, 67], [54, 57, 61], [59, 63, 66]],
+    mel: [[71, 72, 71, 0, 75, 0, 72, 71], [72, 0, 76, 0, 79, 0, 76, 72], [71, 72, 71, 0, 78, 0, 75, 0], [76, 0, 72, 0, 69, 0, 0, 0],
+          [74, 0, 71, 0, 67, 0, 71, 74], [76, 0, 79, 0, 84, 0, 79, 76], [73, 0, 76, 0, 78, 0, 81, 0], [83, 0, 0, 0, 71, 0, 0, 0]] };
+  // Chefe desperto (andar 20): o Trono de Cinza dois tons abaixo, com órgão, mais rápido
+  SONGS.desperto2 = Object.assign(variant2(SONGS.boss1n, -2, 118, 'war', { organ: true }), { pad: 'choir', lead: 'saw', arp: 'fast', bass: null, intro: 1, ost: [0, null, 0, 12, 0, null, 10, null, 0, null, 7, null, 0, 3, 5, 7], stabs: [0, 3, 6, 10], fanfare: 7 }); // orgão + coro + ostinato + metais, fanfarra em maior no fim da frase
+  // ---- Biomas novos (2026-10-26, pedido do utilizador: fica a Masmorra I, mudam os outros). Cada um tem instrumentos próprios ----
+  // Masmorra II · Corredores de Pedra: Ré In, 116 bpm, marcha, koto
+  SONGS.d2n = { bpm: 116, drums: 'march', arp: 'koto',
+    ch: [[62, 69, 74], [60, 67, 72], [63, 70, 75], [62, 69, 74], [55, 62, 67], [60, 67, 72], [57, 62, 69], [62, 69, 74]],
+    mel: [[74, 0, 75, 0, 74, 0, 72, 0], [69, 0, 72, 0, 74, 0, 0, 0], [75, 0, 79, 0, 81, 0, 79, 75], [74, 0, 0, 0, 0, 0, 0, 0],
+          [79, 0, 81, 0, 84, 0, 81, 79], [75, 0, 74, 0, 72, 0, 69, 0], [72, 0, 74, 75, 0, 74, 72, 0], [74, 0, 0, 0, 0, 0, 0, 0]] };
+  // Masmorra III · Profundezas: Lá frígio, 98 bpm, ritual 3+3+2, coro escuro, flauta
+  SONGS.d3n = { bpm: 98, drums: 'ritual', arp: false, pad: 'choir', lead: 'flute', bass: 'pump',
+    ch: [[57, 60, 64], [58, 62, 65], [57, 60, 64], [55, 58, 62], [53, 57, 60], [58, 62, 65], [52, 56, 59], [57, 60, 64]],
+    mel: [[69, 0, 70, 0, 72, 0, 0, 0], [74, 0, 72, 0, 70, 0, 69, 0], [72, 0, 0, 74, 76, 0, 77, 0], [76, 0, 74, 0, 0, 0, 0, 0],
+          [77, 0, 76, 0, 74, 0, 72, 0], [70, 0, 72, 0, 74, 0, 0, 0], [71, 0, 72, 0, 74, 0, 76, 0], [69, 0, 0, 0, 0, 0, 0, 0]] };
+  // Grutas dos Fungos: Mi Hirajoshi, 88 bpm, sem bateria, cacho a cintilar e caixa de música (estranha)
+  SONGS.d4n = { bpm: 88, drums: 'none', arp: 'cluster', lead: 'box', pad: 'choir',
+    ch: [[64, 71, 76], [60, 67, 72], [64, 71, 76], [59, 66, 71], [64, 71, 76], [67, 71, 76], [60, 67, 72], [64, 71, 76]],
+    mel: [[88, 0, 0, 90, 91, 0, 0, 0], [0, 0, 95, 0, 0, 0, 0, 0], [96, 0, 95, 0, 91, 0, 0, 0], [90, 0, 0, 0, 0, 0, 0, 0],
+          [88, 0, 91, 0, 95, 0, 96, 0], [0, 0, 0, 0, 95, 0, 0, 0], [91, 0, 90, 0, 88, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]] };
+  // Forja: Dó menor harmónico, 124 bpm, guerra, ostinato de baixo e golpes de metais (as marteladas)
+  SONGS.d5n = { bpm: 124, drums: 'war', arp: false, lead: 'saw',
+    ost: [0, null, 0, null, 12, null, 0, null, 0, null, 7, null, 10, null, 11, null], stabs: [0, 8],
+    ch: [[60, 63, 67], [56, 60, 63], [60, 63, 67], [55, 59, 62], [53, 56, 60], [56, 60, 63], [55, 59, 62], [60, 63, 67]],
+    mel: [[72, 0, 0, 0, 75, 0, 74, 72], [71, 0, 0, 0, 67, 0, 0, 0], [72, 0, 74, 0, 75, 0, 77, 0], [79, 0, 0, 0, 0, 0, 0, 0],
+          [80, 0, 79, 0, 77, 0, 75, 0], [75, 0, 74, 0, 72, 0, 0, 0], [71, 0, 72, 0, 74, 0, 71, 0], [72, 0, 0, 0, 0, 0, 0, 0]] };
+  // Salões Gelados: Si Yo, 84 bpm, suave, koto + flauta + coro (frio e aberto)
+  SONGS.d6n = { bpm: 84, drums: 'soft', arp: 'koto', lead: 'flute', pad: 'choir',
+    ch: [[59, 66, 71], [61, 68, 73], [64, 71, 76], [59, 66, 71], [56, 61, 68], [64, 71, 76], [66, 71, 78], [59, 66, 71]],
+    mel: [[83, 0, 85, 0, 88, 0, 85, 83], [80, 0, 0, 0, 78, 0, 80, 0], [83, 0, 0, 0, 85, 0, 0, 0], [78, 0, 0, 0, 0, 0, 0, 0],
+          [76, 0, 78, 0, 80, 0, 83, 0], [85, 0, 83, 0, 80, 0, 78, 0], [80, 0, 0, 78, 76, 0, 78, 0], [71, 0, 0, 0, 0, 0, 0, 0]] };
+  // Arquivo do Rei: Ré Hirajoshi, 92 bpm, suave, koto + caixa de música (biblioteca antiga e misteriosa)
+  SONGS.arquivo2 = { bpm: 92, drums: 'soft', arp: 'koto', lead: 'box',
+    ch: [[62, 69, 74], [58, 65, 70], [62, 69, 74], [64, 69, 76], [65, 69, 74], [58, 65, 70], [64, 69, 76], [62, 69, 74]],
+    mel: [[86, 0, 88, 0, 89, 0, 88, 0], [86, 0, 0, 0, 81, 0, 0, 0], [82, 0, 81, 0, 77, 0, 76, 0], [74, 0, 0, 0, 0, 0, 0, 0],
+          [77, 0, 81, 0, 82, 0, 86, 0], [88, 0, 86, 0, 82, 0, 81, 0], [77, 0, 76, 0, 74, 0, 76, 0], [74, 0, 0, 0, 0, 0, 0, 0]] };
+  // Minas de Cristal: Mi Yo, 110 bpm, ritual (as picaretas), arpejo rápido, flauta (brilhante)
+  SONGS.minas2 = { bpm: 110, drums: 'ritual', arp: 'fast', lead: 'flute',
+    ch: [[64, 71, 76], [66, 73, 78], [69, 76, 81], [64, 71, 76], [61, 66, 73], [69, 76, 81], [71, 76, 83], [64, 71, 76]],
+    mel: [[76, 0, 78, 0, 81, 0, 83, 0], [85, 0, 83, 0, 81, 0, 0, 0], [83, 0, 81, 0, 78, 0, 76, 0], [78, 0, 0, 0, 0, 0, 0, 0],
+          [81, 0, 83, 0, 85, 0, 88, 0], [85, 0, 83, 0, 81, 0, 78, 0], [76, 0, 78, 0, 81, 0, 78, 0], [76, 0, 0, 0, 0, 0, 0, 0]] };
+  // ---- Estilo "RPG samurai 8-bit" (pedido do utilizador, a partir de um vídeo de referência): escalas pentatónicas japonesas,
+  //      koto dedilhado, flauta tipo shakuhachi e taiko. Ré Yo (Ré Mi Sol Lá Si), Ré In (Ré Mib Sol Lá Dó), Ré Hirajoshi (Ré Mi Fá Lá Sib) ----
+  SONGS.ronin = { bpm: 100, drums: 'soft', arp: 'koto', lead: 'flute',
+    ch: [[62, 69, 74], [64, 71, 76], [67, 74, 79], [62, 69, 74], [59, 64, 71], [67, 74, 79], [64, 69, 76], [62, 69, 74]],
+    mel: [[74, 0, 76, 0, 79, 0, 76, 74], [76, 0, 0, 0, 71, 0, 74, 0], [79, 0, 81, 0, 83, 0, 81, 79], [76, 0, 0, 0, 0, 0, 0, 0],
+          [74, 0, 76, 79, 0, 81, 79, 0], [83, 0, 81, 0, 79, 0, 76, 0], [74, 0, 71, 0, 69, 0, 71, 74], [74, 0, 0, 0, 0, 0, 0, 0]] };
+  SONGS.duelo = { bpm: 144, drums: 'taiko', arp: 'koto', lead: 'saw', pad: 'choir', bass: 'pump',
+    ch: [[62, 69, 74], [63, 70, 75], [67, 74, 79], [62, 69, 74], [60, 67, 72], [63, 70, 75], [55, 62, 67], [62, 69, 74]],
+    mel: [[74, 75, 74, 0, 79, 0, 81, 0], [84, 0, 81, 0, 79, 75, 74, 0], [79, 0, 81, 0, 84, 0, 86, 0], [87, 0, 86, 0, 84, 0, 0, 0],
+          [86, 0, 84, 81, 0, 79, 75, 0], [74, 0, 75, 0, 79, 0, 81, 84], [86, 0, 84, 0, 81, 0, 79, 75], [74, 0, 0, 0, 0, 0, 0, 0]] };
+  SONGS.templo = { bpm: 72, drums: 'none', arp: 'koto', lead: 'flute',
+    ch: [[62, 69, 74], [58, 65, 70], [64, 69, 76], [62, 69, 74], [65, 69, 74], [58, 65, 70], [64, 69, 76], [62, 69, 74]],
+    mel: [[74, 0, 0, 0, 76, 0, 77, 0], [0, 0, 0, 0, 81, 0, 0, 0], [82, 0, 81, 0, 77, 0, 0, 0], [76, 0, 0, 0, 0, 0, 0, 0],
+          [74, 0, 77, 0, 81, 0, 82, 0], [86, 0, 0, 0, 0, 0, 82, 0], [81, 0, 77, 0, 76, 0, 0, 0], [74, 0, 0, 0, 0, 0, 0, 0]] };
+  // ---- O Rei, versão 2 (2026-10-26): não é o tema do título. Ostinato de baixo, coro + metais staccato, tambores de guerra.
+  //      Só o 1.º compasso cita o motivo do título (Ré-Mi-Fá), como uma assinatura. Fases: tonalidade, andamento e camadas novas ----
+  // Fase 1, "O Rei de Ferro": Ré menor, 112 bpm, marcha de guerra, melodia régia em notas longas, a 4.ª nota presa um compasso inteiro (tensão)
+  SONGS.rei1n = { bpm: 112, drums: 'war', arp: false, pad: 'choir', lead: 'saw', intro: 2,
+    ost: [0, null, 0, 12, 0, null, 10, null, 0, null, 7, null, 0, 3, 5, 7], stabs: [0, 3, 6, 10],
+    ch: [[62, 65, 69], [58, 62, 65], [62, 65, 69], [61, 64, 69], [55, 58, 62], [60, 64, 67], [61, 64, 67], [62, 65, 69]],
+    mel: [[74, 0, 0, 76, 77, 0, 0, 0], [76, 0, 74, 0, 73, 0, 0, 0], [74, 0, 0, 76, 77, 0, 79, 0], [81, 0, 0, 0, 0, 0, 0, 0],
+          [82, 0, 81, 0, 79, 0, 77, 0], [76, 0, 77, 0, 79, 0, 0, 0], [77, 0, 76, 0, 74, 0, 73, 0], [74, 0, 0, 0, 0, 0, 0, 0]] };
+  // Fase 2, "A Coroa em Brasa": sobe uma 3.ª menor (Fá menor), 138 bpm, ostinato em todas as semicolcheias, metais a contratempo,
+  //   arpejo rápido, e no compasso 8 uma FANFARRA EM MAIOR (Fá maior): o puxa-empurra entre o medo e o triunfo
+  SONGS.rei2n = { bpm: 138, drums: 'boss', arp: false, pad: 'choir', lead: 'saw', // sem o arpejo rápido (era a faixa mais pesada)
+    ost: [0, 0, 12, 0, 0, 0, 10, 0, 0, 0, 7, 0, 0, 12, 10, 7], stabs: [2, 6, 10, 14], fanfare: 7,
+    ch: [[65, 68, 72], [61, 65, 68], [65, 68, 72], [64, 67, 72], [58, 61, 65], [63, 67, 70], [64, 67, 70], [65, 69, 72]],
+    mel: [[77, 0, 79, 80, 0, 79, 77, 0], [80, 0, 82, 84, 0, 82, 80, 0], [77, 0, 79, 80, 0, 84, 0, 0], [84, 0, 82, 0, 79, 0, 76, 0],
+          [82, 0, 80, 0, 77, 0, 73, 0], [75, 0, 79, 0, 82, 0, 0, 0], [79, 0, 82, 0, 85, 0, 84, 82], [84, 0, 0, 0, 0, 0, 0, 0]] };
+  // Fase 3, "A Última Ceia": grotesca e a desfazer-se. Dó# menor, 76 bpm em meio-tempo, coro a descer cromaticamente,
+  //   coração, e o motivo do título numa CAIXA DE MÚSICA desafinada por cima (o Rei a lembrar-se de quando era rei)
+  SONGS.rei3n = { bpm: 76, drums: 'half', arp: false, pad: 'choir', lead: 'box', heart: true,
+    ost: [0, null, null, null, null, null, null, null, -1, null, null, null, null, null, null, null], stabs: [0],
+    ch: [[61, 64, 68], [60, 63, 67], [59, 62, 66], [58, 61, 65], [61, 64, 68], [60, 63, 67], [57, 61, 64], [56, 60, 63]],
+    mel: [[85, 0, 0, 87, 88, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [87, 0, 0, 85, 84, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+          [85, 0, 0, 87, 88, 0, 90, 0], [0, 0, 0, 0, 0, 0, 0, 0], [88, 0, 87, 0, 85, 0, 84, 0], [0, 0, 0, 0, 0, 0, 0, 0]] };
+  // Desafio do portal ("O Portal"): Mi frígio, ritual 3+3+2, cacho de meio tom a cintilar, melodia aguda e esparsa
+  SONGS.provacao = { bpm: 132, drums: 'ritual', arp: 'cluster', pad: 'choir',
+    ch: [[52, 55, 59], [53, 57, 60], [52, 55, 59], [50, 53, 57], [52, 55, 59], [53, 57, 60], [48, 52, 55], [47, 50, 54]],
+    mel: [[76, 0, 0, 77, 0, 0, 76, 0], [77, 0, 0, 81, 0, 0, 0, 0], [79, 0, 0, 77, 0, 0, 76, 0], [74, 0, 0, 0, 0, 0, 0, 0],
+          [83, 0, 0, 84, 0, 0, 83, 0], [84, 0, 0, 81, 0, 0, 77, 0], [79, 0, 0, 76, 0, 0, 72, 0], [71, 0, 0, 0, 0, 0, 0, 0]] };
 
   /* uma semicolcheia da música, a tocar t segundos depois de agora (Mestre do Som: temas mais longos).
      Cada faixa dá 2 voltas diferentes antes de se repetir: na 2.ª volta a melodia sobe uma oitava nos
@@ -2261,24 +2362,49 @@ window.Sound = (() => {
     const pass = Math.floor(step / (16 * song.ch.length)) % 2;
     const introBar = song.intro && step < 16 * song.intro; // v55: compassos de entrada sem bateria
     if (s === 0 && song.organ) organ(ch.map(n => n - (song.noMel ? 12 : 0)), t, e * 16 * 0.98, 0.018, out); // v55: órgão do Rei
-    if (s === 0 && !song.organ) ch.forEach(n => tone({ type: 'triangle', f: mtof(n), t, dur: e * 16 * 0.98, v: 0.05, a: 0.12, out })); // acordes de fundo
+    if (s === 0 && song.pad === 'choir') ch.forEach(n => { const f = mtof(n); tone({ type: 'sawtooth', f: f * 1.006, t, dur: e * 16 * 0.98, v: 0.016, a: 0.45, out }); tone({ type: 'sawtooth', f: f / 1.006, t, dur: e * 16 * 0.98, v: 0.016, a: 0.45, out }); tone({ type: 'triangle', f, t, dur: e * 16 * 0.98, v: 0.04, a: 0.3, out }); });
+    if (s === 0 && !song.organ && !song.pad) ch.forEach(n => tone({ type: 'triangle', f: mtof(n), t, dur: e * 16 * 0.98, v: 0.05, a: 0.12, out })); // acordes de fundo
     if (s === 0) {
       tone({ wave: pulse12, f: mtof(ch[0] - 12), t, dur: e * 16 * 0.95, v: 0.03, a: 0.2, out });
       if (bar % 4 === 0 && song.drums !== 'none') noise({ t, dur: 0.9, v: 0.12, f: 6000, f2: 2000, type: 'highpass', out });
     }
-    if (song.arp && song.drums !== 'boss' ? s % 2 === 0 : song.arp) {
+    if (song.ost && s % 2 === 1 && song.ost[s] != null) { const f = mtof(ch[0] - 24 + song.ost[s]); tone({ type: 'triangle', f, t, dur: e * 0.85, v: 0.27, out }); tone({ type: 'square', f: f * 2, t, dur: e * 0.5, v: 0.018, out }); }
+    if (song.stabs && song.stabs.includes(s) && !(song.intro && step < 16 * song.intro)) ch.forEach(n => { const f = mtof(n); tone({ type: 'sawtooth', f, t, dur: e * 1.3, v: 0.03, a: 0.004, out }); tone({ type: 'square', f: f / 2, t, dur: e * 1.0, v: 0.02, a: 0.004, out }); });
+    if (song.fanfare === bar && s === 0) ch.forEach(n => { const f = mtof(n); tone({ type: 'sawtooth', f, t, dur: e * 14, v: 0.035, a: 0.05, out }); tone({ type: 'sawtooth', f: f * 1.005, t, dur: e * 14, v: 0.03, a: 0.05, out }); });
+    if (song.arp === 'koto') {
+      if (s % 2 === 0) { const n = ch[[0, 2, 1, 2, 0, 1, 2, 1][(s / 2) % 8]] + 12, f = mtof(n);
+        tone({ type: 'square', f, f2: f * 0.985, t, dur: e * 1.8, v: 0.03, a: 0.002, out }); tone({ type: 'triangle', f: f * 2, t, dur: e * 0.6, v: 0.025, a: 0.002, out }); }
+    } else if (song.arp === 'fast' || song.arp === 'cluster') {
+      const n = song.arp === 'cluster' ? ch[0] + 12 + (s % 2) : ch[[0, 1, 2, 1][s % 4]] + 12;
+      tone({ type: 'square', f: mtof(n), t, dur: e * 0.7, v: 0.024, out });
+    } else if (song.arp && song.drums !== 'boss' ? s % 2 === 0 : song.arp) {
       const shape = pass ? [0, 2, 1, 2] : [0, 1, 2, 1];
       const n = ch[shape[(s / (song.drums === 'boss' ? 1 : 2) | 0) % 4]] + 12;
       tone({ type: 'square', f: mtof(n), t, dur: e * 0.9, v: song.drums === 'none' ? 0.035 : 0.03, out });
     }
     if (s % 2 === 0) {
       const bn = ch[0] - (s % 8 === 4 ? 12 : 24);
-      if (song.drums !== 'none' || s % 8 === 0) tone({ type: 'triangle', f: mtof(bn), t, dur: e * 1.8, v: 0.3, out });
+      if (song.ost && song.ost[s] != null) { const f = mtof(ch[0] - 24 + song.ost[s]); tone({ type: 'triangle', f, t, dur: e * 0.85, v: 0.27, out }); tone({ type: 'square', f: f * 2, t, dur: e * 0.5, v: 0.018, out }); }
+      if (song.ost) {}
+      else if (song.bass === 'pump') { tone({ type: 'triangle', f: mtof(ch[0] - 24), t, dur: e * 1.4, v: 0.32, out }); tone({ type: 'square', f: mtof(ch[0] - 12), t, dur: e * 0.8, v: 0.03, out }); }
+      else if (song.drums !== 'none' || s % 8 === 0) tone({ type: 'triangle', f: mtof(bn), t, dur: e * 1.8, v: 0.3, out });
       let m = song.noMel ? 0 : song.mel[bar][s / 2];
       if (m && pass) { if (bar < 4) { if (m + 12 <= 88) m += 12; } else if ((s / 2) % 2) m = 0; }
       if (m) {
         let len = 1; for (let k = s / 2 + 1; k < 8 && !song.mel[bar][k]; k++) len++;
-        leadNote(mtof(m), t, Math.min(len, 4) * e * 2 * 0.92, lead);
+        if (song.lead === 'flute') {
+          const dl = Math.min(len, 4) * e * 2 * 0.95, f = mtof(m), s0 = ctx.currentTime + Math.max(0, t);
+          const o = ctx.createOscillator(), g = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
+          o.type = 'triangle'; o.frequency.setValueAtTime(f * 0.94, s0); o.frequency.exponentialRampToValueAtTime(f, s0 + 0.07);
+          lfo.frequency.value = 5; lg.gain.setValueAtTime(0, s0); lg.gain.linearRampToValueAtTime(0, s0 + 0.2); lg.gain.linearRampToValueAtTime(18, s0 + 0.45);
+          lfo.connect(lg); lg.connect(o.detune);
+          g.gain.setValueAtTime(0.0001, s0); g.gain.exponentialRampToValueAtTime(0.11, s0 + 0.05); g.gain.setTargetAtTime(0.0001, s0 + dl * 0.85, dl * 0.08);
+          o.connect(g); g.connect(lead); o.start(s0); lfo.start(s0); o.stop(s0 + dl + 0.3); lfo.stop(s0 + dl + 0.3);
+          noise({ t, dur: 0.09, v: 0.035, f: 2200, type: 'bandpass', q: 2, out: lead }); // sopro
+        }
+        else if (song.lead === 'box') { const dl = Math.min(len, 4) * e * 2 * 0.92; tone({ type: 'sine', f: mtof(m) * 0.994, t, dur: dl, v: 0.07, a: 0.005, out: lead }); tone({ type: 'sine', f: mtof(m) * 2, t, dur: dl * 0.5, v: 0.02, a: 0.005, out: lead }); }
+        else if (song.lead === 'saw') { const dl = Math.min(len, 4) * e * 2 * 0.92; tone({ type: 'sawtooth', f: mtof(m), t, dur: dl, v: 0.05, a: 0.02, out: lead }); tone({ type: 'square', f: mtof(m) / 2, t, dur: dl, v: 0.02, a: 0.02, out: lead }); }
+        else leadNote(mtof(m), t, Math.min(len, 4) * e * 2 * 0.92, lead);
       }
     }
     // bombo: além do grave, um "clique" agudo curto, para se ouvir no altifalante do telemóvel (que não toca graves)
@@ -2287,6 +2413,23 @@ window.Sound = (() => {
     if (song.heart && (s === 0 || s === 3)) { // v55: coração grave (com harmónicos para se ouvir no altifalante)
       tone({ type: 'sine', f: 55, t, dur: 0.16, v: 0.35, out }); tone({ type: 'sine', f: 110, t, dur: 0.12, v: 0.17, out }); tone({ type: 'sine', f: 165, t, dur: 0.1, v: 0.1, out });
       noise({ t, dur: 0.01, v: 0.1, f: 1500, type: 'bandpass', q: 1.2, out });
+    }
+    if (d === 'taiko') {
+      if ([0, 6, 12].includes(s)) { tone({ type: 'triangle', f: s === 12 ? 110 : 90, f2: 50, t, dur: 0.32, v: 0.42, out }); noise({ t, dur: 0.25, v: 0.22, f: 450, f2: 120, out }); noise({ t, dur: 0.01, v: 0.1, f: 2500, type: 'bandpass', q: 1, out }); }
+      if (s === 4 || s === 10) noise({ t, dur: 0.02, v: 0.14, f: 3200, type: 'bandpass', q: 2, out });
+      if (bar % 4 === 3 && s >= 12) { tone({ type: 'triangle', f: 130 - (s - 12) * 12, f2: 70, t, dur: 0.15, v: 0.3, out }); }
+    }
+    if (d === 'war') {
+      if ([0, 1, 8, 9].includes(s)) kick();
+      if (s === 4 || s === 12) { noise({ t, dur: 0.18, v: 0.32, f: 1800, type: 'bandpass', q: 0.6, out }); tone({ type: 'triangle', f: 180, f2: 110, t, dur: 0.1, v: 0.18, out }); }
+      if (bar % 2 === 1 && s >= 12) { const f = [220, 180, 150, 120][s - 12]; tone({ type: 'triangle', f, f2: f * 0.6, t, dur: 0.14, v: 0.28, out }); noise({ t, dur: 0.05, v: 0.1, f: 900, out }); }
+      if (bar % 2 === 0 && s === 0) noise({ t, dur: 1.4, v: 0.14, f: 7000, f2: 3000, type: 'highpass', out });
+    }
+    if (d === 'ritual') {
+      if ([0, 6, 12].includes(s)) { kick(); tone({ type: 'triangle', f: [140, 170, 120][[0, 6, 12].indexOf(s)], f2: 80, t, dur: 0.18, v: 0.22, out }); }
+      if (s === 10) noise({ t, dur: 0.07, v: 0.2, f: 2500, type: 'bandpass', q: 1, out });
+      noise({ t, dur: 0.015, v: s % 4 === 2 ? 0.07 : 0.035, f: 8000, type: 'highpass', out });
+      if (bar % 4 === 0 && s === 0) [0, 0.09, 0.18].forEach(k => tone({ type: 'sine', f: mtof(ch[0] + 36), t: t + k, dur: 0.5, v: 0.025, out }));
     }
     if (d === 'half') { if (s === 0) kick(); if (s === 8) tone({ type: 'triangle', f: 110, f2: 70, t, dur: 0.2, v: 0.28, out }); }
     if (d === 'soft') { if (s === 0) { tone({ type: 'sine', f: 120, f2: 40, t, dur: 0.15, v: 0.35, out }); tone({ type: 'triangle', f: 300, f2: 100, t, dur: 0.03, v: 0.12, out }); } if (s === 8) noise({ t, dur: 0.06, v: 0.08, f: 5000, type: 'highpass', out }); }
@@ -2333,13 +2476,15 @@ window.Sound = (() => {
      Presas: camp e title (voltam sempre) e as do Rei (para a troca de fase nunca esperar por uma gravação) */
   const PIN = new Set(['camp', 'title', 'rei1', 'rei2', 'rei3', 'vitoria', 'antecamara']);
   const touch = name => { if (BUF.has(name)) { const b = BUF.get(name); BUF.delete(name); BUF.set(name, b); } };
+  // telemóveis com pouca memória (navigator.deviceMemory <= 2 GB): só 3 faixas gravadas de cada vez
+  const CACHE_MAX = navigator.deviceMemory && navigator.deviceMemory <= 2 ? 3 : 5;
   function trimCache() {
-    for (const k of [...BUF.keys()]) { if (BUF.size <= 5) break; if (k !== cur && !PIN.has(k)) BUF.delete(k); }
+    for (const k of [...BUF.keys()]) { if (BUF.size <= CACHE_MAX) break; if (k !== cur && !PIN.has(k)) BUF.delete(k); }
   }
   // gravar uma faixa com antecedência, quando o browser estiver livre
   function prerender(name) {
     if (!ctx || MUTE || BUF.has(name) || !SONGS[name]) return;
-    const go = () => renderSong(name);
+    const go = () => { if (typeof coreBusy === 'function' && coreBusy()) return; renderSong(name); }; // nunca grava em combate (o soluço prendia animações e input)
     if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 3000 }); else setTimeout(go, 200);
   }
   // troca do sequenciador para o buffer no próximo passo ainda por agendar: as notas até lá já estão marcadas
@@ -2366,7 +2511,7 @@ window.Sound = (() => {
       return;
     }
     timer = setInterval(sched, 25);
-    renderSong(name);
+    prerender(name); // v0.10.9 (Sábio): sem a faixa na cache toca ao vivo; grava-a só fora de combate (o prerender recusa com coreBusy), nunca a meio
   }
   function sched() {
     if (!song || !ctx) return;
@@ -2811,6 +2956,7 @@ LANGS.en = {
   'Cavaleiro': 'Knight', 'Bárbaro': 'Barbarian', 'Mago': 'Mage', 'Arqueiro': 'Archer', 'Arcano': 'Arcane', 'Assassino': 'Assassin', 'Ecos': 'Echoes', '+HP': '+HP',
   'Luz simplificada para manter a fluidez.': 'Lighting simplified to keep the game smooth.',
   'Constelação dos Núcleos': 'Constellation of Cores',
+  '(mais {n} turnos)': '({n} more turns)', '(mais {n} turno)': '({n} more turn)',
   // ===== fase 3: nomes próprios (FASE3-nomes.md, revisto pelo Sábio) =====
   'Cruzado': 'Crusader', 'Batedor': 'Scout', 'de Ferro': 'Iron', 'Selvagem': 'Savage', 'Sagrado': 'Holy',
   'Sombrio': 'Shadow', 'Errante': 'Wandering', 'Certeiro': 'Deadeye', 'Golpe esmagador': 'Crushing Blow', 'Muralha': 'Bulwark',
@@ -2993,6 +3139,70 @@ LANGS.en = {
   'FONTE': 'FOUNTAIN', 'Água límpida que corre de uma boca de pedra.': 'Clear water running from a stone mouth.', 'PRISIONEIRO': 'PRISONER', 'Alguém fechado numa cela pede ajuda.': 'Someone locked in a cell begs for help.',
   'Adaga na mão e armadura leve: chega-te às costas deles sem seres visto. Com o Sexto sentido, executas.': 'Dagger in hand and light armour: you can reach their backs unseen. With Sixth Sense, you execute.',
   'Vês a coroa vermelha? É um feroz: a execução não o mata, dá-lhe um golpe furtivo ×3. Acaba com ele depressa.': 'See the red crown? That one is fierce: an execution does not kill it, it takes a ×3 sneak attack instead. Finish it quickly.',
+  // v0.10.9 (OBS 79): textos que o varrimento encontrou sem tradução
+  'CHEFE DO ANDAR {n}': 'FLOOR {n} BOSS',
+  'DANO BLOQUEADO': 'DAMAGE BLOCKED',
+  'MAIOR GOLPE': 'BIGGEST HIT',
+  'VIDA CURADA': 'HEALTH HEALED',
+  'EXECUÇÕES': 'EXECUTIONS',
+  'ATINGIDOS PELA MACHADINHA': 'HIT BY THE HATCHET',
+  'TIROS CERTEIROS': 'ACCURATE SHOTS',
+  'FEITIÇOS LANÇADOS': 'SPELLS CAST',
+  'Começa sem habilidades: ganha-as a lutar com as armas.': 'Starts with no abilities: earn them by fighting with weapons.',
+  'Frágil, mas destrói à distância.': 'Fragile, but destroys from afar.',
+  'Equilibrado, controla o combate.': 'Balanced, controls the fight.',
+  'Sem classe: a arma que encontrares decide como lutas.': 'No class: the weapon you find decides how you fight.',
+  'A tua origem. As habilidades vêm do Domínio das armas.': 'Your origin. Abilities come from weapon Mastery.',
+  'Precisão': 'Precision',
+  'Remédios': 'Remedies',
+  'Ganância': 'Greed',
+  'Fúria cega': 'Blind Fury',
+  'Coração de leão': 'Lionheart',
+  'Inabalável': 'Unshakable',
+  'Veterano de guerra': 'War Veteran',
+  'Fonte de mana': 'Mana Spring',
+  'Escudo de gelo': 'Ice Shield',
+  'Pele de cristal': 'Crystal Skin',
+  'Conduíte': 'Conduit',
+  'Olho de falcão': 'Hawk Eye',
+  'Pés ligeiros': 'Light Feet',
+  'Caçador': 'Hunter',
+  'Caçador de cabeças': 'Headhunter',
+  'Resistência': 'Endurance',
+  'Titã': 'Titan',
+  'Mão pesada': 'Heavy Hand',
+  'Vontade de ferro': 'Iron Will',
+  'Lâmina certeira': 'True Blade',
+  'Passo de sombra': 'Shadow Step',
+  'Críticos frequentes': 'Frequent critical hits',
+  '+1 ATQ, -1 DEF · varrimento: fere também as 2 casas ao lado · sangramento 3 turnos': '+1 ATK, -1 DEF · sweep: also hits the 2 side tiles · bleeding 3 turns',
+  '+2 ATQ, falha mais · empurra 1 casa (contra a parede, +50% de dano)': '+2 ATK, misses more · pushes 1 tile (into a wall, +50% damage)',
+  'Arremessa até 3 casas; volta à mão no turno seguinte': 'Thrown up to 3 tiles; returns to your hand next turn',
+  '+2 dano nas habilidades': '+2 ability damage',
+  'Armadura de obsidiana': 'Obsidian Armor',
+  'Manto de obsidiana': 'Obsidian Mantle',
+  'Cota de obsidiana': 'Obsidian Mail',
+  'Placas de aço': 'Steel Plates',
+  'Elmo de ferro': 'Iron Helm',
+  'Elmo de aço': 'Steel Helm',
+  'Elmo de obsidiana': 'Obsidian Helm',
+  'Manoplas de ferro': 'Iron Gauntlets',
+  'Manoplas de aço': 'Steel Gauntlets',
+  'Manoplas de obsidiana': 'Obsidian Gauntlets',
+  'Botas de ferro': 'Iron Boots',
+  'Grevas de aço': 'Steel Greaves',
+  'Grevas de obsidiana': 'Obsidian Greaves',
+  'Crescem sobre os que caíram nas Grutas. Se olhares bem, alguns ainda têm botas.': 'They grow on those who fell in the Caves. Look closely and some still have boots on.',
+  'Aurel III, o Rei que Não Acaba. Tinha medo de morrer, cavou até ao deus e aprendeu a comer o tempo dos outros.': 'Aurel III, the King Who Does Not End. He was afraid of dying, dug down to the god and learned to eat the time of others.',
+  '+1 dano das habilidades, +3 HP': '+1 ability damage, +3 HP', '+3% crítico, +3 HP': '+3% critical, +3 HP', 'projétil arcano': 'arcane bolt', 'Resistente, luta corpo a corpo.': 'Tough, fights up close.',
+  'FORÇA': 'STRENGTH', 'INTELIGÊNCIA': 'INTELLIGENCE', '+4 HP máximo por ponto.': '+4 max HP per point.', '+1 ATQ a cada 2 pontos. Requisito do machado e do martelo.': '+1 ATK every 2 points. Required for the axe and the hammer.',
+  '+2% esquiva, +2% acerto e +1% crítico por ponto. Requisito do arco e da adaga.': '+2% dodge, +2% accuracy and +1% critical per point. Required for the bow and the dagger.',
+  '+1 dano das habilidades a cada 2 pontos (no Mago, +3 de mana por ponto). Requisito do cajado.': '+1 ability damage every 2 points (for the Mage, +3 mana per point). Required for the staff.',
+  'A partida fica gravada: toca outra vez em MENU para sair.': 'Your run is saved: tap MENU again to leave.', 'SAIR?': 'LEAVE?',
+  // v0.10.9 (OBS 79): textos do visual.js (a Imagem passa-os pelo _t)
+  'SEMPRE': 'ALWAYS', 'CAPACIDADE': 'CAPACITY', 'Véu: invisível': 'Veil: invisible', '(último turno)': '(last turn)', 'Relíquias ativas': 'Active relics',
+  'Abre depois do chefe do andar 15': 'Opens after the floor 15 boss', 'Espaço vazio': 'Empty slot', 'Mas:': 'But:',
+  'Fechadura': 'Lock',
   'Fragmento de frasco': 'Flask shard', 'Ração de viagem': 'Travel ration',
   'O Rei já não reina.': 'The King reigns no more.', 'A masmorra lembra-se de quem a venceu.': 'The dungeon remembers who beat it.',
 };
@@ -3170,7 +3380,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.10.8', GAME_BUILD = 104;
+const GAME_SEMVER = '0.10.9', GAME_BUILD = 105;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -3964,34 +4174,34 @@ const SERVANT = { id: 'servant', nome: 'Servo faminto', hp: 4, atk: 1, def: 0, x
    tint: cores e nome próprios de um inimigo nesse bioma (a Gosma das cisternas é tóxica, a dos salões é gélida...) */
 const BIOMES = {
   prisao: { nome: 'Prisões do rei', env: null, track: 'd1', foes: { rat: 3, bat: 2, slime: 2, skel: 2, skelarcher: 1, goblin: 1, ghost: 1, snake: 1, brute: 1 , shieldman: 1, sentry: 1 } },
-  catacumbas: { nome: 'Catacumbas', track: 'd3', foes: { skel: 3, skelarcher: 3, ghost: 2, rat: 2, spider: 2, snake: 2, darkmage: 1 , shieldman: 1, sentry: 2, lancer: 1 , healer: 1 },
+  catacumbas: { nome: 'Catacumbas', track: 'd3n', foes: { skel: 3, skelarcher: 3, ghost: 2, rat: 2, spider: 2, snake: 2, darkmage: 1 , shieldman: 1, sentry: 2, lancer: 1 , healer: 1 },
     env: { '#': '#100d09', 1: '#26221c', 2: '#3a342a', 3: '#62584a', 4: '#988a72', K: '#c8bc9e', k: '#efe6d0' } },
-  cisternas: { nome: 'Cisternas húmidas', track: 'd2', foes: { slime: 3, rat: 3, bat: 2, spider: 1, shroom: 1, snake: 2, darkmage: 1 , shieldman: 1, sentry: 1, lancer: 1 , healer: 2 },
+  cisternas: { nome: 'Cisternas húmidas', track: 'd2n', foes: { slime: 3, rat: 3, bat: 2, spider: 1, shroom: 1, snake: 2, darkmage: 1 , shieldman: 1, sentry: 1, lancer: 1 , healer: 2 },
     env: { '#': '#08120e', 1: '#132520', 2: '#1c3830', 3: '#2c5a4a', 4: '#4a8a6e', K: '#3f7a3a', k: '#7ac25b' },
     tint: { slime: { ov: { v: '#a8d040', V: '#5a8a20' }, nome: 'Gosma tóxica' }, rat: { ov: { l: '#7a8a6a', L: '#4a5a3a' }, nome: 'Ratazana' } } },
-  fungos: { nome: 'Grutas dos fungos', track: 'd4', foes: { shroom: 3, bat: 3, slime: 2, spider: 2, goblin: 2, darkmage: 1 , shieldman: 1, sentry: 1, lancer: 1 , healer: 1, alchemist: 1 },
+  fungos: { nome: 'Grutas dos fungos', track: 'd4n', foes: { shroom: 3, bat: 3, slime: 2, spider: 2, goblin: 2, darkmage: 1 , shieldman: 1, sentry: 1, lancer: 1 , healer: 1, alchemist: 1 },
     env: { '#': '#0e0814', 1: '#22142c', 2: '#341e44', 3: '#54306a', 4: '#8656a4', K: '#b06ad0', k: '#f0a8e0' },
     tint: { shroom: { ov: { e: '#c87ae0', E: '#7a3a9a' }, nome: 'Cogumelo-fantasma' }, goblin: { ov: { v: '#b06ad0' }, nome: 'Goblin das grutas' } } },
-  forja: { nome: 'Forja do rei', track: 'd5', foes: { imp: 3, goblin: 3, skel: 2, slime: 1, skelarcher: 1, brute: 2, darkmage: 1 , shieldman: 2, sentry: 1, lancer: 2 , alchemist: 2, healer: 1 },
+  forja: { nome: 'Forja do rei', track: 'd5n', foes: { imp: 3, goblin: 3, skel: 2, slime: 1, skelarcher: 1, brute: 2, darkmage: 1 , shieldman: 2, sentry: 1, lancer: 2 , alchemist: 2, healer: 1 },
     env: { '#': '#140806', 1: '#2a1410', 2: '#40201a', 3: '#6a3424', 4: '#a85a34', K: '#c4692e', k: '#f2c14e' }, // ossos em brasa, não vermelhos (o vermelho é o perigo)
     tint: { slime: { ov: { v: '#f28a3a', V: '#b0401a' }, nome: 'Gosma de magma' }, skel: { ov: { k: '#d8a070' }, nome: 'Esqueleto chamuscado' } } },
-  gelo: { nome: 'Salões gelados', track: 'd6', foes: { ghost: 3, skel: 2, bat: 2, slime: 2, skelarcher: 2, spider: 1, brute: 1, darkmage: 1 , shieldman: 1, sentry: 1, lancer: 2 , healer: 1, alchemist: 1 },
+  gelo: { nome: 'Salões gelados', track: 'd6n', foes: { ghost: 3, skel: 2, bat: 2, slime: 2, skelarcher: 2, spider: 1, brute: 1, darkmage: 1 , shieldman: 1, sentry: 1, lancer: 2 , healer: 1, alchemist: 1 },
     env: { '#': '#0a1018', 1: '#1a2a3a', 2: '#2a4058', 3: '#4a6a8a', 4: '#9ac0dc', K: '#64b4f4', k: '#e8f4ff' },
     tint: { slime: { ov: { v: '#9ad0f4', V: '#4a80b0' }, nome: 'Gosma gélida' }, bat: { ov: { P: '#a8b8d0' }, nome: 'Morcego das neves' }, ghost: { ov: { u: '#e8f4ff', U: '#8ab0d0' }, nome: 'Alma penada gélida' } } },
 };
 // v62: biomas novos (o Mestre da Imagem afina as cores; o Mestre do Som a música). Os inimigos novos entram quando tiverem sprite
-BIOMES.arquivo = { nome: 'Arquivo do Rei', track: 'arquivo', foes: { skel: 3, ghost: 2, darkmage: 2, skelarcher: 2, spider: 1, brute: 1, sentry: 3, shieldman: 1, lancer: 2 , healer: 2, alchemist: 1 },
+BIOMES.arquivo = { nome: 'Arquivo do Rei', track: 'arquivo2', foes: { skel: 3, ghost: 2, darkmage: 2, skelarcher: 2, spider: 1, brute: 1, sentry: 3, shieldman: 1, lancer: 2 , healer: 2, alchemist: 1 },
   env: { '#': '#0e0a08', 1: '#241a12', 2: '#36281c', 3: '#58422e', 4: '#8a6a48', K: '#b8925e', k: '#e8d0a0' } };
-BIOMES.minas = { nome: 'Minas de cristal', track: 'minas', foes: { brute: 3, goblin: 2, spider: 2, imp: 2, skelarcher: 1, darkmage: 1, shieldman: 3, lancer: 2, sentry: 1 , alchemist: 2, healer: 1 },
+BIOMES.minas = { nome: 'Minas de cristal', track: 'minas2', foes: { brute: 3, goblin: 2, spider: 2, imp: 2, skelarcher: 1, darkmage: 1, shieldman: 3, lancer: 2, sentry: 1 , alchemist: 2, healer: 1 },
   env: { '#': '#080c14', 1: '#141c2c', 2: '#1e2c44', 3: '#30486a', 4: '#5a80b0', K: '#5ad0c8', k: '#c8f4f0' } };
 BIOMES.antecamara = { nome: 'Antecâmara do Rei', track: 'antecamara', foes: { darkmage: 2, brute: 2, skelarcher: 2, ghost: 2, imp: 2, skel: 1, shieldman: 2, lancer: 2, sentry: 1 , executioner: 1, alchemist: 2, healer: 1 },
   env: { '#': '#0c0612', 1: '#1e1028', 2: '#2e1a3c', 3: '#4a2a5e', 4: '#7a4a8a', K: '#c8a040', k: '#f2d478' } };
 // v62 (Sábio, aprovado): mais 3 biomas (desenhos do Mestre da Imagem). A mecânica do luar e a dos espelhos ficam para quando houver furtividade a sério (fase 3)
-BIOMES.observatorio = { nome: 'Observatório', track: 'arquivo', foes: { darkmage: 3, skelarcher: 3, sentry: 2, ghost: 2, bat: 2, healer: 1 },
+BIOMES.observatorio = { nome: 'Observatório', track: 'arquivo2', foes: { darkmage: 3, skelarcher: 3, sentry: 2, ghost: 2, bat: 2, healer: 1 },
   env: { '#': '#06081a', 1: '#10163a', 2: '#1a2452', 3: '#2c3a7a', 4: '#5a6ab0', K: '#c8a040', k: '#f2d478' } };
-BIOMES.espelhos = { nome: 'Salão dos Espelhos', track: 'minas', foes: { ghost: 3, shieldman: 2, lancer: 2, darkmage: 2, imp: 2 },
+BIOMES.espelhos = { nome: 'Salão dos Espelhos', track: 'minas2', foes: { ghost: 3, shieldman: 2, lancer: 2, darkmage: 2, imp: 2 },
   env: { '#': '#14121c', 1: '#2a2836', 2: '#3e3b50', 3: '#625e78', 4: '#9a96b0', K: '#c8d0e0', k: '#f0f4ff' } };
-BIOMES.cofre = { nome: 'Cofre do Rei', track: 'd5', foes: { shieldman: 3, brute: 2, alchemist: 2, goblin: 2, sentry: 1 },
+BIOMES.cofre = { nome: 'Cofre do Rei', track: 'd5n', foes: { shieldman: 3, brute: 2, alchemist: 2, goblin: 2, sentry: 1 },
   env: { '#': '#100a04', 1: '#24180a', 2: '#3a2a14', 3: '#5e4420', 4: '#8a6a34', K: '#f2c14e', k: '#fff4d8' } };
 // v73: o Cão de caça (ato 2+, peso 2) e o Espectro arcano (ato 3+, raro, peso 1) entram em todos os biomas; o andar mínimo está no FOES
 for (const B of Object.values(BIOMES)) { B.foes.hound = B.foes.hound || 2; B.foes.wraith = B.foes.wraith || 1; }
@@ -5373,7 +5583,7 @@ function buildFloor() {
   // v55: relíquias que reiniciam em cada andar; o Mapa de contrabandista mostra os baús no mini-mapa
   st.ambushUsed = false; st.asaUsed = false;
   if (hasRelic('mapa')) { for (const it of st.items) if (/chest/.test(it.k)) st.seen[idx(it.x, it.y)] = true; relicPing('mapa'); }
-  if (st.floor === KING_FLOOR) Sound.prerender('rei1'); // v56: a faixa do Rei fica pronta antes da arena
+  if (st.floor === KING_FLOOR) Sound.prerender('rei1n'); // v56: a faixa do Rei fica pronta antes da arena
   fov();
 }
 // baús e urnas ocupam a casa: se algum bloquear o caminho até às escadas, a uma personagem ou a outro objeto,
@@ -6043,7 +6253,7 @@ function feederAct(f) {
 }
 function bossIntro(f) {
   const el = $('bossIntro');
-  el.innerHTML = `<small>CHEFE DO ANDAR ${st.floor}</small><b>${esc(f.nome.toUpperCase())}</b><span>${esc(f.desc)}</span>`;
+  el.innerHTML = `<small>${_t('CHEFE DO ANDAR {n}', { n: st.floor })}</small><b>${esc(fname(f).toUpperCase())}</b><span>${esc(_t(f.desc || ''))}</span>`; // v0.10.9 (OBS 79): o cartão do chefe ficava em PT
   el.hidden = false; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
   clearTimeout(bossIntro.t); bossIntro.t = setTimeout(() => { el.hidden = true; }, 2800);
   log(_t('{f} aparece! {d}', { f: fname(f), d: _t(f.desc) }));
@@ -6060,14 +6270,22 @@ function checkArena() {
   log(_t('As grades fecham-se atrás de ti! Não há fuga.'));
   const b = st.foes.find(f => f.boss);
   if (b) { b.aware = true; b.seen = true; b.gcd = 1; bossIntro(b); }
-  if (st.floor === KING_FLOOR) { Sound.prerender('rei2'); Sound.prerender('rei3'); } // v56: prontas antes das trocas de fase
+  if (st.floor === KING_FLOOR) { Sound.prerender('rei2n'); Sound.prerender('rei3n'); } // v56: prontas antes das trocas de fase
   Sound.music(floorTrack());
 }
+// v0.10.9 (Sábio, músicas v2): a 1.ª gravação de uma faixa custa 200-450 ms num telemóvel; pré-grava-se só em momentos mortos
+// (o cartão da passagem de andar e a fogueira) a faixa do chefe deste andar e a do andar seguinte. O Sound.prerender nunca grava com coreBusy()
+const bossTrackOf = fl => fl === KING_FLOOR ? 'rei1n' : fl === 20 ? 'desperto2' : fl % 5 === 0 ? ((fl / 5) % 2 ? 'boss1n' : 'boss2n') : null;
+function musicPrep() {
+  if (!st.p || !st.floor) return;
+  const b = bossTrackOf(st.floor); if (b) Sound.prerender(b);
+  const nb = BIOMES[biomeOf(st.floor + 1)]; if (nb && nb.track && st.floor < KING_FLOOR) Sound.prerender(nb.track);
+}
 function floorTrack() {
-  if (st.trial && !st.trial.done) return 'boss1';
-  if (st.arena && st.arena.locked && st.floor === KING_FLOOR) { const k = st.foes.find(o => o.btype === 'king'); return 'rei' + ((k && k.phase) || 1); }
-  if (st.arena && st.arena.locked && st.floor === 20) return 'desperto'; // v62: o chefe desperto tem faixa própria
-  if (st.arena && st.arena.locked) return (st.floor / 5) % 2 ? 'boss1' : 'boss2';
+  if (st.trial && !st.trial.done) return 'provacao'; // v0.10.9 (músicas v2, Mestre do Som): faixas novas
+  if (st.arena && st.arena.locked && st.floor === KING_FLOOR) { const k = st.foes.find(o => o.btype === 'king'); return 'rei' + ((k && k.phase) || 1) + 'n'; }
+  if (st.arena && st.arena.locked && st.floor === 20) return 'desperto2'; // v62: o chefe desperto tem faixa própria
+  if (st.arena && st.arena.locked) return (st.floor / 5) % 2 ? 'boss1n' : 'boss2n';
   return biome().track; // cada bioma tem a sua música
 }
 
@@ -6811,7 +7029,7 @@ function descend() {
     buildFloor(); msFloor(); // v96: marcos dos Núcleos por andar
     if (st.p.prisonerReward) { st.p.prisonerReward = false; setTimeout(prisonerPick, 0); }
     if (hasRelic('vela')) SK.forEach((a, j) => { if (a.disc === 'mag') st.p.cds[j] = 0; }); // v62: Vela do erudito
-    Sound.music(floorTrack());
+    Sound.music(floorTrack()); musicPrep(); // v0.10.9: no cartão da passagem (momento morto)
     log(newB ? _t('Desces para o andar {n}. Um lugar novo: {b}.', { n: st.floor, b: _t(biome().nome) }) : _t('Desces para o andar {n}.', { n: st.floor }));
     if (st.npcs.some(n => n.k === 'merchant')) log(_t('Cheira a fumo: há um mercador algures neste andar.'));
     else if (st.npcs.some(n => n.k === 'fire')) log(_t('Há um acampamento abandonado algures neste andar.'));
@@ -6823,7 +7041,7 @@ function enterPortal() {
   st.screen = 'play';
   Sound.play('portal');
   if (st.p.anchor) { const i = st.p.anchor.i; st.p.anchor = null; st.p.cds[i] = anchorCd(st.p, i); } // v74
-  transitionTo(_t('PROVAÇÃO'), _t('Andar {n} · não há volta', { n: st.floor }), () => { buildTrial(); Sound.music('boss1'); });
+  transitionTo(_t('PROVAÇÃO'), _t('Andar {n} · não há volta', { n: st.floor }), () => { buildTrial(); Sound.music('provacao'); }); // v0.10.9: faixa própria da Provação
 }
 
 /* habilidades "armadas" (v43, pedido do utilizador): tocar numa habilidade com direção ou alvo marca-a, mesmo sem
@@ -7434,12 +7652,14 @@ const TIPS = {
   morte: ['Caíste. A torre guarda o teu nome, e os Ecos ficam para quem vier.', 14],
 };
 let tipT = null;
+// v0.10.9 (OBS 80, tester): a secção aberta do manual desliza para a vista (o «ver no manual» abria-a fora do ecrã)
+const manScroll = () => requestAnimationFrame(() => { const s = document.querySelector('.man-sec.on'); if (s && s.scrollIntoView) s.scrollIntoView({ block: 'start', behavior: reduceMotion() ? 'auto' : 'smooth' }); });
 function tip(id) {
   const T = TIPS[id]; if (!T || opts.tips === false || typeof document === 'undefined') return;
   acct.tipsSeen = acct.tipsSeen || {}; if (acct.tipsSeen[id]) return;
   acct.tipsSeen[id] = 1; saveAcct();
   let el = document.getElementById('tipCard');
-  if (!el) { el = document.createElement('div'); el.id = 'tipCard'; el.className = 'tip-card'; document.body.appendChild(el); el.addEventListener('click', e => { const m = e.target.closest('[data-tipman]'); el.hidden = true; if (m && st.screen !== 'manual') { app.manBack = st.screen; app.manOpen = +m.dataset.tipman; st.screen = 'manual'; Sound.play('menu'); ui(); } }); }
+  if (!el) { el = document.createElement('div'); el.id = 'tipCard'; el.className = 'tip-card'; document.body.appendChild(el); el.addEventListener('click', e => { const m = e.target.closest('[data-tipman]'); el.hidden = true; if (m && st.screen !== 'manual') { app.manBack = st.screen; app.manOpen = +m.dataset.tipman; st.screen = 'manual'; Sound.play('menu'); ui(); manScroll(); } }); }
   el.innerHTML = `<i class="tip-por" aria-hidden="true"></i><div class="tip-tx"><b>${_t('Velha das Brasas')}</b><p>${esc(_t(T[0]))}</p><button class="tip-man" data-tipman="${T[1]}">${_t('ver no manual')}</button></div>`;
   el.hidden = false; clearTimeout(tipT); tipT = setTimeout(() => { el.hidden = true; }, 9000);
 }
@@ -7455,6 +7675,7 @@ function openCrone(i) {
 function openCamp(i) { tip('fogueira'); st.screen = 'camp'; st.campAt = i; st.campMsg = st.p && st.p.relicHint ? _t('Agora tens 3 espaços de relíquia: escolhe-as aqui, em RELÍQUIAS.') : ''; Sound.play('menu'); Sound.music('camp'); ui(); }
 function closeCamp() { st.screen = 'play'; Sound.play('back'); Sound.music(floorTrack()); ui(); }
 function restCamp() {
+  musicPrep(); // v0.10.9 (Sábio): a fogueira é um momento morto: pré-grava a faixa do chefe e a do andar seguinte
   const p = st.p, fire = st.npcs[st.campAt]; if (!fire) return;
   if (!fire.used) {
     fire.used = true; fire.lit = true; p.poison = 0;
@@ -10613,7 +10834,7 @@ const DEATHS = {
   function hudRects() { const t = performance.now(); if (t - HUDT < 500) return HUDR; HUDT = t; HUDR = []; const R = cv.getBoundingClientRect(); if (!R.width) return HUDR; const kx = cv.width / R.width, ky = cv.height / R.height;
     for (const el of [document.getElementById('domBox'), document.querySelector('.mini')]) { if (!el || !el.offsetParent) continue; const r = el.getBoundingClientRect(); HUDR.push([(r.left - R.left) * kx, (r.top - R.top) * ky, (r.right - R.left) * kx, (r.bottom - R.top) * ky]); } return HUDR; } // OBS 61: inimigos com execução à vista no último fotograma; queimas em curso
   let stealthTxt = null; // v63: alcance de furtividade no HUD (o olho e o número de stealthS())
-  function stealthHud() { const vt = st.p && st.p.veilT > 0 ? st.p.veilT - 1 : -1, v = st.p && typeof stealthS === 'function' ? String(stealthS()) + '|' + vt : null; if (v === stealthTxt) return; stealthTxt = v; for (const e of document.querySelectorAll('.stealth')) { e.hidden = v == null; if (v == null) continue; e.textContent = v.split('|')[0]; e.classList.toggle('veil', vt >= 0); if (vt > 0) e.dataset.left = vt; else delete e.dataset.left; e.title = vt >= 0 ? 'Véu: invisível' + (vt > 0 ? ' (mais ' + vt + ' turno' + (vt > 1 ? 's' : '') + ')' : ' (último turno)') : 'Alcance da furtividade: a quantas casas te notam'; } } // v63: com o Véu, olho fechado, 0 e os turnos que faltam // no HUD largo (#stealthS) e no do telemóvel
+  function stealthHud() { const vt = st.p && st.p.veilT > 0 ? st.p.veilT - 1 : -1, v = st.p && typeof stealthS === 'function' ? String(stealthS()) + '|' + vt : null; if (v === stealthTxt) return; stealthTxt = v; for (const e of document.querySelectorAll('.stealth')) { e.hidden = v == null; if (v == null) continue; e.textContent = v.split('|')[0]; e.classList.toggle('veil', vt >= 0); if (vt > 0) e.dataset.left = vt; else delete e.dataset.left; e.title = vt >= 0 ? _t('Véu: invisível') + ' ' + (vt > 0 ? _t(vt > 1 ? '(mais {n} turnos)' : '(mais {n} turno)', { n: vt }) : _t('(último turno)')) : _t('Alcance da furtividade: a quantas casas te notam'); } } // v63: com o Véu, olho fechado, 0 e os turnos que faltam // no HUD largo (#stealthS) e no do telemóvel
   function draw() { OUTL = true; try { stealthHud(); return drawIn(); } finally { OUTL = false; } } // v60: contorno só no mapa
   function drawIn() {
     const real = performance.now(), dt = Math.min(64, real - (lastFrame || real)); lastFrame = real;
@@ -11645,12 +11866,12 @@ const DEATHS = {
 // v71: medalhões do relicário (ecrã 'relics', cartão 'relicfull' e HERÓI). Decora as listas do menus.js depois de desenhadas:
 // 3 ou 4 medalhões redondos com as ativas e os vazios à vista; o 4.º fica fechado até ao andar 15. Tocar num medalhão = tocar na linha dele
 function relMedals(act, slots, attr) {
-  const box = document.createElement('div'); box.className = 'rel-medals'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Relíquias ativas');
+  const box = document.createElement('div'); box.className = 'rel-medals'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', _t('Relíquias ativas'));
   for (let i = 0; i < 4; i++) {
     const id = act[i], R = id && RELIC[id];
-    if (i >= slots) { const s = document.createElement('span'); s.className = 'medal lock'; s.title = 'Abre depois do chefe do andar 15'; s.textContent = '15'; box.append(s); continue; }
-    if (!R) { const s = document.createElement('span'); s.className = 'medal empty'; s.title = 'Espaço vazio'; box.append(s); continue; }
-    const m = document.createElement(attr ? 'button' : 'span'); m.className = 'medal on'; m.title = R.nome + ': ' + R.d + (R.custo ? ' · Mas: ' + R.custo : ''); if (attr) { m.type = 'button'; m.setAttribute('aria-label', R.nome); m.dataset.medal = id; m.dataset.mattr = attr; }
+    if (i >= slots) { const s = document.createElement('span'); s.className = 'medal lock'; s.title = _t('Abre depois do chefe do andar 15'); s.textContent = '15'; box.append(s); continue; }
+    if (!R) { const s = document.createElement('span'); s.className = 'medal empty'; s.title = _t('Espaço vazio'); box.append(s); continue; }
+    const m = document.createElement(attr ? 'button' : 'span'); m.className = 'medal on'; m.title = _t(R.nome) + ': ' + _t(R.d) + (R.custo ? ' · ' + _t('Mas:') + ' ' + _t(R.custo) : ''); if (attr) { m.type = 'button'; m.setAttribute('aria-label', R.nome); m.dataset.medal = id; m.dataset.mattr = attr; }
     const img = document.createElement('img'); img.alt = ''; img.src = ICON_URL['rel_' + id] || ''; m.append(img); box.append(m);
   }
   return box;
@@ -11758,7 +11979,7 @@ function relDecorate() {
   const p = st.p, act = (p.relics || []).filter(id => RELIC[id] && !RELIC[id].conta), slots = typeof relicSlots === 'function' ? relicSlots() : 3;
   if (st.screen === 'relics') { const b = ov.querySelector('[data-reloff], .box.menu'); const menu = b && b.closest('.box.menu'); if (menu) { const f = menu.querySelector('.foot'); (f || menu.firstChild).after(relMedals(act, slots, 'data-reloff')); menu.classList.add('rel-act'); } }
   else if (st.screen === 'relicfull') { const b = ov.querySelector('[data-relswap]'); const menu = b && b.closest('.box.menu'); if (menu) { menu.querySelector('.foot').after(relMedals(act, slots, 'data-relswap')); menu.classList.add('rel-act'); } }
-  else { const hr = ov.querySelector('.hero-rel'); if (hr) { const conta = (p.relics || []).filter(id => RELIC[id] && RELIC[id].conta); hr.textContent = ''; hr.append(relMedals(act, slots, null)); if (conta.length) { const c = document.createElement('div'); c.className = 'rel-sempre'; const t = document.createElement('small'); t.textContent = 'SEMPRE'; c.append(t); conta.forEach(id => { const s = document.createElement('span'); s.className = 'hr'; s.title = RELIC[id].nome + ': ' + RELIC[id].d; const im = document.createElement('img'); im.className = 'ico'; im.alt = ''; im.src = ICON_URL['rel_' + id] || ''; s.append(im); c.append(s); }); hr.append(c); } } }
+  else { const hr = ov.querySelector('.hero-rel'); if (hr) { const conta = (p.relics || []).filter(id => RELIC[id] && RELIC[id].conta); hr.textContent = ''; hr.append(relMedals(act, slots, null)); if (conta.length) { const c = document.createElement('div'); c.className = 'rel-sempre'; const t = document.createElement('small'); t.textContent = _t('SEMPRE'); c.append(t); conta.forEach(id => { const s = document.createElement('span'); s.className = 'hr'; s.title = RELIC[id].nome + ': ' + RELIC[id].d; const im = document.createElement('img'); im.className = 'ico'; im.alt = ''; im.src = ICON_URL['rel_' + id] || ''; s.append(im); c.append(s); }); hr.append(c); } } }
 }
 { const ov = document.getElementById('ov'); if (ov) { new MutationObserver(relDecorate).observe(ov, { childList: true }); ov.addEventListener('click', e => { const m = e.target.closest('.medal[data-medal]'); if (!m) return; const row = ov.querySelector(`[${m.dataset.mattr}="${CSS.escape(m.dataset.medal)}"]`); if (row) row.click(); }); } }
 // v67: cartão da passagem de andar COMPLETA (os números vêm do transRun.card; as linhas entram uma a uma e contam até ao valor)
@@ -11841,7 +12062,7 @@ function showRelicCard(id) {
   if (!c) { c = document.createElement('div'); c.id = 'relicCard'; c.setAttribute('role', 'status'); document.body.appendChild(c); c.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); c.classList.remove('on'); }); }
   c.innerHTML = '<img alt=""><div><b></b><span></span><small></small></div>';
   c.querySelector('img').src = ICON_URL['rel_' + id] || ''; c.querySelector('b').textContent = R.nome.toUpperCase(); c.querySelector('span').textContent = R.d;
-  const sm = c.querySelector('small'); if (R.custo) sm.textContent = 'Mas: ' + R.custo; else sm.remove();
+  const sm = c.querySelector('small'); if (R.custo) sm.textContent = _t('Mas:') + ' ' + _t(R.custo); else sm.remove();
   c.classList.toggle('small', !!(st.attacks && st.attacks.length)); // Sábio: com ataques avisados, fica pequena no topo (nunca por cima do perigo)
   c.classList.remove('on'); void c.offsetWidth; c.classList.add('on');
   clearTimeout(showRelicCard.t); showRelicCard.t = setTimeout(() => c.classList.remove('on'), 1200);
@@ -11877,7 +12098,7 @@ function coreSky(p) {
     svg += `<text x="${tx}" y="${up ? ly - 16 : ly + 22}" fill="${v > cap ? '#e0b8f0' : L.col}" font-family="Departure Mono, monospace" font-size="9" text-anchor="${left ? 'end' : 'start'}">${lab}</text>`;
   }
   svg += `<circle cx="${cx}" cy="${cy}" r="16" fill="#120e14" stroke="#b07d22" stroke-width="2"/><polygon points="${cx},${cy - 8} ${cx + 3},${cy - 3} ${cx + 8},${cy} ${cx + 3},${cy + 3} ${cx},${cy + 8} ${cx - 3},${cy + 3} ${cx - 8},${cy} ${cx - 3},${cy - 3}" fill="#f2c14e"/></svg>`;
-  return `<div class="box core-cap"><span>CAPACIDADE</span><div class="core-bar"><i style="width:${w}%"></i><i class="ov" style="left:${w}%;width:${wo}%"></i></div><span>${used}/${tot}</span></div><div class="box core-sky">${svg}</div>`;
+  return `<div class="box core-cap"><span>${_t('CAPACIDADE')}</span><div class="core-bar"><i style="width:${w}%"></i><i class="ov" style="left:${w}%;width:${wo}%"></i></div><span>${used}/${tot}</span></div><div class="box core-sky">${svg}</div>`;
 }
 // v60: constelação pequena, só para ver (ecrã HERÓI); toca para abrir os Núcleos
 function coreMini(p) {
@@ -12377,8 +12598,8 @@ function pickClass(k) {
   if (app.crLooks[k]) LOOK_K.forEach(f => { app.cr[f] = app.crLooks[k][f]; });
   app.cr.cls = k;
   const c = CLASSES[k];
-  if ($('shName')) $('shName').textContent = c.nome.toUpperCase();
-  if ($('shDesc')) $('shDesc').textContent = `${c.desc} Começa sem habilidades: ganha-as a lutar com as armas.`;
+  if ($('shName')) $('shName').textContent = _t(c.nome).toUpperCase(); // v0.10.9 (OBS 79)
+  if ($('shDesc')) $('shDesc').textContent = `${_t(c.desc)} ${_t('Começa sem habilidades: ganha-as a lutar com as armas.')}`;
   Sound.play('recede');
   if (!reduceMotion()) Sound.play('march');
   clearTimeout(app.fanT); app.fanT = setTimeout(() => { if (st.screen === 'create' && app.cr && app.cr.cls === k) Sound.play('fan_' + k); }, reduceMotion() ? 0 : 420);
@@ -13627,7 +13848,7 @@ $('ov').addEventListener('click', e => {
   // v61 (ecrã inicial E2): separadores ASPETO/TRAÇO e setas ◀ ▶ que dão a volta à lista (salta as cores bloqueadas do Altar)
   // v61: manual COMO JOGAR (abre-se nos Heróis e nas Opções e volta para onde estava)
   else if (d.manual) { app.manBack = st.screen; app.manOpen = 0; st.screen = 'manual'; Sound.play('menu'); ui(); }
-  else if (d.mansec) { const i = +d.mansec; app.manOpen = app.manOpen === i ? -1 : i; Sound.play('menu'); ui(); }
+  else if (d.mansec) { const i = +d.mansec; app.manOpen = app.manOpen === i ? -1 : i; Sound.play('menu'); ui(); manScroll(); }
   else if (d.manback) { st.screen = app.manBack || 'chars'; Sound.play('back'); ui(); }
   else if (d.crtab) { app.crTab = d.crtab; Sound.play('menu'); ui(); }
   else if (d.crprev || d.crnext) { crCycle(d.crprev || d.crnext, d.crprev ? -1 : 1); }
@@ -13754,7 +13975,16 @@ $('bHero').addEventListener('click', () => ['equip', 'disc'].includes(st.screen)
 $('bMap').addEventListener('click', () => st.screen === 'map' ? closePanel() : openPanel('map'));
 $('bPot').addEventListener('click', () => { walk.stop(); consume(); });
 $('bWait').addEventListener('click', () => act(0, 0));
-$('bMenu').addEventListener('click', toMenu); // v96: a barra de cima volta ao menu principal
+// v96: a barra de cima volta ao menu principal. v0.10.9 (OBS 81, tester): a meio de uma partida pede um 2.º toque e diz que fica gravada
+let menuAskT = 0;
+$('bMenu').addEventListener('click', () => {
+  const b = $('bMenu'), reset = () => { b.textContent = _t('MENU'); b.style.outline = ''; };
+  if (st.p && st.screen === 'play' && !st.dying && performance.now() > menuAskT) { // Sábio: a confirmação vê-se no próprio botão durante os 3 s
+    menuAskT = performance.now() + 3000; log(_t('A partida fica gravada: toca outra vez em MENU para sair.')); ui();
+    b.textContent = _t('SAIR?'); b.style.outline = '2px solid #f2c14e'; setTimeout(() => { if (performance.now() >= menuAskT) reset(); }, 3050); return;
+  }
+  menuAskT = 0; reset(); toMenu();
+});
 $('bOpts').addEventListener('click', () => st.screen === 'opts' ? closeOpts() : openOpts());
 $('bOpts2').addEventListener('click', () => st.screen === 'opts' ? closeOpts() : openOpts());
 $('bRange').addEventListener('click', () => knockMode() ? knockAct() : toggleRange()); // v67: com a adaga (sem arma de distância), o botão bate na parede
