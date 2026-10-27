@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.14.5 (build 118). Fontes embutidas:
+<!-- GODSPIRE v0.14.6 (build 119). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -601,6 +601,21 @@ html.passagem .trans.card .thint { display: block; }
 .log-list { display: flex; flex-direction: column; gap: 3px; min-height: 130px; font-size: 16px; }
 .log-list p { margin: 0; }
 .log-list p:nth-child(n+3) { color: var(--g2); }
+/* OBS 91 (Imagem): no PC largo a coluna do lado parte-se em duas (estado, atributos e mapa | mochila e diário), para tudo caber à altura do jogo sem deslizar a página.
+   O diário enche o espaço que sobra; se um dia não couber, corta as linhas mais antigas (em baixo) e o resto fica no botão DIÁRIO */
+@media (min-width: 1500px) {
+  html:not(.compact) body { margin-top: 0; margin-bottom: 0; }
+  html:not(.compact) .app { max-width: 1500px; padding-bottom: 8px; }
+  html:not(.compact) .game { grid-template-columns: 528px 900px; justify-content: center; }
+  html:not(.compact) .panel { display: grid; grid-template-columns: 440px 440px; column-gap: 20px; row-gap: 14px; align-items: stretch; }
+  html:not(.compact) .panel > .status { grid-column: 1; grid-row: 1; }
+  html:not(.compact) .panel > .grid2 { grid-column: 1; grid-row: 2; }
+  html:not(.compact) .panel > .box:has(#mm) { grid-column: 1; grid-row: 3; }
+  html:not(.compact) .panel > .box:has(#bag) { grid-column: 2; grid-row: 1 / 3; }
+  html:not(.compact) .panel > .box:has(#log) { grid-column: 2; grid-row: 3; display: flex; flex-direction: column; min-height: 0; }
+  html:not(.compact) .panel > .box:has(#log) .log-list { flex: 1 1 0; min-height: 0; overflow: hidden; }
+  html:not(.compact) .panel > .keys { grid-column: 1 / 3; grid-row: 4; margin: 0; }
+}
 .keys { color: var(--g2); font-size: 15px; margin: 0; }
 .keys kbd { font-family: var(--display); font-size: 8px; border: 2px solid currentColor; background: none; color: inherit; border-radius: 3px; padding: 2px 4px; }
 
@@ -3599,7 +3614,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.14.5', GAME_BUILD = 118;
+const GAME_SEMVER = '0.14.6', GAME_BUILD = 119;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -7925,7 +7940,14 @@ const TIPS = {
 };
 let tipT = null;
 // v0.10.9 (OBS 80, tester): a secção aberta do manual desliza para a vista (o «ver no manual» abria-a fora do ecrã)
-const manScroll = () => requestAnimationFrame(() => { const s = document.querySelector('.man-sec.on'); if (s && s.scrollIntoView) s.scrollIntoView({ block: 'start', behavior: reduceMotion() ? 'auto' : 'smooth' }); });
+// v0.14.6 (OBS 90, tester): desliza só a caixa do manual; o scrollIntoView mexia também na página e o topo do jogo ficava cortado (a barra global está escondida)
+const manScroll = () => requestAnimationFrame(() => {
+  const s = document.querySelector('.man-sec.on'); if (!s) return;
+  let box = s.parentElement;
+  while (box && box !== document.body) { const o = getComputedStyle(box).overflowY; if ((o === 'auto' || o === 'scroll') && box.scrollHeight > box.clientHeight) break; box = box.parentElement; }
+  if (box && box !== document.body) { const top = box.scrollTop + s.getBoundingClientRect().top - box.getBoundingClientRect().top; box.scrollTo({ top, behavior: reduceMotion() ? 'auto' : 'smooth' }); }
+  const se = document.scrollingElement; if (se && se.scrollTop) se.scrollTop = 0; // e desfaz o deslize da página que as versões antigas deixavam
+});
 function tip(id) {
   const T = TIPS[id]; if (!T || opts.tips === false || typeof document === 'undefined') return;
   acct.tipsSeen = acct.tipsSeen || {}; if (acct.tipsSeen[id]) return;
