@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.14.4 (build 117). Fontes embutidas:
+<!-- GODSPIRE v0.14.5 (build 118). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -2056,7 +2056,26 @@ window.Sound = (() => {
     equip: () => { noise({ dur: 0.05, v: 0.2, f: 3000, type: 'highpass' }); tone({ type: 'square', f: mtof(67), t: 0.03, dur: 0.06, v: 0.1 }); },
     save: () => arp([67, 72, 76, 79, 84], 0.09, { type: 'sine', dur: 0.35, v: 0.16 }),
     portal: () => { tone({ type: 'sawtooth', f: 80, f2: 600, dur: 0.6, v: 0.14 }); arp([60, 63, 67, 70, 75], 0.08, { type: 'square', dur: 0.12, v: 0.08 }); },
-    spin: () => noise({ dur: 0.3, v: 0.3, f: 400, f2: 3000, type: 'bandpass', q: 3 }),
+    // v0.14.5 (Mestre do Som, §15): o vento a RODAR (20–290 ms), com o pan a dar a volta (esquerda → direita → esquerda) + o tremor aos 60 ms
+    spin: () => {
+      const s0 = ctx.currentTime, src = ctx.createBufferSource(), bp = ctx.createBiquadFilter(), g = ctx.createGain(), pn = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+      src.buffer = noiseBuf; bp.type = 'bandpass'; bp.Q.value = 2.5;
+      bp.frequency.setValueAtTime(500, s0 + 0.02); bp.frequency.exponentialRampToValueAtTime(2600, s0 + 0.16); bp.frequency.exponentialRampToValueAtTime(700, s0 + 0.3);
+      g.gain.setValueAtTime(0.0001, s0); g.gain.exponentialRampToValueAtTime(0.26, s0 + 0.06); g.gain.exponentialRampToValueAtTime(0.0001, s0 + 0.31);
+      src.connect(bp); bp.connect(g);
+      if (pn) { pn.pan.setValueAtTime(-0.5, s0); pn.pan.linearRampToValueAtTime(0.5, s0 + 0.15); pn.pan.linearRampToValueAtTime(-0.5, s0 + 0.3); g.connect(pn); pn.connect(sfxOut || sfxG); }
+      else g.connect(sfxOut || sfxG);
+      src.start(s0, Math.random() * 0.5); src.stop(s0 + 0.33);
+      tone({ type: 'triangle', f: 120, f2: 70, t: 0.06, dur: 0.08, v: 0.1 });
+    },
+    // §15: impacto LEVE por inimigo atingido pelo Rodopio, ao ritmo do giro
+    spin_hit: () => { noise({ dur: 0.05, v: 0.2, f: 2400, f2: 700 }); tone({ type: 'square', f: 170, f2: 90, dur: 0.05, v: 0.1 }); },
+    // §15: Passo arcano, a CHEGADA (aos 180 ms): um pio a descer + Lá6/Mi7 de cristal com eco + um brilho; abaixo do 'hit'
+    blink_in: () => {
+      tone({ wave: pulse12, f: 2000, f2: 1200, dur: 0.06, v: 0.04 });
+      [1760, 2637].forEach((f, i) => tone({ type: 'sine', f, t: 0.02 + i * 0.03, dur: 0.22, v: 0.045, a: 0.004, out: sfxEcho }));
+      noise({ dur: 0.04, v: 0.06, f: 8000, type: 'highpass' });
+    },
     smash: () => { noise({ dur: 0.25, v: 0.45, f: 900, f2: 80 }); tone({ type: 'square', f: 120, f2: 40, dur: 0.2, v: 0.24 }); },
     shield: () => [60, 64, 67].forEach(n => tone({ type: 'triangle', f: mtof(n), dur: 0.35, v: 0.11 })),
     charge: () => noise({ dur: 0.22, v: 0.3, f: 300, f2: 2500, type: 'bandpass', q: 1.5 }),
@@ -2200,11 +2219,20 @@ window.Sound = (() => {
       }
     },
     // v74 (Mestre do Som, aprovado pelo Sábio: §9): Âncora de sombra, os dois baixinhos (do jogador, sem ruído para os inimigos)
+    // v0.14.5 (Mestre do Som, §16): LANÇAR a âncora: a poça a nascer em 0–260 ms (sopro grave + 3 bolhas lentas + fumo + Si6 muito baixo)
     anchor_drop: () => {
-      tone({ type: 'triangle', f: 160, f2: 90, dur: 0.03, v: 0.08 });
-      tone({ type: 'triangle', f: 320, f2: 180, dur: 0.025, v: 0.03 });
-      noise({ t: 0.02, dur: 0.16, v: 0.06, f: 2600, f2: 1100, type: 'bandpass', q: 1.5 });
-      tone({ wave: pulse12, f: mtof(95), t: 0.05, dur: 0.12, v: 0.025, out: sfxEcho });
+      noise({ dur: 0.26, v: 0.06, f: 200, f2: 900, type: 'lowpass' });
+      [0.04, 0.12, 0.21].forEach((t, i) => tone({ type: 'sine', f: 90 + i * 25, f2: 200 + i * 40, t, dur: 0.06, v: 0.05 }));
+      noise({ t: 0.05, dur: 0.2, v: 0.03, f: 2600, f2: 1200, type: 'bandpass', q: 1.5 });
+      tone({ wave: pulse12, f: mtof(95), t: 0.12, dur: 0.12, v: 0.02, out: sfxEcho });
+    },
+    // §16: EMERGIR da poça (aos ~110 ms do regresso): bolha grave e fria que sobe, ~0,3 s
+    anchor_rise: () => {
+      tone({ type: 'sine', f: 110, f2: 330, dur: 0.12, v: 0.09, a: 0.01 });
+      tone({ type: 'sine', f: 220, f2: 520, t: 0.02, dur: 0.1, v: 0.035, a: 0.01 });
+      noise({ dur: 0.25, v: 0.07, f: 300, f2: 900, type: 'lowpass' });
+      [0.12, 0.19].forEach(t => tone({ type: 'sine', f: 400 + Math.random() * 200, f2: 700, t, dur: 0.04, v: 0.03 }));
+      tone({ wave: pulse12, f: mtof(90), t: 0.16, dur: 0.12, v: 0.02 });
     },
     anchor_back: () => {
       const s0 = ctx.currentTime, src = ctx.createBufferSource(), lp = ctx.createBiquadFilter(), g = ctx.createGain();
@@ -2312,8 +2340,8 @@ window.Sound = (() => {
   };
   // efeitos que se repetem muito e ganham com uma pequena variação de tom (±4%)
   // v55: os sons de ruído variam ±4%; os sons com nota só ±0,5% (com mais, desafinavam em relação à música)
-  const VARY = new Set(['step', 'bump', 'swing', 'hit', 'crit', 'miss', 'hurt', 'dodge', 'arrow', 'equip', 'eat', 'dash', 'execute', 'knock', 'bark', 'anchor_drop', 'anchor_back', 'trap_set', 'trap_snap', 'riposte', 'leap', 'blood']);
-  const VARY_NOTE = new Set(['hshield', 'hshield_break', 'kill', 'coin', 'take', 'cart', 'stun', 'magic', 'relic_ping']);
+  const VARY = new Set(['step', 'bump', 'swing', 'hit', 'crit', 'miss', 'hurt', 'dodge', 'arrow', 'equip', 'eat', 'dash', 'execute', 'knock', 'bark', 'anchor_drop', 'anchor_back', 'anchor_rise', 'spin', 'spin_hit', 'trap_set', 'trap_snap', 'riposte', 'leap', 'blood']);
+  const VARY_NOTE = new Set(['blink_in', 'hshield', 'hshield_break', 'kill', 'coin', 'take', 'cart', 'stun', 'magic', 'relic_ping']);
   // vol (opcional, 0–1): toca o efeito mais baixo, por exemplo o 2.º som de uma runa em área
   let sfxOut = null;
   function play(name, arg, volume) {
@@ -3571,7 +3599,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.14.4', GAME_BUILD = 117;
+const GAME_SEMVER = '0.14.5', GAME_BUILD = 118;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -7366,9 +7394,9 @@ function anchorUse(i) {
   st.foes.forEach(o => { if (o.aware && !o.boss && !o.ally && vis[idx(o.x, o.y)]) { o.aware = false; o.sus = 1; o.inv = { x: ox, y: oy, t: 6 }; } }); // quem te via vai ver de onde saíste
   fxTrail(p, ox, oy, x, y, now); setPos(p, x, y, 60, 0); fov(); pickup();
   p.anchor = null; p.cds[i] = anchorCd(p, i) + (inDanger ? 1 : 0);
-  log(_t(inDanger ? 'Regressas à âncora (estavas em perigo: gastou o turno).' : 'Regressas à âncora, sem ruído.')); Sound.play('anchor_back');
+  log(_t(inDanger ? 'Regressas à âncora (estavas em perigo: gastou o turno).' : 'Regressas à âncora, sem ruído.')); Sound.play('anchor_back'); setTimeout(() => Sound.play('anchor_rise'), 110); // v0.14.5 (§16): afundar aos 0, emergir aos 110 ms
   if (runeOf(p, i) && runeOf(p, i).id === 'explosao') { // a runa troca o silêncio por dano à volta
-    fxBurst(x, y, 1.3, now, 60, 300); Sound.play('blast'); if (p.veilT > 0) p.veilT = 0; makeNoise(x, y, 3); // §9: com a Explosão toca também o 'blast'
+    fxBurst(x, y, 1.3, now, 60, 300); setTimeout(() => Sound.play('blast'), 110); if (p.veilT > 0) p.veilT = 0; makeNoise(x, y, 3); // §9: com a Explosão toca também o 'blast'
     st.foes.filter(o => !o.ally && Math.max(Math.abs(o.x - x), Math.abs(o.y - y)) <= 1).forEach(o => { st.cast = { hits: [] }; try { damageFoe(o, Math.max(1, Math.round(atkOf(p) * 0.5)), true); } finally { st.cast = null; } });
   }
   if (inDanger) endTurn(); else { lastAct = 0; ui(); }
@@ -7472,13 +7500,17 @@ const noTarget = () => { log(_t('Não há nenhum alvo à vista.')); return false
 const stun = (f, n) => { if (f.hp > 0) stunFoe(f, stunTurns(n)); }; // v77: imunidade única nos chefes
 const Q = true;
 
+const SPIN_AT = [120, 180, 240, 290];
 function abRodopio(p, bonus, now) {
   const adj = st.foes.filter(f => Math.abs(f.x - p.x) <= 1 && Math.abs(f.y - p.y) <= 1);
   if (!adj.length) { log(_t('Não tens inimigos ao teu lado.')); return false; }
   say('Rodopio');
   fx.push({ k: 'spin', x: p.x, y: p.y, t0: now, until: now + 340 });
   SWING.set(p, { t0: now, dur: 340 });
-  adj.forEach(f => { damageFoe(f, Math.max(1, atkOf(p) + 2 + bonus + rnd(0, 2) - f.def), Q); if (hasT('bar_varr')) trBleed(f); });
+  // v0.14.5 (Mestre do Som §15): cada inimigo soa à hora em que o giro lhe chega (120/180/240/290 ms, até 4): o 'spin_hit' e, se houver, o crit/kill/execute
+  adj.forEach((f, i) => { const at = SPIN_AT[Math.min(i, 3)], real = Sound.play; Sound.play = (n, ...r) => { setTimeout(() => real.call(Sound, n, ...r), at); };
+    try { damageFoe(f, Math.max(1, atkOf(p) + 2 + bonus + rnd(0, 2) - f.def), Q); if (hasT('bar_varr')) trBleed(f); } finally { Sound.play = real; }
+    if (i < 4) setTimeout(() => Sound.play('spin_hit'), at); });
   return true;
 }
 function abEsmagar(p, bonus, now) {
@@ -7572,6 +7604,7 @@ function abPasso(p, bonus, now) {
   setPos(p, tx, ty, 80 + land * 25, 0);
   passed.filter(e => e.s < land).forEach(e => { fxBurst(e.f.x, e.f.y, 0.6, now, 60); damageFoe(e.f, Math.max(1, atkOf(p) + 2 + bonus + rnd(0, 2) - e.f.def), Q); });
   fov(); pickup();
+  setTimeout(() => Sound.play('blink_in'), 180); // v0.14.5 (Mestre do Som §15): a chegada; o 'dash' de saída toca aos 0
   return true;
 }
 function abRaio(p, bonus, now) {
@@ -8939,6 +8972,7 @@ function draw() {
   floats = floats.filter(f => now - f.t < 800);
   ctx.font = '8px "Departure Mono", monospace'; ctx.textAlign = 'center'; ctx.lineJoin = 'round';
   for (const f of floats) {
+    if (now < f.t) continue; // v0.14.3: o Rodopio atrasa o número de cada inimigo até o giro lá chegar
     const k = (now - f.t) / 800, crit = f.col === 'crit', x = (f.x - cx) * TS + 8, y = (f.y - cy) * TS + 2 - k * (crit ? 14 : 10);
     // crítico: letra maior, que salta um pouco ao aparecer
     if (crit) ctx.font = `${k < 0.15 ? 13 : 11}px "Departure Mono", monospace`;
@@ -11271,12 +11305,16 @@ const DEATHS = {
     // v74: Âncora de sombra (st.p.anchor = { x, y, left }): runa lilás no chão onde vais regressar, com os turnos que faltam em pontos; nunca vermelha
     if (st.p && st.p.anchor) {
       const A = st.p.anchor, [px, py] = at(A.x, A.y), cx = px + TS / 2, cy = py + TS / 2 + 2, pu = .5 + .5 * Math.sin(now / 320);
+      const amk = typeof EFEITOS !== 'undefined' && EFEITOS.anchorMark && FXV.anc === 'P' ? EFEITOS.anchorMark(ctx, A, cx, cy, now, S.heroCopy, HS, OX, OY) : null; /* v0.14.3: a poça de sombra no chão (js/efeitos.js) */
+      if (amk) lights.push({ x: cx, y: cy - 4, r: 20, int: .35, col: amk, tint: .2, s: 0 });
+      else {
       ctx.globalAlpha = .22 + .1 * pu; ctx.fillStyle = '#9a7ad0'; ctx.beginPath(); ctx.ellipse(cx, cy, 7, 3.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
       const G = ['..#..', '.###.', '..#..', '..#..', '#.#.#', '.###.'], gx = cx - 2, gy = cy - 9 - Math.round(pu);
       ctx.fillStyle = '#0a0810'; G.forEach((r, yy) => { for (let xx = 0; xx < 5; xx++) if (r[xx] === '#') ctx.fillRect(gx + xx - 1, gy + yy - 1, 3, 3); });
       ctx.fillStyle = '#d8c0ff'; G.forEach((r, yy) => { for (let xx = 0; xx < 5; xx++) if (r[xx] === '#') ctx.fillRect(gx + xx, gy + yy, 1, 1); });
       const n = Math.max(0, Math.min(5, A.left | 0)); for (let k = 0; k < n; k++) { const dx = Math.round(cx - (n * 3 - 1) / 2) + k * 3; ctx.fillStyle = '#0a0810'; ctx.fillRect(dx - 1, cy + 3, 4, 3); ctx.fillStyle = k === 0 && n <= 1 && Math.floor(now / 250) % 2 ? '#ffffff' : '#c8a8ff'; ctx.fillRect(dx, cy + 4, 2, 1); }
       lights.push({ x: cx, y: cy - 4, r: 20, int: .35, col: '#b08ad8', tint: .2, s: 0 });
+      }
     }
     // v62: marca do Carrasco (st.p.markN = turnos até ao golpe): machado vermelho e a contagem por cima do herói (perigo: ícone e número)
     if (st.p && st.p.markN > 0) {
@@ -11617,11 +11655,14 @@ const DEATHS = {
         return;
       }
       S.deadDone = false;
+      const HM = typeof EFEITOS !== 'undefined' && EFEITOS.heroMod ? EFEITOS.heroMod(now) : null; /* v0.14.3: no teletransporte o herói some (os píxeis do js/efeitos.js desenham-no); antes do Rodopio A encolhe 1 fotograma */
+      if (HM && HM.hide) return;
       const wfl = p.flash && now < p.flash - 210 ? .85 : 0; let r;
       const veil = p.veilT > 0, va = veil ? .34 + .1 * Math.sin(now / 170) + (Math.floor(now / 90) % 23 === 0 ? -.18 : 0) : 1; // v63: Véu, herói meio transparente a tremeluzir, com um contorno de fumo
       if (veil) { smartHalf(); const sm = tintAny(HC, '#b8a8e8'); ctx.globalAlpha = .22 + .08 * Math.sin(now / 240); for (const [a2, b2] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) ctx.drawImage(sm, 0, 0, HS, HS, dx + a2, dy + b2, HS, HS); ctx.globalAlpha = 1;
         for (let k = 0; k < 4; k++) { const q = ((now / 1300) + k / 4) % 1, wx = sx - 6 + k * 4 + Math.round(Math.sin(now / 300 + k) * 2), wy = sy - 2 - q * 22; ctx.fillStyle = 'rgba(190,176,236,' + (1 - q) * .55 + ')'; ctx.fillRect(Math.round(wx), Math.round(wy), 2, 2); } }
-      if (HFX.sq || HFX.dx) { const data = smartHalf(), s2 = HFX.sq > 0 ? 1 : HFX.sq < 0 ? -1 : 0, x2 = dx + HFX.dx - s2, y2 = dy + Math.round(HFX.sq * .9), w2 = HS + s2 * 2, h2 = HS - HFX.sq; ctx.globalAlpha = va; ctx.drawImage(HC, 0, 0, HS, HS, x2, y2, w2, h2); ctx.globalAlpha = 1; if (wfl) { ctx.globalAlpha = wfl; ctx.drawImage(tintAny(HC, '#ffffff'), 0, 0, HS, HS, x2, y2, w2, h2); ctx.globalAlpha = 1; } r = { base: HC, data, s2: 1, w: HS }; } // v57: recuo e squash (só aspeto)
+      if (HM && HM.sx) { const data = smartHalf(), w2 = Math.round(HS * HM.sx), h2 = Math.round(HS * HM.sy), fy = dy + OY * .5; ctx.globalAlpha = va; ctx.drawImage(HC, 0, 0, HS, HS, Math.round(dx + (HS - w2) / 2), Math.round(fy - OY * .5 * HM.sy), w2, h2); ctx.globalAlpha = 1; r = { base: HC, data, s2: 1, w: HS }; }
+      else if (HFX.sq || HFX.dx) { const data = smartHalf(), s2 = HFX.sq > 0 ? 1 : HFX.sq < 0 ? -1 : 0, x2 = dx + HFX.dx - s2, y2 = dy + Math.round(HFX.sq * .9), w2 = HS + s2 * 2, h2 = HS - HFX.sq; ctx.globalAlpha = va; ctx.drawImage(HC, 0, 0, HS, HS, x2, y2, w2, h2); ctx.globalAlpha = 1; if (wfl) { ctx.globalAlpha = wfl; ctx.drawImage(tintAny(HC, '#ffffff'), 0, 0, HS, HS, x2, y2, w2, h2); ctx.globalAlpha = 1; } r = { base: HC, data, s2: 1, w: HS }; } // v57: recuo e squash (só aspeto)
       else r = putChar(ctx, .5, dx, dy, wfl, va);
       if (full) reveal('hero', r, dx + (HFX.dx || 0), dy, true);
       if (!S.heroCopy) S.heroCopy = mkC(HS, HS)[0]; { const hg = S.heroCopy.getContext('2d'); hg.clearRect(0, 0, HS, HS); hg.drawImage(r.base, 0, 0); }
@@ -11717,7 +11758,7 @@ const DEATHS = {
     ctx.globalAlpha = 1;
     // projéteis, explosões e raios do jogo (desenho antigo, já em píxeis de arte)
     // v48h: efeitos das habilidades ao estilo do remake (js/efeitos.js); o resto continua no drawFx
-    const efx = typeof EFEITOS !== 'undefined' ? EFEITOS.before({ now, at, WX, WY, parts: S.parts, glows, hero: { x: HX, y: HY }, shake: ms => { shakeUntil = Math.max(shakeUntil, now + ms); }, ghost: (gx, gy, a, tint) => { if (!S.heroCopy) return; ctx.globalAlpha = a; ctx.drawImage(tint ? tintAny(S.heroCopy, tint) : S.heroCopy, 0, 0, HS, HS, Math.round(gx - OX / 2), Math.round(gy - OY / 2), HS, HS); ctx.globalAlpha = 1; } }) : null;
+    const efx = typeof EFEITOS !== 'undefined' ? EFEITOS.before({ now, at, WX, WY, hc: S.heroCopy, HS, OX, OY, parts: S.parts, glows, hero: { x: HX, y: HY }, shake: ms => { shakeUntil = Math.max(shakeUntil, now + ms); }, ghost: (gx, gy, a, tint) => { if (!S.heroCopy) return; ctx.globalAlpha = a; ctx.drawImage(tint ? tintAny(S.heroCopy, tint) : S.heroCopy, 0, 0, HS, HS, Math.round(gx - OX / 2), Math.round(gy - OY / 2), HS, HS); ctx.globalAlpha = 1; } }) : null;
     drawFx(now, cx, cy);
     if (st.screen === 'play' && !st.dying && drawFx.stairs >= 0 && st.seen[drawFx.stairs]) { const [sx, sy] = at(drawFx.stairs % W, (drawFx.stairs / W) | 0); holes.push([sx + 2, sy - 12, 12, 9, 0.85]); } // v56 (daltonismo): a seta das escadas fica fora da escuridão, para o contorno e o núcleo claro se lerem
     if (efx) EFEITOS.after(efx, now);
@@ -11780,6 +11821,7 @@ const DEATHS = {
     floats = floats.filter(f => real - f.t < 800);
     lg.textAlign = 'center'; lg.textBaseline = 'middle'; lg.lineJoin = 'round';
     for (const f of floats) {
+      if (real < f.t) continue; /* v0.14.3: o Rodopio atrasa o número de cada inimigo até o giro lá chegar */
       const k = (real - f.t) / 800, crit = f.col === 'crit', word = /^[A-Za-zÀ-ÿ+]/.test(f.txt) && !/^[+-]?\d/.test(f.txt), rise = easeOut(Math.min(1, k * 1.4)) * 12 + (f.n || 0) * 8; // v65: f.n = números na mesma casa há pouco; cada um sobe 8 px
       const sz = Math.round(KD * (crit && !word ? 9 : 7) * (k < .1 ? 1 + (0.1 - k) * 4 : 1)), x = D((f.x - cx) * TS + 8), y = D((f.y - cy) * TS + 2 - rise);
       lg.font = `700 ${sz}px Georgia, 'Times New Roman', serif`; lg.globalAlpha = k > .65 ? 1 - (k - .65) / .35 : 1;
@@ -12537,15 +12579,84 @@ function coreMini(p) {
    Passo arcano B, Relâmpago B, Flecha B, Tiro perfurante C, Rolamento C, Tiro atordoante B, Chuva de flechas B.
    Só desenho: o dano, os turnos e os tempos ficam iguais. */
 const EFEITOS = (() => {
-  const AB = { abRodopio: 'spin', abEsmagar: 'smash', abMuralha: 'shield', abInvestida: 'charge', abGrito: 'shout', abFogo: 'fire', abGelo: 'ice', abCura: 'heal', abPasso: 'dash', abRaio: 'zap', abFlecha: 'arrow', abPerfurante: 'pierce', abRolamento: 'roll', abAtordoar: 'stun', abChuva: 'rain' };
+  const AB = { abRodopio: 'spin', anchorUse: 'anchor', abEsmagar: 'smash', abMuralha: 'shield', abInvestida: 'charge', abGrito: 'shout', abFogo: 'fire', abGelo: 'ice', abCura: 'heal', abPasso: 'dash', abRaio: 'zap', abFlecha: 'arrow', abPerfurante: 'pierce', abRolamento: 'roll', abAtordoar: 'stun', abChuva: 'rain' };
   const live = [];
+  // v0.14.3 (Imagem): Rodopio e teletransporte novos. FXV escolhe a variante ('old' é o desenho anterior)
+  const FXV = window.FXV = window.FXV || { spin: 'B', passo: 'A', anc: 'P' }; // escolha do utilizador (v0.14.3): Rodopio B, Passo arcano A, Âncora P (poça de sombra)
+  const RM = () => typeof reduceMotion === 'function' && reduceMotion();
+  const VIO = ['#7a3aa0', '#b06ad0', '#e0b8f0'], DARK = ['#1a1024', '#2a1838', '#8a4ac0'];
+  let curA = null;
+  // os píxeis do herói (a cópia a meia escala do último fotograma antes de sumir), com uma chave de 0 a 1: os de baixo saem primeiro
+  function heroPix(A) {
+    const c = A.hc; if (!c) return null; const n = A.HS, d = c.getContext('2d').getImageData(0, 0, n, n).data, out = [];
+    let y0 = n, y1 = 0; for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (d[(y * n + x) * 4 + 3] > 40) { y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+    for (let y = y0; y <= y1; y++) for (let x = 0; x < n; x++) { const i = (y * n + x) * 4; if (d[i + 3] <= 40) continue; const h = Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5) % 1, row = (y - y0) / Math.max(1, y1 - y0); out.push({ x, y, k: (1 - row) * .7 + h * .3, col: `rgb(${d[i]},${d[i + 1]},${d[i + 2]})` }); }
+    return out;
+  }
+  // desenha os píxeis com chave acima de q; out = a desfazer-se (os que passam o limiar sobem como partículas), senão a juntar-se
+  function drawPix(L, sx, sy, q, P, dark, out) {
+    const A = curA, pix = L.pix; if (!pix) return; const bx = sx - A.OX / 2, by = sy - A.OY / 2, wx = bx - A.WX(0), wy = by - A.WY(0), last = out ? (L.qo ?? 0) : 1;
+    for (const p of pix) {
+      if (p.k > q) { ctx.fillStyle = p.k - q < .08 ? P[2] : (dark ? P[1] : p.col); ctx.fillRect(Math.round(bx + p.x), Math.round(by + p.y), 1, 1); }
+      else if (out && p.k > last && (p.x + p.y) % 3 === 0) A.parts.push({ x: wx + p.x, y: wy + p.y, vx: R1(-10, 10), vy: R1(-70, -40), life: R1(.22, .34), max: .34, col: dark ? (p.x % 2 ? P[0] : P[2]) : P[(p.x + p.y) % 2 ? 1 : 2], t: 'spark', add: !dark && p.x % 5 === 0, s: dark ? 2 : 1 });
+    }
+    if (out) L.qo = q;
+  }
+  // o herói espremido na horizontal (fenda): s = 1 inteiro, s = 0 uma linha
+  function squeeze(sx, sy, s, dark) {
+    const A = curA; if (!A.hc || s <= 0) return; const w = Math.max(1, Math.round(A.HS * s));
+    ctx.drawImage(A.hc, 0, 0, A.HS, A.HS, Math.round(sx - w / 2), Math.round(sy - A.OY / 2), w, A.HS);
+  }
+  // o momento (ms depois do golpe) em que o giro passa pelo inimigo em (x, y): as faíscas e o número de dano saem aí
+  const spinAt = (hx, hy, x, y, v) => { const a0 = -Math.PI / 2, ang = Math.atan2((y - hy) * .6, x - hx), turn = ((ang - a0) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2); return (v === 'A' ? 50 : 20) + turn / (Math.PI * 2.2) * 250; };
+  // v0.14.3 (Imagem, escolha do utilizador: P): a Âncora deixa uma poça de sombra no chão; ao voltar, o herói afunda onde está e sobe da poça
+  const AC = { blk: '#07060c', deep: '#1a2350', ice: '#9fd8ff', smoke: '#26305a', smoke2: '#4a5a9a' };
+  const ANC_LIGHT = { P: '#6f9cff' };
+  const ANC_T0 = new WeakMap();
+  const P1 = (g, x, y, w, h, col, a) => { if (a <= 0) return; g.globalAlpha = Math.min(1, a); g.fillStyle = col; g.fillRect(Math.round(x), Math.round(y), w, h); };
+  // a boca no chão em (cx, cy) (centro da casa, no chão): ap = 0..1 a abrir, t = relógio (parado com movimento reduzido), boost = clarão extra
+  function ancMouth(g, v, cx, cy, ap, t, boost = 0) {
+    if (ap <= 0) return;
+    if (v === 'P') { // poça de sombra com o rebordo gelado a cintilar e fumo azul-escuro a subir devagar
+      const rx = 7 * ap, ry = 3.2 * ap;
+      for (let yy = -Math.ceil(ry); yy <= Math.ceil(ry); yy++) { const w = Math.round(rx * Math.sqrt(Math.max(0, 1 - (yy / ry) ** 2))); P1(g, cx - w, cy + yy, w * 2 + 1, 1, AC.deep, .92); if (w > 2) P1(g, cx - w + 2, cy + yy, w * 2 - 3, 1, AC.blk, .9); }
+      for (let k = 0; k < 24; k++) { const a = k / 24 * Math.PI * 2, sh = .35 + .65 * Math.max(0, Math.sin(a * 3 + t / 220)); P1(g, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, 1, 1, AC.ice, (sh * .8 + boost) * ap); }
+      for (let k = 0; k < 5; k++) { const q = ((t / 1700) + k / 5) % 1, x = cx - 5 + k * 2.5 + Math.sin(t / 380 + k * 2) * 1.5, y = cy - q * 15; P1(g, x, y, q < .5 ? 2 : 1, 2, q < .4 ? AC.smoke : AC.smoke2, (.8 - q * .8) * ap); }
+    }
+  }
+  // a marca da âncora lançada (chamada pelo visual.js): a poça e os turnos que faltam em pontos
+  function anchorMark(g, A, cx, cy, now, hc, HS, OX, OY) {
+    const v = FXV.anc, calm = RM(), t = calm ? 0 : now;
+    if (!ANC_T0.has(A)) ANC_T0.set(A, now); /* fora do st.p.anchor, para não ir para a gravação */
+    const born = now - ANC_T0.get(A), ap = calm ? 1 : Math.min(1, born / 260);
+    ancMouth(g, v, cx, cy, ap, t, born < 260 && !calm ? .4 * (1 - born / 260) : 0, A.left);
+    const n = Math.max(0, Math.min(5, A.left | 0)); for (let k = 0; k < n; k++) { const dx = Math.round(cx - (n * 3 - 1) / 2) + k * 3; P1(g, dx - 1, cy + 4, 4, 3, '#0a0810', 1); P1(g, dx, cy + 5, 2, 1, k === 0 && n <= 1 && Math.floor(now / 250) % 2 ? '#ffffff' : AC.ice, 1); }
+    g.globalAlpha = 1;
+    return ANC_LIGHT[v];
+  }
+  // o herói local durante os efeitos: escondido no teletransporte (os píxeis desenham-no), encolhido 1 fotograma antes do Rodopio A
+  function heroMod(now) {
+    for (const L of live) {
+      const age = now - L.t0;
+      if ((L.id === 'dash' || L.id === 'anchor') && FXV[L.id === 'anchor' ? 'anc' : 'passo'] !== 'old' && L.fx.some(e => e.k === 'trail')) {
+        const sink = L.id === 'anchor' && FXV.anc === 'P', tr = L.fx.find(e => e.k === 'trail');
+        if (age < (RM() ? 90 : sink ? 250 : 180) && (!sink || (st.p.x === tr.x1 && st.p.y === tr.y1))) return { hide: true };
+      }
+      if (L.id === 'spin' && FXV.spin === 'A' && !RM() && age < 50) return { sx: 1.1, sy: .86 };
+    }
+    return null;
+  }
   for (const [fn, id] of Object.entries(AB)) {
     const f = window[fn]; if (typeof f !== 'function') continue;
     window[fn] = function (...a) {
       const n0 = fx.length, p = st.p, hx = p.x, hy = p.y, t0 = performance.now();
+      const nf0 = floats.length, near = st.foes.filter(o => !o.ally && Math.max(Math.abs(o.x - hx), Math.abs(o.y - hy)) === 1).map(o => ({ x: o.x, y: o.y })); // v0.14.3: para o Rodopio acender cada um pela ordem do giro
       const r = f.apply(this, a);
-      const mine = fx.slice(n0); mine.forEach(e => { e.ab = id; });
-      if (mine.length || id === 'shield') live.push({ id, t0, fx: mine, hx, hy, face: p.dir === 'l' ? -1 : 1, flags: {} });
+      let mine = fx.slice(n0);
+      if (id === 'spin' && FXV.spin !== 'old' && !RM()) for (const fl of floats.slice(nf0)) if (near.some(o => o.x === fl.x && o.y === fl.y)) fl.t += spinAt(hx, hy, fl.x, fl.y, FXV.spin); // v0.14.3: cada número sai quando o giro chega a esse inimigo (só o desenho; o hp já mudou)
+      if (id === 'anchor') { mine = mine.filter(e => e.k === 'trail'); if (!mine.length || FXV.anc === 'old') return r; } // v0.14.3: o lançar da âncora e a runa Explosão ficam com o drawFx
+      mine.forEach(e => { e.ab = id; });
+      if (mine.length || id === 'shield') live.push({ id, t0, fx: mine, hx, hy, near, face: p.dir === 'l' ? -1 : 1, flags: {} });
       return r;
     };
   }
@@ -12560,6 +12671,7 @@ const EFEITOS = (() => {
   }
   // antes do drawFx: tira do fx o que é das habilidades (fica guardado) e desenha os efeitos novos
   function before(A) {
+    curA = A;
     const stash = fx.filter(e => e.ab); fx = fx.filter(e => !e.ab);
     const g = ctx, now = A.now, C = (x, y) => { const [a, b] = A.at(x, y); return [a + 8, b + 8]; }, W2 = (wx, wy) => [A.WX(wx), A.WY(wy)];
     const part = o => A.parts.push(o), glow = (x, y, col, r, a) => A.glows.push([x, y, col, r, a]);
@@ -12570,11 +12682,93 @@ const EFEITOS = (() => {
       const E = k => L.fx.find(e => e.k === k), Es = k => L.fx.filter(e => e.k === k);
       const qOf = (e, ext = 0) => (now - e.t0) / ((e.until - e.t0) + ext);
       switch (L.id) {
-        case 'spin': { // C: três rastos da espada a girar, pó em anel e um círculo raspado no chão
-          const e = E('spin'); if (!e) break; const [sx, sy] = C(e.x, e.y), q = (now - e.t0) / 420;
-          if (q >= 0 && q < 1) for (let k = 0; k < 3; k++) { const a = q * Math.PI * 2.4 - k * .5; g.globalAlpha = .75 - k * .2; g.strokeStyle = '#d2d5da'; g.beginPath(); g.moveTo(sx, sy - 2); g.lineTo(sx + Math.cos(a) * 14, sy - 2 + Math.sin(a) * 10); g.stroke(); g.globalAlpha = 1; }
-          if (once('pó')) for (let k = 0; k < 18; k++) { const a = k / 18 * Math.PI * 2; part({ x: e.x * TS + 8 + Math.cos(a) * 9, y: e.y * TS + 13 + Math.sin(a) * 4, vx: Math.cos(a) * 26, vy: Math.sin(a) * 10, life: .7, max: .7, col: '#5d566c', t: 'dust', s: 2 }); }
-          if (age < 1400) ring(sx, sy + 5, 12, 5, '#0b0a10', .4 * (1 - age / 1400));
+        case 'spin': { // v0.14.3: A crescentes com antecipação, B ciclone no chão; os acertos acendem pela ordem do giro
+          const e = E('spin'); if (!e) break; const [sx, sy] = C(e.x, e.y), v = FXV.spin, rm = RM();
+          if (v === 'old') { const q = (now - e.t0) / 420;
+            if (q >= 0 && q < 1) for (let k = 0; k < 3; k++) { const a = q * Math.PI * 2.4 - k * .5; g.globalAlpha = .75 - k * .2; g.strokeStyle = '#d2d5da'; g.beginPath(); g.moveTo(sx, sy - 2); g.lineTo(sx + Math.cos(a) * 14, sy - 2 + Math.sin(a) * 10); g.stroke(); g.globalAlpha = 1; }
+            if (once('pó')) for (let k = 0; k < 18; k++) { const a = k / 18 * Math.PI * 2; part({ x: e.x * TS + 8 + Math.cos(a) * 9, y: e.y * TS + 13 + Math.sin(a) * 4, vx: Math.cos(a) * 26, vy: Math.sin(a) * 10, life: .7, max: .7, col: '#5d566c', t: 'dust', s: 2 }); }
+            if (age < 1400) ring(sx, sy + 5, 12, 5, '#0b0a10', .4 * (1 - age / 1400));
+            break; }
+          const a0 = L.face > 0 ? -Math.PI / 2 : -Math.PI / 2, T0 = rm ? 0 : v === 'A' ? 50 : 20, DUR = rm ? 160 : 250;
+          if (rm) { // versão curta: um anel que se apaga e os acertos todos de uma vez
+            if (age < DUR) { const f = 1 - age / DUR; ring(sx, sy - 4, 15, 9, '#ffffff', .8 * f); ring(sx, sy - 4, 14, 8, '#d2d5da', .5 * f); }
+            for (const [i, n] of (L.near || []).entries()) if (once('h' + i, 30)) hitFx(n.x, n.y, v);
+            break;
+          }
+          const u = (age - T0) / DUR;
+          if (v === 'A') {
+            if (u >= 0 && u < 1.2) for (let k = 0; k < 3; k++) { // três crescentes: o da frente forte, os de trás a apagar
+              const head = a0 + Math.min(1, u) * Math.PI * 2.2 - k * .7, fade = (u > .8 ? Math.max(0, 1 - (u - .8) / .4) : 1) * (1 - k * .32);
+              for (let s = 0; s < 22; s++) { const a = head - s * .07, w = s < 8 ? 2 : 1, rx = 16 - s * .1, ry = 10 - s * .06, xx = sx + Math.cos(a) * rx, yy = sy - 4 + Math.sin(a) * ry; g.globalAlpha = Math.min(1, fade * (1.25 - s / 22)); px(g, xx, yy, w, w, s < 7 ? '#ffffff' : '#e8dcc4'); if (s < 12) { g.globalAlpha *= .6; px(g, sx + Math.cos(a) * (rx - 2), sy - 4 + Math.sin(a) * (ry - 1.5), 1, 1, '#d2d5da'); } }
+              g.globalAlpha = 1;
+            }
+            if (u >= 0 && u < 1) glow(sx, sy - 4, '#ffffff', 16, .18 * (1 - u));
+            if (once('pó', T0 + 90)) for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2; part({ x: e.x * TS + 8 + Math.cos(a) * 9, y: e.y * TS + 13 + Math.sin(a) * 4, vx: Math.cos(a) * 30, vy: Math.sin(a) * 11, life: .5, max: .5, col: '#5d566c', t: 'dust', s: 2 }); }
+          } else { // B: o vento rasa o chão em duas elipses que abrem, riscos de velocidade e cascalho atirado
+            if (u >= 0 && u < 1.1) { const ez = 1 - Math.pow(1 - Math.min(1, u), 2), f = Math.max(0, 1 - u / 1.1), rot = u * Math.PI * 3;
+              for (const [rx0, col, span, off, w] of [[11, '#ffffff', 3.8, 0, 2], [8, '#a8adb8', 3.2, Math.PI, 1]]) { const rx = rx0 + 8 * ez, ry = rx * .42;
+                for (let s = 0; s < 30; s++) { const a = rot + off + s / 30 * span; g.globalAlpha = Math.min(1, f * (s / 30) * 1.4); px(g, sx + Math.cos(a) * rx, sy + 3 + Math.sin(a) * ry, 2, w, col); } }
+              for (let k = 0; k < 6; k++) { const a = rot * 1.4 + k * Math.PI / 3, r = 15, x0 = sx + Math.cos(a) * r, y0 = sy - 6 + Math.sin(a) * r * .55; g.globalAlpha = .7 * f; for (let s = 0; s < 4; s++) px(g, x0 - Math.sin(a) * s * 1.5, y0 + Math.cos(a) * s * .8, 1, 1, '#ffffff'); }
+              g.globalAlpha = 1; }
+            if (once('cascalho', T0 + 40)) { A.shake(120); for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; part({ x: e.x * TS + 8 + Math.cos(a) * 6, y: e.y * TS + 13 + Math.sin(a) * 3, z: 2, vx: -Math.sin(a) * 40 + Math.cos(a) * 20, vy: Math.cos(a) * 16 + Math.sin(a) * 8, vz: R1(20, 50), life: .6, max: .6, col: ['#5d566c', '#8a8f9a', '#3a3448'][k % 3], t: 'debris' }); } }
+          }
+          for (const [i, n] of (L.near || []).entries()) { // pela ordem do giro: cada inimigo acende quando o crescente passa por ele
+            const at2 = spinAt(L.hx, L.hy, n.x, n.y, v);
+            if (once('h' + i, at2)) { hitFx(n.x, n.y, v); if (v === 'A' && i === 0) A.shake(90); }
+          }
+          for (const h of L.hits || []) if (now - h.t < 90) { const [hx2, hy2] = C(h.x, h.y), f = 1 - (now - h.t) / 90; if (h.v === 'A') { g.globalAlpha = f; px(g, hx2 - 3, hy2 - 4, 7, 1, '#ffffff'); px(g, hx2, hy2 - 7, 1, 7, '#ffffff'); g.globalAlpha = 1; } else ring(hx2, hy2 - 4, 3 + (1 - f) * 5, 2 + (1 - f) * 3, '#ffffff', f); }
+          function hitFx(x, y, v2) { (L.hits = L.hits || []).push({ x, y, t: now, v: v2 }); glow(...C(x, y), '#ffffff', 5, .3); if (!rm) for (let k = 0; k < 6; k++) { const a = Math.random() * Math.PI * 2, s = R1(25, 55); part({ x: x * TS + 8, y: y * TS + 6, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.15, .25), max: .25, col: k % 2 ? '#ffffff' : '#f2c14e', t: 'spark', add: k < 2 }); } }
+          break;
+        }
+        case 'dash': case 'anchor': { // v0.14.3: A píxeis que sobem e voltam a juntar-se; B uma fenda que engole e devolve o herói. A Âncora é a versão sombria
+          const tr = E('trail'); if (!tr) break; const dark = L.id === 'anchor', v = FXV[dark ? 'anc' : 'passo'], rm = RM();
+          if (dark && v === 'P') { // v0.14.3: afunda na poça onde está e sobe da poça da âncora; sem gastar turno
+            const [ox, oy] = W2(tr.x0 * TS + 8, tr.y0 * TS + 13), [tx, ty] = W2(tr.x1 * TS + 8, tr.y1 * TS + 13);
+            if (rm) { if (age >= 90 && age < 240) ancMouth(g, v, tx, ty - 3, 1 - (age - 90) / 150, 0, .3); break; }
+            if (!L.dk && A.hc) { const c = document.createElement('canvas'); c.width = c.height = A.HS; const cg = c.getContext('2d'); cg.drawImage(A.hc, 0, 0); cg.globalCompositeOperation = 'source-in'; cg.fillStyle = AC.deep; cg.fillRect(0, 0, A.HS, A.HS); L.dk = c; L.hc0 = document.createElement('canvas'); L.hc0.width = L.hc0.height = A.HS; L.hc0.getContext('2d').drawImage(A.hc, 0, 0); const d = cg.getImageData(0, 0, A.HS, A.HS).data; let top = A.HS; for (let i = 3; i < d.length; i += 4) if (d[i] > 40) { top = Math.floor((i >> 2) / A.HS); break; } L.hh = Math.max(8, A.OY / 2 - top + 2); }
+            const sunk = (sx, sy, d, dk) => { if (!L.hc0) return; const fy = A.OY / 2, h = Math.round(fy - d); if (h <= 0) return; const X = Math.round(sx - A.OX / 2), Y = Math.round(sy - fy + d);
+              g.drawImage(L.hc0, 0, 0, A.HS, h, X, Y, A.HS, h); if (dk > 0) { g.globalAlpha = Math.min(1, dk); g.drawImage(L.dk, 0, 0, A.HS, h, X, Y, A.HS, h); g.globalAlpha = 1; } };
+            const oAp = age < 40 ? age / 40 : age < 110 ? 1 : Math.max(0, 1 - (age - 110) / 90), k = Math.min(1, age / 110);
+            ancMouth(g, v, ox, oy - 3, oAp, now, .3);
+            if (age < 110) sunk(ox, oy, k * k * L.hh, k * .9);
+            const tAp = age < 80 ? 0 : age < 110 ? (age - 80) / 30 : age < 250 ? 1 : Math.max(0, 1 - (age - 250) / 150);
+            ancMouth(g, v, tx, ty - 3, tAp, now, age > 110 && age < 300 ? .5 : 0);
+            if (age >= 110 && age < 250) { const e = 1 - Math.pow(1 - (age - 110) / 140, 2); sunk(tx, ty, (1 - e) * L.hh, (1 - e) * .6); }
+            { const drip = (wx, wy) => part({ x: wx + R1(-4, 4), y: wy - R1(0, 6), vx: R1(-4, 4), vy: R1(30, 60), life: R1(.12, .22), max: .22, col: Math.random() < .3 ? AC.ice : '#2c3a78', t: 'spark', s: 1 });
+              if (age < 110 && Math.random() < .7) drip(tr.x0 * TS + 8, tr.y0 * TS + 10); if (age >= 110 && age < 230 && Math.random() < .6) drip(tr.x1 * TS + 8, tr.y1 * TS + 6);
+              for (const [t0r, rx2, ry2] of [[0, ox, oy], [110, tx, ty]]) { const q = (age - t0r) / 220; if (q >= 0 && q < 1) { ring(rx2, ry2 - 3, 7 + q * 7, 3.2 + q * 3, AC.ice, .7 * (1 - q)); if (q > .25) ring(rx2, ry2 - 3, 7 + (q - .25) * 6, 3.2 + (q - .25) * 2.6, AC.ice, .4 * (1 - q)); } } }
+            if (once('sai', 110)) { const wx = tr.x1 * TS + 8, wy = tr.y1 * TS + 10;
+              for (let i = 0; i < 10; i++) part({ x: wx + R1(-5, 5), y: wy, vx: R1(-8, 8), vy: R1(-45, -25), life: R1(.35, .55), max: .55, col: i % 2 ? AC.smoke2 : AC.smoke, t: 'dust', s: 2 });
+              L.em = now; }
+            if (L.em && now - L.em < 140) glow(tx, ty - 8, ANC_LIGHT[v], 14, .4 * (1 - (now - L.em) / 140));
+            break;
+          }
+          if (v === 'old') { if (dark) break; const wx0 = tr.x0 * TS + 8, wy0 = tr.y0 * TS + 6, wx1 = tr.x1 * TS + 8, wy1 = tr.y1 * TS + 6;
+            if (once('sai')) for (let k = 0; k < 18; k++) { const a = Math.random() * Math.PI * 2, s = R1(16, 40); part({ x: wx0, y: wy0, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.3, .5), max: .5, col: k % 2 ? '#b06ad0' : '#e0b8f0', t: 'spark', add: true }); }
+            if (once('chega', 200)) { for (let k = 0; k < 18; k++) { const a = Math.random() * Math.PI * 2, s = R1(20, 50); part({ x: wx1, y: wy1, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.25, .4), max: .4, col: k % 2 ? '#b06ad0' : '#e0b8f0', t: 'spark', add: true }); } L.flash = now; }
+            if (L.flash && now - L.flash < 250) { const [x1, y1] = C(tr.x1, tr.y1); glow(x1, y1 - 2, '#e0b8f0', 18, .6 * (1 - (now - L.flash) / 250)); }
+            break; }
+          const P = dark ? DARK : VIO, [ox, oy] = W2(tr.x0 * TS + 8, tr.y0 * TS + 13), [tx, ty] = W2(tr.x1 * TS + 8, tr.y1 * TS + 13);
+          if (!L.pix) L.pix = heroPix(A);
+          if (rm) { // versão curta: some, e um anel e um clarão curtos no destino
+            if (age >= 90 && age < 240) { const f = 1 - (age - 90) / 150; ring(tx, ty - 8, 10 + (1 - f) * 4, 6 + (1 - f) * 2, P[2], .8 * f); glow(tx, ty - 8, P[2], 14, .4 * f); }
+            break;
+          }
+          if (v === 'A') {
+            if (age < 90) drawPix(L, ox, oy, age / 90, P, dark, true); // desfaz-se de baixo para cima e os píxeis sobem
+            if (age >= 80 && age < 140) { const f = 1 - (age - 80) / 60; g.globalAlpha = .55 * f; g.strokeStyle = P[2]; g.lineWidth = 1; g.beginPath(); g.moveTo(ox, oy - 8); g.lineTo(tx, ty - 8); g.stroke(); g.globalAlpha = 1; for (const k of [1, 2]) A.ghost(ox + (tx - ox) * k / 3, oy + (ty - oy) * k / 3, .3 * f / k, dark ? '#2a1838' : '#b06ad0'); }
+            if (age >= 110 && age < 180) { const q = (age - 110) / 70; drawPix(L, tx, ty, 1 - q, P, dark, false); const r = 16 * (1 - q) + 2; ring(tx, ty - 8, r, r * .6, P[2], .8); }
+            if (once('junta', 110)) for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2, wx = tr.x1 * TS + 8 + Math.cos(a) * 15, wy = tr.y1 * TS + 5 + Math.sin(a) * 9; part({ x: wx, y: wy, vx: -Math.cos(a) * 200, vy: -Math.sin(a) * 120, life: .07, max: .07, col: P[k % 2 ? 1 : 2], t: 'spark', add: !dark && k % 3 === 0 }); }
+          } else {
+            const slit = (x, y, h, f) => { if (h <= 0) return; g.globalAlpha = f; px(g, x - 2, y - 8 - h / 2, 1, h, P[2]); px(g, x + 1, y - 8 - h / 2, 1, h, P[2]); px(g, x - 1, y - 8 - h / 2, 2, h, dark ? '#0b0610' : '#ffffff'); g.globalAlpha = 1; glow(x, y - 8, P[2], 10, (dark ? .25 : .5) * f); };
+            if (age < 110) slit(ox, oy, age < 40 ? 24 * age / 40 : age < 70 ? 24 : 24 * (1 - (age - 70) / 40), 1);
+            if (age < 70) squeeze(ox, oy, 1 - age / 70, dark);
+            for (let k = 1; k <= 3; k++) { const t2 = 60 + k * 15; if (age >= t2 && age < t2 + 60) { const f = 1 - (age - t2) / 60, x = ox + (tx - ox) * k / 4, y = oy - 8 + (ty - oy) * k / 4; g.globalAlpha = f; px(g, x - 1, y, 3, 1, P[2]); px(g, x, y - 1, 1, 3, P[2]); g.globalAlpha = 1; } }
+            if (age >= 90 && age < 220) slit(tx, ty, age < 120 ? 24 * (age - 90) / 30 : age < 170 ? 24 : 24 * (1 - (age - 170) / 50), 1);
+            if (age >= 110 && age < 180) squeeze(tx, ty, (age - 110) / 70, dark);
+          }
+          if (once('clarão', 180)) L.flash = now;
+          if (L.flash && now - L.flash < 120) glow(tx, ty - 8, P[2], 16, (dark ? .35 : .6) * (1 - (now - L.flash) / 120));
           break;
         }
         case 'smash': { // B: rachas no chão, pó em anel, pedras e o ecrã a tremer
@@ -12622,13 +12816,6 @@ const EFEITOS = (() => {
           if (Math.random() < .5) part({ x: e.x * TS + 8 + R1(-7, 7), y: e.y * TS + 13, vx: 0, vy: R1(-24, -12), life: .8, max: .8, col: Math.random() < .5 ? '#9ad070' : '#d8f4b0', t: 'ember', add: true });
           break;
         }
-        case 'dash': { // B: desfaz-se em partículas roxas e reaparece com um estalo de luz
-          const tr = E('trail'); if (!tr) break; const wx0 = tr.x0 * TS + 8, wy0 = tr.y0 * TS + 6, wx1 = tr.x1 * TS + 8, wy1 = tr.y1 * TS + 6;
-          if (once('sai')) for (let k = 0; k < 18; k++) { const a = Math.random() * Math.PI * 2, s = R1(16, 40); part({ x: wx0, y: wy0, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.3, .5), max: .5, col: k % 2 ? '#b06ad0' : '#e0b8f0', t: 'spark', add: true }); }
-          if (once('chega', 200)) { for (let k = 0; k < 18; k++) { const a = Math.random() * Math.PI * 2, s = R1(20, 50); part({ x: wx1, y: wy1, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.25, .4), max: .4, col: k % 2 ? '#b06ad0' : '#e0b8f0', t: 'spark', add: true }); } L.flash = now; }
-          if (L.flash && now - L.flash < 250) { const [x1, y1] = C(tr.x1, tr.y1); glow(x1, y1 - 2, '#e0b8f0', 18, .6 * (1 - (now - L.flash) / 250)); }
-          break;
-        }
         case 'zap': { // B: relâmpago branco e azul em cadeia, com clarões
           const e = E('zap'); if (!e) break; const q = (now - e.t0) / (e.until - e.t0); if (q < 0 || q >= 1) break;
           const P = e.pts.map(p2 => C(p2.x, p2.y));
@@ -12660,7 +12847,7 @@ const EFEITOS = (() => {
   }
   // depois do drawFx: volta a pôr no fx o que é das habilidades e ainda não acabou
   function after(stash, now) { fx = fx.concat(stash.filter(e => e.until > now)); }
-  return { before, after };
+  return { before, after, heroMod, anchorMark };
 })();
 
 </script>
