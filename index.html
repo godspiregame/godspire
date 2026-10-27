@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.12.0 (build 108). Fontes embutidas:
+<!-- GODSPIRE v0.12.1 (build 109). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -3290,7 +3290,7 @@ LANGS.en = {
   'LER O CÓDIGO DO COLEGA': 'SCAN YOUR PARTNER\'S CODE', 'LER O CÓDIGO': 'SCAN THE CODE', 'ESCOLHE A ARMA': 'CHOOSE YOUR WEAPON', 'O teu colega escolheu: {w}.': 'Your partner chose: {w}.',
   'O teu colega está a escolher.': 'Your partner is choosing.', 'À espera de {h}…': 'Waiting for {h}…', 'o teu colega': 'your partner', '{n} s': '{n} s', 'Não voltou.': 'They did not come back.',
   'Para ligar os 2 telemóveis, o jogo contacta um servidor STUN público (Google), que vê o endereço IP público; nenhum dado de jogo passa por ele.': 'To connect the 2 phones, the game contacts a public STUN server (Google), which sees your public IP address; no game data goes through it.',
-  'CONTINUAR SOZINHO': 'CONTINUE ALONE', 'ACABAR': 'END', 'Lê o código do teu colega.': 'Scan your partner\'s code.', 'VAGA {n} · faltam {m}': 'WAVE {n} · {m} left',
+  'CONTINUAR SOZINHO': 'CONTINUE ALONE', 'Política de privacidade': 'Privacy policy', 'ACABAR': 'END', 'Lê o código do teu colega.': 'Scan your partner\'s code.', 'VAGA {n} · faltam {m}': 'WAVE {n} · {m} left',
   'Fragmento de frasco': 'Flask shard', 'Ração de viagem': 'Travel ration',
   'O Rei já não reina.': 'The King reigns no more.', 'A masmorra lembra-se de quem a venceu.': 'The dungeon remembers who beat it.',
 };
@@ -3468,7 +3468,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.12.0', GAME_BUILD = 108;
+const GAME_SEMVER = '0.12.1', GAME_BUILD = 109;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -14209,7 +14209,7 @@ function renderOverlay() {
       <div class="tabs opt-tabs">${[['som', 'SOM'], ['imagem', 'IMAGEM'], ['controlos', 'CONTROLOS'], ['jogo', 'JOGO']].map(([k, n]) => `<button data-otab="${k}" aria-pressed="${tab === k}">${_t(n)}</button>`).join('')}</div>
       <div class="box opts-grid">${G[tab]}
       </div>
-      <p class="foot">GODSPIRE v${GAME_SEMVER} (${GAME_BUILD})<br>${_t('Forjado por Rune Weaver · design: Sábio · som: Mestre do Som')}<br>${_t('Fontes: Departure Mono (Helena Zhang) e Pixelify Sans (Stefie Justprince), licença SIL OFL 1.1')}</p>
+      <p class="foot">GODSPIRE v${GAME_SEMVER} (${GAME_BUILD})<br>${_t('Forjado por Rune Weaver · design: Sábio · som: Mestre do Som')}<br>${_t('Fontes: Departure Mono (Helena Zhang) e Pixelify Sans (Stefie Justprince), licença SIL OFL 1.1')}<br><a class="opt-priv" href="https://godspiregame.github.io/godspire/privacy.html#${langNow()}" target="_blank" rel="noopener">${_t('Política de privacidade')}</a></p>
       <div class="btn-row"><button class="box again" data-closeopts="1">${_t('VOLTAR')}</button>${st.optsBack === 'play' ? `<button class="box again" data-tochars="1">${_t('HERÓIS')}</button>` : ''}</div>
     </div>`;
   } else if (st.screen === 'shop') {
