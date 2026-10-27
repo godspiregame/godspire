@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.12.1 (build 109). Fontes embutidas:
+<!-- GODSPIRE v0.12.2 (build 110). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -3468,7 +3468,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.12.1', GAME_BUILD = 109;
+const GAME_SEMVER = '0.12.2', GAME_BUILD = 110;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -13531,7 +13531,8 @@ const CoopNet = (() => {
     if (pc) pc.addEventListener('connectionstatechange', () => { if (['failed', 'closed', 'disconnected'].includes(pc.connectionState) && ch.closed) ch.closed(pc.connectionState); });
     return ch;
   }
-  const opened = dc => new Promise((res, rej) => { if (dc.readyState === 'open') return res(); dc.onopen = () => res(); setTimeout(() => rej(new Error('tempo esgotado')), 60000); });
+  // v0.12.2 (OBS 86): sem prazo; ler os 2 códigos pode levar minutos e o anfitrião tem o CANCELAR
+  const opened = dc => new Promise(res => { if (dc.readyState === 'open') return res(); dc.onopen = () => res(); });
   // anfitrião (J1): cria a oferta; accept(códigoDoColega) fecha a ligação; ready = o canal aberto
   async function host() {
     const pc = new RTCPeerConnection({ iceServers: ICE }), dc = pc.createDataChannel('g', { ordered: true });
