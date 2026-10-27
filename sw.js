@@ -1,6 +1,6 @@
 /* GODSPIRE · sw.js (app instalável): rede primeiro, para cada versão nova chegar logo ao telemóvel;
-   sem rede, abre a última versão guardada. O tools/site.ps1 troca o 107 pelo número do build. */
-const CACHE = 'godspire-107';
+   sem rede, abre a última versão guardada. O tools/site.ps1 troca o 108 pelo número do build. */
+const CACHE = 'godspire-108';
 const FILES = ['./', './index.html', './manifest.webmanifest', './app-192.png', './app-512.png', './app-maskable-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
