@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.12.2 (build 110). Fontes embutidas:
+<!-- GODSPIRE v0.13.0 (build 111). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -774,6 +774,71 @@ html:not(.compact) #coopMate { margin-top: 6px; }
 .co-pause > b { font-family: var(--display); font-size: 14px; letter-spacing: .06em; color: var(--g3); }
 .co-pause > span { font-family: var(--display); font-size: 26px; line-height: 1; color: #9fd8ff; }
 .co-pause .btn-row { margin-top: 4px; width: 100%; }
+/* v0.13 ARENA, fluxo novo (Imagem; maqueta aprovada pelo utilizador): todos os ecras dentro de .ov-in.ar2 .ar2-NOME.
+   Escrito sempre como .ar2 .x, porque os nomes da maqueta (.opt, .box, .foot, .btn, .seg) chocam com os do jogo. Ouro so para o teu
+   e para o 1.o lugar; azul-claro para o servidor e o co-op; nunca vermelho */
+.ov-in.ar2 { --a2gold: #f2c14e; --a2blue: #9fd8ff; --a2box: #17141f; --a2line: #3a3448; --a2ink: #f0e6d2; --a2dim: #8f8796; display: flex; flex-direction: column; gap: 8px; max-width: 430px; width: 100%; margin: 0 auto; color: var(--a2ink); font-family: var(--body); }
+.ar2 .box { background: var(--a2box); border: 2px solid var(--a2line); border-radius: 8px; box-shadow: none; }
+.ar2 h2 { font-family: var(--display); font-size: 14px; letter-spacing: .08em; margin: 4px 0 0; text-align: center; }
+.ar2 .sub { color: var(--a2dim); font-size: 12px; text-align: center; margin: 0 0 2px; line-height: 1.4; }
+.ar2 .btn { font: inherit; font-family: var(--display); font-size: 11px; letter-spacing: .06em; color: var(--a2ink); background: var(--a2box); border: 2px solid var(--a2line); border-radius: 8px; padding: 10px; cursor: pointer; width: 100%; }
+.ar2 .btn.go { border-color: var(--a2gold); background: #2a2010; color: var(--a2gold); } .ar2 .btn.big { font-size: 15px; padding: 16px 10px; }
+.ar2 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; } .ar2 .grow { flex: 1 1 auto; }
+.ar2 .scr { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-height: 0; } .ar2 .scr > *, .ar2 .field > * { flex-shrink: 0; } .ar2 .field { gap: 6px; } /* sem encolher: a fila do cabelo nao cai por cima do rotulo ROUPA */ .ar2 .mode-card, .ar2 .hero-panel, .ar2 .mode-hero { width: 100%; } /* os ecras vem dentro de div.scr, como na maqueta */
+.ar2 .av { height: auto; width: auto; zoom: 2; image-rendering: pixelated; } /* o heroFrontURL e o sprite do mapa (~17x20): sempre ampliado por inteiros */
+.ar2 .mode-card { display: grid; grid-template-columns: 64px 1fr 14px; column-gap: 10px; align-items: center; text-align: left; font: inherit; color: var(--a2ink); padding: 10px 12px; cursor: pointer; }
+.ar2 .mode-card .mc-av { grid-row: 1 / 4; display: flex; justify-content: center; align-items: flex-end; height: 58px; background: radial-gradient(circle at 50% 70%, rgba(255, 154, 60, .18), transparent 65%); }
+.ar2 .mode-card .mc-av .av { zoom: 3; } .ar2 .mode-card .mc-av .av + .av { margin-left: -4px; }
+.ar2 .mode-card b { font-family: var(--display); font-size: 13px; letter-spacing: .08em; } .ar2 .mode-card small { color: var(--a2dim); font-size: 11px; } .ar2 .mode-card .me { color: var(--a2gold); font-size: 11px; }
+.ar2 .mode-card em { grid-row: 1 / 4; grid-column: 3; font-style: normal; color: var(--a2dim); font-family: var(--display); }
+.ar2 .hero-panel { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 10px 12px; position: relative; overflow: hidden; }
+.ar2 .hero-panel::before { content: ""; position: absolute; left: 50%; top: 46px; width: 200px; height: 200px; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(255, 154, 60, .2), transparent 62%); pointer-events: none; }
+.ar2 .hp-lbl { font-family: var(--display); font-size: 9px; letter-spacing: .1em; color: var(--a2dim); }
+.ar2 .hero-big { width: auto; height: auto; zoom: 7; image-rendering: pixelated; position: relative; } /* ~20 px de altura x7 */
+.ar2 .hero-floor { width: 90px; height: 7px; border-radius: 50%; background: rgba(0, 0, 0, .55); margin-top: -6px; }
+.ar2 .nick { font-size: 16px; } .ar2 .nick-sub { color: var(--a2dim); font-size: 11px; display: flex; align-items: center; gap: 4px; } .ar2 .nick-sub img { width: 16px; height: 16px; image-rendering: pixelated; }
+.ar2 .ed-prev { display: flex; justify-content: center; padding: 6px 0 0; position: relative; } .ar2 .ed-prev .hero-big { zoom: 7; } @media (max-height: 700px) { .ar2 .ed-prev .hero-big { zoom: 5; } .ar2 .ed-prev { padding-top: 0; } } /* a 360x640 os botoes do editor cabem sem deslizar */
+.ar2 .field { display: flex; flex-direction: column; gap: 5px; } .ar2 .field > span { font-family: var(--display); font-size: 9px; letter-spacing: .1em; color: var(--a2dim); }
+.ar2 .field input { font: inherit; font-size: 15px; color: var(--a2ink); background: #0f0d14; border: 2px solid var(--a2line); border-radius: 6px; padding: 8px 10px; }
+.ar2 .field input:focus { outline: none; border-color: var(--a2gold); } .ar2 .count { text-align: right; font-size: 10px; color: var(--a2dim); }
+.ar2 .sw { display: flex; flex-wrap: wrap; gap: 6px; }
+.ar2 .sw button { width: 28px; height: 28px; min-height: 0; border-radius: 6px; border: 2px solid #0a0810; box-shadow: 0 0 0 2px var(--a2line); cursor: pointer; padding: 0; } .ar2 .sw button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--a2gold); }
+.ar2 .seg { display: flex; gap: 4px; margin: 0; }
+.ar2 .seg button { flex: 1; font: inherit; font-family: var(--display); font-size: 10px; letter-spacing: .04em; color: var(--a2dim); background: var(--a2box); border: 2px solid var(--a2line); border-radius: 6px; padding: 7px 4px; cursor: pointer; }
+.ar2 .seg button[aria-pressed="true"] { color: var(--a2ink); border-color: var(--a2gold); background: #231d14; }
+.ar2 .mode-hero { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 10px; }
+.ar2 .best { display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; gap: 4px; margin-top: 4px; width: 100%; } .ar2 .best b { display: block; font-family: var(--display); font-size: 16px; } .ar2 .best span { color: var(--a2dim); font-size: 10px; }
+.ar2 .opt { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; font: inherit; color: var(--a2ink); background: transparent; border: 0; border-top: 1px solid #241f2e; border-radius: 0; padding: 9px 10px; cursor: pointer; min-height: 0; box-shadow: none; }
+.ar2 .opt:first-child { border-top: 0; } .ar2 .opt img { width: 28px; height: 28px; image-rendering: pixelated; } .ar2 .opt span { flex: 1; display: flex; flex-direction: column; }
+.ar2 .opt b { font-family: var(--display); font-size: 12px; letter-spacing: .05em; } .ar2 .opt small { color: var(--a2dim); font-size: 11px; } .ar2 .opt em { font-style: normal; color: var(--a2dim); font-family: var(--display); }
+.ar2 .opt.on { box-shadow: inset 0 0 0 2px var(--a2gold); border-radius: 6px; } .ar2 .opt.on em { color: var(--a2gold); } .ar2 .opt.off, .ar2 .opt[aria-disabled="true"]:not(.on) { opacity: .45; }
+.ar2 .foot { font-family: var(--body); font-size: 11px; color: var(--a2dim); text-align: center; margin: 0; line-height: 1.5; }
+.ar2 .chips { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; flex: none; } .ar2 .chips::-webkit-scrollbar { display: none; }
+.ar2 .chips button { flex: none; display: flex; align-items: center; gap: 4px; font: inherit; font-family: var(--display); font-size: 9px; color: var(--a2dim); background: var(--a2box); border: 2px solid var(--a2line); border-radius: 6px; padding: 5px 8px; cursor: pointer; min-height: 0; }
+.ar2 .chips button[aria-pressed="true"] { color: var(--a2ink); border-color: var(--a2gold); } .ar2 .chips img, .ar2 .wpn img { width: 16px; height: 16px; image-rendering: pixelated; }
+.ar2 .podium { display: grid; grid-template-columns: 1fr 1.12fr 1fr; gap: 6px; align-items: end; flex: none; }
+.ar2 .pod { padding: 6px 4px 7px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+.ar2 .pod.p1 { border-color: var(--a2gold); padding-top: 9px; } .ar2 .pod.p2 { border-color: #6e6a80; } .ar2 .pod.p3 { border-color: #7a5634; }
+.ar2 .pod .medal { width: 18px; height: 18px; image-rendering: pixelated; } .ar2 .pod .avs { display: flex; justify-content: center; }
+.ar2 .pod .av { zoom: 2; } .ar2 .pod.p1 .av { zoom: 3; } .ar2 .pod .avs .av + .av { zoom: 2; margin-left: -3px; }
+.ar2 .pod .nm { font-size: 12px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ar2 .pod .wv { font-family: var(--display); font-size: 11px; white-space: nowrap; } .ar2 .pod.p1 .wv { font-size: 13px; color: var(--a2gold); } .ar2 .pod .tu { color: var(--a2dim); font-size: 10px; }
+.ar2 .thead, .ar2 .lrow { display: grid; grid-template-columns: 44px minmax(0, 1fr) 50px 44px; align-items: center; gap: 6px; }
+.ar2 .thead { font-family: var(--display); font-size: 8px; letter-spacing: .06em; color: var(--a2dim); padding: 0 8px; flex: none; } .ar2 .r { text-align: right; }
+.ar2 .lrow { padding: 4px 8px; border-top: 1px solid #241f2e; } .ar2 .list .lrow:first-child { border-top: 0; }
+.ar2 .lrow .pos { font-family: var(--display); font-size: 10px; color: var(--a2dim); } .ar2 .lrow .who { min-width: 0; display: flex; align-items: center; gap: 6px; }
+.ar2 .lrow .who .av { zoom: 1; } .ar2 .lrow .nm { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ar2 .lrow .wv { font-family: var(--display); font-size: 12px; } .ar2 .lrow .tu { color: var(--a2dim); font-size: 12px; }
+.ar2 .ok { color: #7fc8a8; font-size: 10px; margin-left: 2px; }
+.ar2 .wpn { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; color: var(--a2dim); font-size: 10px; } .ar2 .wpn span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; } .ar2 .wpn i { font-style: normal; opacity: .5; }
+.ar2 .gap { text-align: center; color: var(--a2dim); font-family: var(--display); font-size: 11px; padding: 2px 0; letter-spacing: .2em; }
+.ar2 .lrow.me { background: #2a2312; box-shadow: inset 0 0 0 2px var(--a2gold); border-radius: 6px; border-top-color: transparent; } .ar2 .lrow.me .pos, .ar2 .lrow.me .nm { color: var(--a2gold); }
+.ar2 .mebar { position: sticky; bottom: 0; z-index: 2; border-top: 2px solid var(--a2gold); background: #1b1610; padding: 4px 12px 8px; }
+.ar2 .mebar .lbl { font-family: var(--display); font-size: 9px; letter-spacing: .06em; color: var(--a2gold); text-align: center; margin: 2px 0; }
+.ar2 .nosrv { padding: 10px 12px; font-size: 12px; line-height: 1.5; color: var(--a2ink); border-color: #4a6a8a; background: #141a24; }
+.ar2 .nosrv b { font-family: var(--display); font-size: 10px; letter-spacing: .08em; color: var(--a2blue); display: block; margin-bottom: 2px; }
+.ar2 .place { text-align: center; font-size: 12px; color: var(--a2ink); margin: 0; } .ar2 .place b { color: var(--a2gold); font-family: var(--display); font-weight: normal; }
+.ar2 .used { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 8px; font-size: 11px; color: var(--a2dim); } .ar2 .used span { display: inline-flex; align-items: center; gap: 4px; } .ar2 .used span:first-child { color: var(--a2gold); } .ar2 .used img { width: 16px; height: 16px; image-rendering: pixelated; }
 .ar-used .ar-u:first-child { color: #f2c14e; } .ar-used .ar-u:first-child img.mic { filter: drop-shadow(0 0 2px rgba(242, 193, 78, .55)); } .ar-used > i { font-style: normal; opacity: .5; }
 html.compact .sk.rng.off { opacity: .55; }
 html.compact .sk kbd { display: none; }
@@ -3283,7 +3348,7 @@ LANGS.en = {
   'Câmara: {e}': 'Camera: {e}', 'A ligar…': 'Connecting…', 'A preparar a resposta…': 'Preparing the reply…', 'Mostra este código ao anfitrião, para ele o ler.': 'Show this code to the host so they can scan it.',
   'Código errado: {e}': 'Wrong code: {e}', 'Ligados! Escolhe a tua arma.': 'Connected! Choose your weapon.', 'ARENA CO-OP': 'CO-OP ARENA', '{a} e {b}': '{a} and {b}',
   'Entram os dois na arena. Cada um escolhe a sua ação; o turno passa quando os dois tiverem escolhido.': 'You both enter the arena. Each one picks an action; the turn passes when both have chosen.',
-  'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
+  'O teu melhor neste aparelho. O ranking global chega quando houver servidor.': 'Your best on this device. The global ranking arrives once there is a server.', 'RANK': 'RANK', 'Escolhe o modo.': 'Choose the mode.', 'ARENA SOLO': 'SOLO ARENA', 'Vagas sem fim, a arma que escolheres': 'Endless waves, the weapon you choose', 'O teu melhor: vaga {n} · {w}': 'Your best: wave {n} · {w}', 'A dois, na mesma rede Wi-Fi': 'Two players, same Wi-Fi network', 'O teu melhor: vaga {n} com {p}': 'Your best: wave {n} with {p}', 'A TUA PERSONAGEM': 'YOUR CHARACTER', 'a tua arma mais usada: {w}': 'your most used weapon: {w}', 'EDITAR': 'EDIT', 'É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).': 'This is how others see you on the podium, in the ranking and in the arena (your co-op partner too).', 'ALCUNHA (3 a 16)': 'NICKNAME (3 to 16)', 'GUARDAR': 'SAVE', 'A alcunha precisa de 3 a 16 letras.': 'The nickname needs 3 to 16 letters.', 'MELHOR VAGA': 'BEST WAVE', 'NO RANKING': 'IN THE RANKING', 'MESMA REDE': 'SAME NETWORK', 'ECOS HOJE': 'ECHOES TODAY', 'JOGAR': 'PLAY', 'TODAS': 'ALL', 'ESTA SEMANA': 'THIS WEEK', '{n}.º': '#{n}', 'AINDA SEM SERVIDOR': 'NO SERVER YET', 'O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.': 'The global ranking is coming soon. For now you only see your records on this device.', 'DUPLA · ARMAS': 'DUO · WEAPONS', 'VAGA': 'WAVE', 'Ainda sem recordes esta semana.': 'No records yet this week.', 'Ainda sem recordes.': 'No records yet.', 'ABANDONAR PARTIDA': 'ABANDON RUN', 'Como queres sair?': 'How do you want to leave?', 'GUARDAR E SAIR': 'SAVE AND QUIT', 'A partida fica gravada; continuas onde estavas.': 'The run is saved; you continue where you left off.', 'DESISTIR': 'GIVE UP', 'Sais da arena; o teu colega continua sozinho.': 'You leave the arena; your partner carries on alone.', 'A partida acaba aqui; o recorde conta até à última vaga.': 'The run ends here; your record counts up to the last wave.', 'A partida acaba como uma morte: o herói vai para a Cripta.': 'The run ends like a death: the hero goes to the Crypt.', 'a desistência': 'giving up', 'Desististe no andar {n}.': 'You gave up on floor {n}.', 'Tens {n} s; depois o jogo escolhe por ti e avança.': 'You have {n} s; then the game picks for you and moves on.', 'O tempo acabou: o jogo escolheu por ti.': 'Time is up: the game picked for you.', 'No co-op, o equipamento muda-se no descanso entre vagas.': 'In co-op, gear is changed during the rest between waves.', 'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
   'Dois jogadores na mesma rede Wi-Fi. Um cria a sala, o outro entra lendo o código com a câmara.': 'Two players on the same Wi-Fi network. One creates the room, the other joins by scanning the code with the camera.',
   'CRIAR SALA': 'CREATE ROOM', 'És o anfitrião: mostras o código ao teu colega.': 'You are the host: you show the code to your partner.', 'Lês o código do anfitrião com a câmara.': 'You scan the host\'s code with the camera.',
   'A câmara só funciona na app (no site do jogo).': 'The camera only works in the app (on the game\'s website).', 'A TUA SALA': 'YOUR ROOM', 'A TUA RESPOSTA': 'YOUR REPLY', 'código de ligação': 'connection code',
@@ -3468,7 +3533,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.12.2', GAME_BUILD = 110;
+const GAME_SEMVER = '0.13.0', GAME_BUILD = 111;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -4935,6 +5000,7 @@ function knockAct() {
   const p = st.p; if (!p || st.screen !== 'play' || !knockMode()) return;
   if (p.knockCd > 0) { log(_t(p.knockCd > 1 ? 'Bater na parede: espera mais {n} turnos.' : 'Bater na parede: espera mais 1 turno.', { n: p.knockCd })); Sound.play('bump'); ui(); return; }
   const w = knockWall(); if (!w) { log(_t('Para bater na parede tens de estar encostado a uma.')); Sound.play('bump'); ui(); return; }
+  if (typeof coopIntercept === 'function' && isCoop() && !st.coopHold && coopIntercept({ k: 'knock' })) return; // v0.12.3 (OBS 87): co-op
   if (!ready()) return;
   actAt = performance.now();
   p.knockCd = 5; // o fim deste turno já gasta 1: ficam 4
@@ -6549,6 +6615,8 @@ function foesAct() {
 // Em co-op, durante a resolução das 2 ações (st.coopHold), o endTurn de cada ação não corre: o coopEndTurn chama-o 1 vez no fim.
 function endTurn() {
   if (st.coopHold) { st.coopActed = true; return; }
+  // v0.12.3 (OBS 87): rede de segurança; um fim de turno em co-op fora da resolução é um caminho que fugiu à rede: acerta o estado com o J1
+  if (st.heroes && st.coop && st.coop.net && !st.coopEnd && st.av && !st.av.rest && typeof coopResync === 'function') coopResync('endTurn');
   // v0.12.0 (co-op): durante todo o fim do turno o st.p é o MESMO herói nos 2 telemóveis (o 1.º vivo: J1, ou J2 se o J1 caiu), não o local;
   // assim qualquer código do mundo que olhe para o st.p (um aviso de um cogumelo filho, um inimigo que nasce...) dá o mesmo resultado nos dois. No fim volta o local
   if (st.heroes) { const loc = st.p; st.p = heroesUp()[0] || st.heroes[0]; try { endTurnCore(); } finally { st.p = loc; } if (!st.dying && st.screen !== 'arenaend') ui(); return; }
@@ -8176,6 +8244,31 @@ function toChars() {
 }
 // v96 (utilizador, OBS 66/67): menu principal. Sair de uma partida grava-a (a fogueira e a barra de cima vêm aqui)
 let toMenuT = null;
+// v0.12.3 (utilizador): ABANDONAR PARTIDA, em qualquer partida (MENU, fogueiras e OPÇÕES); o jogador escolhe guardar e sair ou desistir.
+// No co-op só há desistir (a partida a dois não fica gravada): o colega é avisado e pode continuar sozinho
+function abandonOpen() {
+  if (!st.p || st.dying) return;
+  const back = st.screen === 'opts' ? st.optsBack : st.screen;
+  if (st.screen !== 'abandon') st.abBack = back || 'play';
+  st.screen = 'abandon'; Sound.play('menu'); ui();
+}
+function abandonBack() { st.screen = st.abBack || 'play'; st.abBack = null; Sound.play('menu'); ui(); }
+function abandonHtml() {
+  const co = typeof isCoop === 'function' && isCoop(), ar = isArena();
+  const quit = co ? _t('Sais da arena; o teu colega continua sozinho.') : ar ? _t('A partida acaba aqui; o recorde conta até à última vaga.') : _t('A partida acaba como uma morte: o herói vai para a Cripta.');
+  return `<div class="ov-in ab-ask">
+      <div class="box ov-head"><h2>${_t('ABANDONAR PARTIDA')}</h2><p>${_t('Como queres sair?')}</p></div>
+      <div class="box menu">${co ? '' : `<button class="opt mm-go" data-abkeep="1"><span><b>${_t('GUARDAR E SAIR')}</b><small>${_t('A partida fica gravada; continuas onde estavas.')}</small></span><em>›</em></button>`}
+      <button class="opt mm-go" data-abquit="1"><span><b>${_t('DESISTIR')}</b><small>${quit}</small></span><em>›</em></button></div>
+      <div class="btn-row"><button class="box again" data-abno="1">${_t('CANCELAR')}</button></div></div>`;
+}
+function abandonKeep() { if (typeof isCoop === 'function' && isCoop()) return; st.screen = st.abBack || 'play'; st.abBack = null; toMenu(); }
+function abandonQuit() {
+  st.screen = st.abBack || 'play'; st.abBack = null;
+  if (typeof isCoop === 'function' && isCoop()) { coopEnd(); return; }
+  if (isArena()) { if (st.av.rest) st.screen = 'camp'; if (!st.av.over) arenaDie(); return; }
+  st.screen = 'play'; st.killer = 'a desistência'; st.p.hp = 0; die();
+}
 function toMenu() {
   // v96 (Sábio): a meio de um turno (investida de 180 ms, inimigos a mexer) espera que acabe; gravar a meio deixava o setTimeout pendente a correr sobre o menu
   const wait = busyUntil - performance.now();
@@ -11499,7 +11592,7 @@ const DEATHS = {
         const local = h === p, ph = local ? pr : renderPos(h, now), hx = ph.x * TS + 8, hy = ph.y * TS + 13 - Math.round(ph.h || 0);
         draws.push({ y: WY(hy) + 0.4, f: () => { /* o anel fica por trás do herói */
           const sx = Math.round(WX(hx)), sy = Math.round(WY(hy)); ctx.globalAlpha = h.down ? .3 : calm ? .8 : .6 + .25 * Math.sin(now / 300 + k * 2); ctx.fillStyle = RING[k % 2];
-          for (let i = 0; i < 22; i++) { const an = i / 22 * Math.PI * 2; ctx.fillRect(Math.round(sx + Math.cos(an) * 6.5), Math.round(sy + 1 + Math.sin(an) * 2.3), 1, 1); }
+          for (let i = 0; i < 36; i++) { if (k % 2 && Math.floor(i / 3) % 2) continue; const an = i / 36 * Math.PI * 2; ctx.fillRect(Math.round(sx + Math.cos(an) * 6.5), Math.round(sy + 1 + Math.sin(an) * 2.3), 1, 1); } /* J1 anel cheio, J2 tracejado: distinguem-se tambem sem a cor (daltonismo, teste a cinzento) */
           ctx.globalAlpha = 1;
         } });
         if (local) return;
@@ -12051,7 +12144,18 @@ const DEATHS = {
     else putChar(g, .5, Math.round(16 - OX * .5), Math.round(30 - OY * .5), 0); // grande (chefes): a metade
     return c;
   }
-  return { on, draw, scene, preview, hideOverlay, sheet, spiral, portrait, bust, foeIcon, introAt: 0 };
+  /* v0.13 (Arena, Imagem): o herói DE FRENTE com a arma, EXATAMENTE o sprite do mapa (knightF a meia escala pelo smartHalf, o pixel art
+     do jogo; o utilizador achou a resolução cheia «infantil»), recortado à volta; o CSS amplia-o por inteiros (zoom). Devolve um canvas novo */
+  function front(look, gear) {
+    const P = { bob: 0, step: 0, lean: 0, arm: REST.knightF };
+    renderChar('knightF', P, 1, 1000, { look, gear: Object.assign({ h: -1, g: -1, b: -1, look: null, cls: 'heroi' }, gear), face: 1, rx: 0, ry: 0, cape: null, seed: 0, glows: [] });
+    const t = document.createElement('canvas'); t.width = HS; t.height = HS; const tg = t.getContext('2d'); tg.imageSmoothingEnabled = false; putChar(tg, .5, 0, 0, 0);
+    const d = tg.getImageData(0, 0, HS, HS).data; let x0 = HS, y0 = HS, x1 = -1, y1 = -1;
+    for (let y = 0; y < HS; y++) for (let x = 0; x < HS; x++) if (d[(y * HS + x) * 4 + 3] > 0) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    const o = document.createElement('canvas'); if (x1 < 0) { o.width = o.height = 1; return o; }
+    o.width = x1 - x0 + 1; o.height = y1 - y0 + 1; o.getContext('2d').drawImage(t, x0, y0, o.width, o.height, 0, 0, o.width, o.height); return o;
+  }
+  return { on, draw, scene, preview, front, hideOverlay, sheet, spiral, portrait, bust, foeIcon, introAt: 0 };
 })();
 
 // v48h: nos temas souls a transição entre andares usa a torre nova (com o herói a descer)
@@ -12165,6 +12269,24 @@ const TITLE = (() => {
   return { start };
 })();
 function titleDecorate() { if (typeof st !== 'undefined' && st.screen === 'title') { const ov = document.getElementById('ov'); TITLE.start(ov && ov.querySelector('.title-scr')); } }
+/* v0.13 (Arena, Imagem): heroFrontURL(look, kind, h) = o herói de frente com a arma, em data URL (cache por look + arma + elmo);
+   medalURL(n) = a medalha do pódio em pixel art (1 ouro, 2 prata, 3 bronze; a fita é lilás, nunca vermelha) */
+const HFRONT = new Map();
+function heroFrontURL(look, kind, h) {
+  const L = look || (typeof st !== 'undefined' && st && st.look) || { skin: 0, hair: 0, cloth: 0, style: 0 }, key = `${L.skin}|${L.hair}|${L.cloth}|${L.style}|${kind || ''}|${h == null ? -1 : h}`;
+  if (HFRONT.has(key)) return HFRONT.get(key);
+  let url = ''; try { url = REMAKE.front(L, { kind: kind || null, h: h == null ? -1 : h }).toDataURL('image/png'); } catch (e) { url = ''; }
+  if (url) HFRONT.set(key, url); return url;
+}
+const MEDALS = {};
+function medalURL(n) {
+  if (MEDALS[n]) return MEDALS[n];
+  const c = n === 1 ? ['#f2c14e', '#fff4c0', '#a87a1c'] : n === 2 ? ['#c9c6d8', '#ffffff', '#7c7894'] : ['#c98a4e', '#ffd7a8', '#7a4a20'];
+  const G = ['..r.....r..', '..rr...rr..', '...rr.rr...', '....rrr....', '...ooooo...', '..oooolooo.', '..ooolllo..', '..ooolooo..', '..ooooooo..', '...ooooo...', '....ooo....'];
+  let s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 11" shape-rendering="crispEdges">';
+  G.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === '.') return; const col = ch === 'r' ? '#6a4fa0' : ch === 'l' ? c[1] : (x <= 3 || y >= 9 ? c[2] : c[0]); s += `<rect x="${x}" y="${y}" width="1" height="1" fill="${col}"/>`; }));
+  return (MEDALS[n] = 'data:image/svg+xml,' + encodeURIComponent(s + '</svg>'));
+}
 /* v0.12.0 (co-op, Imagem): HUD do colega e aviso de turno. #coopMate: nome na cor do jogador (J1 dourado, J2 azul-claro), barra de vida,
    «pronto» quando o colega já escolheu (st.coop.peerChose) e «caído» com .down; no compacto fica por baixo do mini-mapa, no clássico no painel,
    por baixo da tua vida. #coopWait: «À ESPERA DO COLEGA…» quando já escolheste (st.coop.mine) e o colega ainda não. Só mexe no DOM quando muda */
@@ -13047,14 +13169,14 @@ const arenaSaved = () => { const s = store.get(KEY.arena); return s && s.mode ==
 // armadura da arma inicial: leve para quem vive da furtividade e da distância, média para os outros
 const arenaWt = kind => ['adaga', 'arco', 'cajado', 'machadinha'].includes(kind) ? 'leve' : 'media';
 
-function openArenaPick() { st = { screen: 'arenapick' }; Sound.play('menu'); ui(); }
+function openArenaPick() { st = { screen: 'arenahub' }; Sound.play('menu'); ui(); } // v0.12.3: a entrada nova (modos + personagem); a lista das armas é o «arenapick»
 function startArena(kind) {
   if (!TRAITS[kind]) return;
   store.del(KEY.arena);
   const c = CLASSES.heroi, seed = RNG_FORCE != null ? RNG_FORCE : newSeed();
   // aspeto ao acaso pelo gerador livre (o st ainda não tem rng), para não mexer no gerador da partida
-  const look = { skin: rnd(0, SKINS.length - 1), hair: rnd(0, HAIRS.length - 1), cloth: rnd(0, CLOTHS.length - 1), style: pick(Object.keys(A.HAIR)) };
-  st = { ver: SAVE_VER, mode: 'arena', seed, rng: rngSeed(seed), screen: 'play', charId: null, nome: _t('Gladiador'), look, cls: 'heroi', floor: 1, turn: 0, boss: false, killer: null, log: [], uidN: 0, fidN: 0, npcs: [], attacks: [], foes: [], items: [], map: null,
+  const me = arenaMe(), look = { ...me.look }; // v0.12.3: a personagem da arena (alcunha e aspeto escolhidos na entrada)
+  st = { ver: SAVE_VER, mode: 'arena', seed, rng: rngSeed(seed), screen: 'play', charId: null, nome: me.nick, look, cls: 'heroi', floor: 1, turn: 0, boss: false, killer: null, log: [], uidN: 0, fidN: 0, npcs: [], attacks: [], foes: [], items: [], map: null,
     p: { x: 0, y: 0, hp: c.hp, max: c.hp, atk: c.atk, def: c.def, lvl: 1, xp: 0, next: 10, gold: 0, pot: 3, food: 1,
       cds: SK.map(() => 0), slots: [null, null, null], alloc: [], pts: 0, buffT: 0, rollT: 0, dir: 'd', streak: 0,
       eq: { w: null, h: null, a: null, g: null, b: null }, kills: 0, inv: [], relics: [], relicBag: [], vida4: true, extra: {}, omenFx: {} },
@@ -13196,12 +13318,15 @@ function arenaNextWave() {
 }
 // morte na arena: recordes, Ecos do dia (floor(vagas/3), até 10 por dia) e o ecrã de resultado. Nada vai para a Cripta
 function arenaDie() {
-  const A = st.av, p = st.p, a = arenaAcct(), w = A.done, t = st.turn, used = arenaUsed();
+  const A = st.av, a = arenaAcct(), w = A.done, t = st.turn, keepP = st.p;
+  if (st.heroes) st.p = st.heroes[st.coop.local]; // em co-op, o recorde e as armas são os do herói DESTE telemóvel
+  const p = st.p, used = arenaUsed(); st.p = keepP;
   const kind = used.length ? used[0].kind : A.kind; // v0.11.0 (utilizador): o recorde vai para a arma com que mais se lutou (mais Domínio ganho), não para a inicial
   A.over = true; store.del(KEY.arena);
   const co = !!st.heroes, newW = !co && arenaBetter(w, t, a.byWeapon[kind]), newB = arenaBetter(w, t, co ? a.coop : a.best);
   if (w > 0 && newW) a.byWeapon[kind] = { wave: w, turns: t };
   if (w > 0 && newB) { if (co) a.coop = { wave: w, turns: t, kinds: st.av.kinds.slice() }; else a.best = { wave: w, turns: t, kind }; } // v0.12.0: o co-op tem a sua tabela
+  if (w > 0) arenaRecord(a, w, t, kind, used, co); // v0.12.3: o ranking local (sempre e esta semana)
   const due = Math.floor(w / 3), give = Math.max(0, Math.min(due, ARENA_ECOS_DIA - a.day.n));
   if (give) { a.day.n += give; earnEcos(give, _t('arena: {n} vagas', { n: w })); }
   A.res = { wave: w, turns: t, kind, start: A.kind, used, newW: w > 0 && newW, newB: w > 0 && newB, ecos: give, capped: due > give, day: a.day.n, kills: p.kills };
@@ -13229,7 +13354,7 @@ function arenaPickHtml() {
       ${s ? `<div class="box menu"><button class="opt mm-go" data-arenaload="1"><span><b>${_t('CONTINUAR')}</b><small>${_t('Vaga {n} · {w}', { n: Math.max(1, s.av.wave), w: _t(TRAITS[s.av.kind].nome) })}</small></span><em>›</em></button></div>` : ''}
       <div class="box menu ar-list">${KINDS.map(k => `<button class="opt ic ar-w" data-arenago="${k}">${ICON_URL['i_' + k] ? `<img class="ico" src="${ICON_URL['i_' + k]}" alt="">` : ''}<span><b>${_t(TRAITS[k].nome).toUpperCase()}</b><small>${_t(discOf(k).nome)} · ${rec(a.byWeapon[k])}</small></span><em>›</em></button>`).join('')}</div>
       <p class="foot">${a.best ? _t('Melhor: vaga {n} com {w} ({t} turnos).', { n: a.best.wave, w: _t(TRAITS[a.best.kind].nome), t: a.best.turns }) : _t('Ainda sem recorde.')} ${_t('Ecos de hoje: {n}/{m}', { n: a.day.n, m: ARENA_ECOS_DIA })}</p>
-      <div class="btn-row"><button class="box again go" data-coop="1">${_t('CO-OP (MESMA REDE)')}</button><button class="box again" data-tomenu="1">‹ ${_t('MENU')}</button></div>
+      <div class="btn-row"><button class="box again" data-arsolo="1">‹ ${_t('VOLTAR')}</button></div>
     </div>`;
 }
 function arenaCampHtml() {
@@ -13242,10 +13367,10 @@ function arenaCampHtml() {
   const head = A.wave ? _t('VAGA {n} SUPERADA', { n: A.wave }) : _t('PREPARA-TE');
   const sub = A.wave ? _t('Escolhe 1 de 3. Depois arruma o herói e segue para a vaga {n}.', { n: A.wave + 1 }) : _t('Gasta os pontos de Núcleo em ARRUMAR e escolhe as peças de Domínio.');
   return `<div class="ov-in ar-rest">
-      <div class="box ov-head"><h2>${head}</h2><p>${sub}</p></div>
+      <div class="box ov-head"><h2>${head}</h2><p>${sub}</p>${typeof coopRestTxt === 'function' && isCoop() && st.coop.net && !st.coop.ready[st.coop.local] ? `<p class="foot ar-timer" data-resttimer>${coopRestTxt()}</p>` : ''}</div>
       ${A.offer ? `<div class="relic-cards ar-offer">${A.offer.map(card).join('')}</div>` : ''}
       <p class="foot">${esc(st.campMsg || `HP ${p.hp}/${p.max} · ${_t('NÍVEL {n}', { n: p.lvl })}`)}</p>
-      <div class="btn-row hx-camp">${p.domQ && p.domQ.length ? `<button class="box again go" data-arenadom="1">${_t('DOMÍNIO')} (${p.domQ.length})</button>` : ''}<button class="box again hx-arr${todo ? ' go' : ''}" data-arrumar="1">${_t('ARRUMAR')}${todo ? ` (${todo})` : ''}</button><button class="box again" data-tomenu="1">${_t('MENU')}</button><button class="box again go" data-campleave="1" aria-disabled="${!!(A.offer || (p.domQ && p.domQ.length))}">${_t('VAGA {n}', { n: A.wave + 1 })} ›</button></div>
+      <div class="btn-row hx-camp">${p.domQ && p.domQ.length ? `<button class="box again go" data-arenadom="1">${_t('DOMÍNIO')} (${p.domQ.length})</button>` : ''}<button class="box again hx-arr${todo ? ' go' : ''}" data-arrumar="1">${_t('ARRUMAR')}${todo ? ` (${todo})` : ''}</button><button class="box again" data-tomenu="1">${_t('ABANDONAR PARTIDA')}</button><button class="box again go" data-campleave="1" aria-disabled="${!!(A.offer || (p.domQ && p.domQ.length))}">${_t('VAGA {n}', { n: A.wave + 1 })} ›</button></div>
     </div>`;
 }
 function arenaEndHtml() {
@@ -13257,10 +13382,129 @@ function arenaEndHtml() {
         <p class="ar-num"><span>${_t('TURNOS')}</span><b>${R.turns || 0}</b></p>
         ${R.newB ? `<p class="ar-new new-best">${_t('NOVO RECORDE GERAL')}</p>` : R.newW ? `<p class="ar-new new-best">${_t('NOVO RECORDE COM {w}', { w: wn.toUpperCase() })}</p>` : ''}
         <p class="ar-num"><span>${_t('ECOS')}</span><b>+${R.ecos || 0}</b></p>
+        ${R.newW || R.newB ? `<p class="place">${_t('O teu melhor neste aparelho. O ranking global chega quando houver servidor.')}</p>` : ''}
         <p class="foot">${_t('Ecos de hoje: {n}/{m}', { n: a.day.n, m: ARENA_ECOS_DIA })}${R.capped ? ' · ' + _t('o teto de hoje já chegou') : ''}</p>
       </div>
-      <div class="btn-row"><button class="box again go" data-arenago="${R.start || R.kind}">${_t('DE NOVO')}</button><button class="box again" data-arena="1">${_t('OUTRA ARMA')}</button><button class="box again" data-tomenu="1">${_t('MENU')}</button></div>
+      ${st.heroes ? `<div class="btn-row"><button class="box again go" data-arplay="coop">${_t('DE NOVO')}</button><button class="box again" data-arrank="coop">${_t('RANK')}</button><button class="box again" data-arena="1">${_t('MENU')}</button></div>`
+        : `<div class="btn-row"><button class="box again go" data-arenago="${R.start || R.kind}">${_t('DE NOVO')}</button><button class="box again" data-arplay="solo">${_t('OUTRA ARMA')}</button></div>
+      <div class="btn-row"><button class="box again" data-arrank="solo">${_t('RANK')}</button><button class="box again" data-arena="1">${_t('MENU')}</button></div>`}
     </div>`;
+}
+
+/* ---------- v0.12.3 (maqueta da Imagem, aprovada pelo utilizador): entrada da arena, personagem, ecrã de cada modo e ranking deste aparelho ----------
+   A personagem é uma só para os 2 modos (acct.arena.me): a alcunha e o aspeto aparecem no pódio, no ranking e dentro da arena (no co-op, o colega vê-a).
+   Até haver servidor, o RANK mostra só os recordes deste aparelho: a solo o melhor por arma, no co-op as 10 melhores duplas (sempre e desta semana). */
+const AR_STYLE_TXT = { curto: 'CURTO', comprido: 'LONGO', careca: 'CARECA', barba: 'BARBA' };
+const arCmp = (x, y) => y.wave - x.wave || x.turns - y.turns;
+function arenaMe() {
+  const a = arenaAcct();
+  if (!a.me || !a.me.look) a.me = { nick: _t('Gladiador'), look: { skin: 0, hair: 0, cloth: 0, style: Object.keys(A.HAIR)[0] } };
+  return a.me;
+}
+// segunda-feira desta semana (a semana do ranking começa à segunda, como combinado para o servidor)
+function arenaWeekKey() { const d = new Date(); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function arenaWeek(a) { if (!a.week || a.week.k !== arenaWeekKey()) a.week = { k: arenaWeekKey(), byWeapon: {}, coop: [] }; return a.week; }
+// a arma mais usada (para o avatar): a que aparece mais vezes como arma do recorde nas partidas da arena; sem partidas, a espada
+function arenaMainKind() {
+  const n = {}; for (const r of acct.runs || []) if (r.mode === 'arena' && TRAITS[r.kind]) n[r.kind] = (n[r.kind] || 0) + 1;
+  return Object.keys(n).sort((x, y) => n[y] - n[x] || KINDS.indexOf(x) - KINDS.indexOf(y))[0] || 'espada';
+}
+// guarda o resultado no ranking local (chamado no arenaDie com w > 0)
+function arenaRecord(a, w, t, kind, used, co) {
+  const u2 = used.slice(0, 2).map(u => ({ k: u.kind, lv: u.lv })), at = dayLocal(), wk = arenaWeek(a);
+  if (!co) {
+    const r = { wave: w, turns: t, used: u2.length ? u2 : [{ k: kind, lv: 0 }], at };
+    if (arenaBetter(w, t, a.byWeapon[kind])) a.byWeapon[kind] = { ...a.byWeapon[kind], ...r };
+    if (arenaBetter(w, t, wk.byWeapon[kind])) wk.byWeapon[kind] = r;
+    return;
+  }
+  const o = st.heroes[1 - st.coop.local], me = st.heroes[st.coop.local];
+  const r = { wave: w, turns: t, partner: String(o.nome || '').slice(0, 16), plook: o.look ? { ...o.look } : null, pk: o.kind, mk: me.kind, used: u2, at };
+  a.coopList = (a.coopList || []).concat(r).sort(arCmp).slice(0, 10); wk.coop = wk.coop.concat(r).sort(arCmp).slice(0, 10);
+}
+const arenaCoopTop = () => (arenaAcct().coopList || [])[0] || null;
+// o herói de frente com a arma: a Imagem desenha-o (heroFrontURL); aqui só fica a marca, e o arPaint enche-a depois de cada ui()
+const arAv = (look, kind, cls = 'av') => look ? `<img class="${cls}" data-hf="${TRAITS[kind] ? kind : 'espada'}" data-look="${look.skin},${look.hair},${look.cloth},${esc(String(look.style))}" alt="">` : '';
+function arPaint() {
+  if (typeof heroFrontURL !== 'function') return;
+  document.querySelectorAll('#ov img[data-hf]:not([data-done])').forEach(img => {
+    const [skin, hair, cloth, style] = img.dataset.look.split(','); img.dataset.done = '1';
+    const u = heroFrontURL({ skin: +skin, hair: +hair, cloth: +cloth, style }, img.dataset.hf);
+    if (u && u.then) u.then(x => { img.src = x; }); else if (u) img.src = u;
+  });
+}
+const arIcon = k => ICON_URL['i_' + k] ? `<img src="${ICON_URL['i_' + k]}" alt="">` : '';
+const arWpn = used => `<div class="wpn">${(used || []).map(u => `<span>${arIcon(u.k)}${_t(TRAITS[u.k] ? TRAITS[u.k].nome : '')}${u.lv ? ' ' + _t('Nv {n}', { n: u.lv }) : ''}</span>`).join('<i>·</i>')}</div>`;
+// 1. entrada: os 2 modos e a personagem
+function arenaHubHtml() {
+  const a = arenaAcct(), me = arenaMe(), mk = arenaMainKind(), cb = arenaCoopTop();
+  return `<div class="ov-in ar2 ar2-entrada"><div class="scr">
+    <h2>${_t('ARENA')}</h2><p class="sub">${_t('Escolhe o modo.')}</p>
+    <button class="box mode-card" data-arsolo="1"><div class="mc-av">${arAv(me.look, mk, 'av me-av')}</div><b>${_t('ARENA SOLO')}</b><small>${_t('Vagas sem fim, a arma que escolheres')}</small><span class="me">${a.best ? _t('O teu melhor: vaga {n} · {w}', { n: a.best.wave, w: _t(TRAITS[a.best.kind].nome) }) : _t('Ainda sem recorde.')}</span><em>›</em></button>
+    <button class="box mode-card" data-arcoop="1"><div class="mc-av">${arAv(me.look, cb ? cb.mk : mk, 'av me-av')}${cb ? arAv(cb.plook, cb.pk) : ''}</div><b>${_t('ARENA CO-OP')}</b><small>${_t('A dois, na mesma rede Wi-Fi')}</small><span class="me">${cb ? _t('O teu melhor: vaga {n} com {p}', { n: cb.wave, p: esc(cb.partner) }) : _t('Ainda sem recorde.')}</span><em>›</em></button>
+    <div class="box hero-panel grow"><span class="hp-lbl">${_t('A TUA PERSONAGEM')}</span>${arAv(me.look, mk, 'hero-big me-big')}<div class="hero-floor"></div><span class="nick">${esc(me.nick)}</span><span class="nick-sub">${arIcon(mk)} ${_t('a tua arma mais usada: {w}', { w: _t(TRAITS[mk].nome) })}</span><button class="btn" data-aredit="1">${_t('EDITAR')}</button></div>
+    <button class="btn" data-tomenu="1">‹ ${_t('MENU')}</button></div></div>`;
+}
+// 2. editar a personagem (o rascunho fica em st.ed até GUARDAR)
+function arenaEditHtml() {
+  const E = st.ed, L = E.look, mk = arenaMainKind();
+  const sw = (k, list) => `<div class="sw">${list.map((c, i) => `<button title="${esc(_t(c[0]))}" style="background:${c[1]}" data-arlook="${k}:${i}" aria-pressed="${L[k] === i}"></button>`).join('')}</div>`;
+  return `<div class="ov-in ar2 ar2-editar"><div class="scr">
+    <h2>${_t('A TUA PERSONAGEM')}</h2><p class="sub">${_t('É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).')}</p>
+    <div class="ed-prev">${arAv(L, mk, 'hero-big')}</div>
+    <label class="field"><span>${_t('ALCUNHA (3 a 16)')}</span><input id="arNick" type="text" maxlength="16" autocomplete="off" value="${esc(E.nick)}"><span class="count" id="arCnt">${E.nick.length}/16</span></label>
+    <div class="field"><span>${_t('PELE')}</span>${sw('skin', SKINS)}</div>
+    <div class="field"><span>${_t('CABELO')}</span><div class="seg">${Object.keys(A.HAIR).map(k => `<button data-arlook="style:${k}" aria-pressed="${L.style === k}">${_t(AR_STYLE_TXT[k] || k.toUpperCase())}</button>`).join('')}</div>${sw('hair', HAIRS)}</div>
+    <div class="field"><span>${_t('ROUPA')}</span>${sw('cloth', CLOTHS)}</div>
+    ${E.msg ? `<p class="foot">${esc(E.msg)}</p>` : ''}
+    <div class="row2"><button class="btn" data-arena="1">${_t('CANCELAR')}</button><button class="btn go" data-aredsave="1">${_t('GUARDAR')}</button></div></div></div>`;
+}
+function arenaEditOpen() { const me = arenaMe(); st = { screen: 'arenaedit', ed: { nick: me.nick, look: { ...me.look }, msg: '' } }; Sound.play('menu'); ui(); }
+function arenaEditLook(v) {
+  const [k, x] = String(v).split(':'), L = st.ed.look;
+  if (k === 'style' && A.HAIR[x]) L.style = x;
+  else if (['skin', 'hair', 'cloth'].includes(k)) { const n = +x, max = { skin: SKINS, hair: HAIRS, cloth: CLOTHS }[k].length; if (Number.isInteger(n) && n >= 0 && n < max) L[k] = n; }
+  Sound.play('menu'); ui();
+}
+function arenaEditSave() {
+  const E = st.ed, nick = String(E.nick || '').replace(/[<>&"]/g, '').trim();
+  if (nick.length < 3) { E.msg = _t('A alcunha precisa de 3 a 16 letras.'); Sound.play('error'); ui(); return; }
+  const a = arenaAcct(); a.me = { nick: nick.slice(0, 16), look: { ...E.look } }; saveAcct(); Sound.play('menu'); openArenaPick();
+}
+// 3. o ecrã de cada modo: JOGAR, RANK e VOLTAR
+function arenaModeHtml(mode) {
+  const a = arenaAcct(), me = arenaMe(), mk = arenaMainKind(), coop = mode === 'coop', cb = arenaCoopTop();
+  const best = coop ? (cb ? cb.wave : '—') : (a.best ? a.best.wave : '—');
+  return `<div class="ov-in ar2 ar2-${mode}"><div class="scr">
+    <h2>${_t(coop ? 'ARENA CO-OP' : 'ARENA SOLO')}</h2>
+    <div class="box mode-hero"><div class="mh-avs">${arAv(me.look, coop && cb ? cb.mk : mk, 'av me-av')}${coop && cb ? arAv(cb.plook, cb.pk) : ''}</div><span class="nick">${esc(me.nick)}${coop && cb ? ' + ' + esc(cb.partner) : ''}</span>
+      <div class="best"><div><b>${best}</b><span>${_t('MELHOR VAGA')}</span></div><div><b>—</b><span>${_t('NO RANKING')}</span></div>${coop ? `<div><b>Wi-Fi</b><span>${_t('MESMA REDE')}</span></div>` : `<div><b>${a.day.n}/${ARENA_ECOS_DIA}</b><span>${_t('ECOS HOJE')}</span></div>`}</div></div>
+    <div class="grow"></div>
+    <button class="btn go big" data-arplay="${mode}">${_t('JOGAR')}</button>
+    <button class="btn big" data-arrank="${mode}">${_t('RANK')}</button>
+    <button class="btn" data-arena="1">‹ ${_t('VOLTAR')}</button></div></div>`;
+}
+function arenaModeOpen(mode) { if (typeof isCoop === 'function' && (isCoop() || coopS.ch)) coopLeave(); st = { screen: mode === 'coop' ? 'arenacoop' : 'arenasolo' }; Sound.play('menu'); ui(); }
+function arenaPlay(mode) {
+  if (mode === 'coop') { st = { screen: 'coopmenu' }; coopS.msg = ''; }
+  else st = { screen: 'arenapick' };
+  Sound.play('menu'); ui();
+}
+// 4. ranking deste aparelho (o aprovado, no estado «sem servidor»)
+function arenaRankOpen(mode) { st = { screen: 'arenarank', rk: { mode: mode === 'coop' ? 'coop' : 'solo', w: 'todas', per: 'sempre' } }; Sound.play('menu'); ui(); }
+function arenaRankHtml() {
+  const R = st.rk, coop = R.mode === 'coop', week = R.per === 'semana', a = arenaAcct(), wk = arenaWeek(a), me = arenaMe();
+  let rows;
+  if (coop) rows = (week ? wk.coop : a.coopList || []).slice().sort(arCmp).map(r => ({ r, name: esc(me.nick) + ' + ' + esc(r.partner), av: arAv(me.look, r.mk, 'av me-av') }));
+  else { const src = week ? wk.byWeapon : a.byWeapon; rows = KINDS.filter(k => src[k] && (R.w === 'todas' || R.w === k)).map(k => ({ r: { ...src[k], used: src[k].used || [{ k, lv: 0 }] }, name: esc(me.nick), av: arAv(me.look, k, 'av me-av') })).sort((x, y) => arCmp(x.r, y.r)); }
+  const tabs = `${coop ? '' : `<div class="chips">${['todas'].concat(KINDS).map(k => `<button data-arrkw="${k}" aria-pressed="${R.w === k}">${k === 'todas' ? _t('TODAS') : arIcon(k) + _t(TRAITS[k].nome).toUpperCase()}</button>`).join('')}</div>`}
+    <div class="seg"><button data-arrkp="sempre" aria-pressed="${!week}">${_t('SEMPRE')}</button><button data-arrkp="semana" aria-pressed="${week}">${_t('ESTA SEMANA')}</button></div>`;
+  const row = (x, i) => `<div class="lrow${i === 0 ? ' me' : ''}"><span class="pos">${_t('{n}.º', { n: i + 1 })}</span><div class="who">${x.av}<div><div class="nm">${x.name}</div>${arWpn(x.r.used)}</div></div><span class="wv r">${x.r.wave}</span><span class="tu r">${x.r.turns}</span></div>`;
+  return `<div class="ov-in ar2 ar2-rank"><div class="scr"><h2>${_t(coop ? 'ARENA CO-OP' : 'ARENA SOLO')} · ${_t('RANK')}</h2>${tabs}
+    <div class="box nosrv"><b>${_t('AINDA SEM SERVIDOR')}</b>${_t('O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.')}</div>
+    <div class="thead"><span>#</span><span>${_t(coop ? 'DUPLA · ARMAS' : 'ARMA')}</span><span class="r">${_t('VAGA')}</span><span class="r">${_t('TURNOS')}</span></div>
+    <div class="box list">${rows.length ? rows.map(row).join('') : `<p class="foot">${_t(week ? 'Ainda sem recordes esta semana.' : 'Ainda sem recordes.')}</p>`}</div>
+    <div class="grow"></div><button class="btn" data-${coop ? 'arcoop' : 'arsolo'}="1">‹ ${_t('VOLTAR')}</button></div></div>`;
 }
 
 </script>
@@ -13355,6 +13599,13 @@ function coopDo(a) {
   if (a.k === 'pot') { if (p.pot <= 0 && p.food <= 0) return 'void'; consume(); return 'ok'; }
   const nx = p.x + (a.dx || 0), ny = p.y + (a.dy || 0), f = foeAt(nx, ny);
   if (a.fid != null && !st.foes.some(o => o.fid === a.fid)) return 'void'; // o alvo já caiu (às mãos do colega, neste turno)
+  // v0.12.3 (OBS 87): disparar tocando num inimigo (qualquer direção) e bater na parede também passam pela rede
+  if (a.k === 'shoot') {
+    const t = st.foes.find(o => o.fid === a.fid), ri = rangedInfo(p);
+    if (!t || t.ally || !ri || Math.max(Math.abs(t.x - p.x), Math.abs(t.y - p.y)) > ri.range || !los(p.x, p.y, t.x, t.y)) return 'void';
+    shoot(t, ri); endTurn(); return 'ok';
+  }
+  if (a.k === 'knock') { st.coopActed = false; knockAct(); return st.coopActed ? 'ok' : 'void'; }
   if (a.k === 'move') {
     if (!f && heroAt(nx, ny)) return 'void'; // o colega está lá
     if (a.fid == null && f) return 'void'; // era um passo e agora há um inimigo nessa casa: não vira ataque sem querer
@@ -13377,7 +13628,7 @@ function coopResolve(acts, order) {
   try { for (const i of order || [0, 1]) { const h = st.heroes[i]; if (!h || h.down || h.hp <= 0) { res[i] = 'down'; continue; } st.p = h; res[i] = coopDo(acts[i]); } }
   finally { st.coopHold = false; st.p = keep; }
   busyUntil = 0; lastAct = -1e9;
-  if (!st.av.rest && !st.av.over) { endTurn(); st.coop.turn++; }
+  if (!st.av.rest && !st.av.over) { st.coopEnd = true; try { endTurn(); } finally { st.coopEnd = false; } st.coop.turn++; }
   if (!st.av.rest && !st.av.over && !st.dying && scr !== 'play' && scr !== 'camp' && st.screen === 'play') st.screen = scr;
   return { res, hash: coopHash() };
 }
@@ -13428,6 +13679,13 @@ function coopRestRec(d) {
   ui(); return true;
 }
 // repete a lista do outro jogador (chega pela rede)
+// v0.12.3 (OBS 87): durante a vaga, o que muda o herói pelos painéis não passa pela rede (só as ações do turno passam): fica para o descanso
+const COOP_REST_ONLY = new Set(['equip', 'drop', 'eqdo', 'equn', 'dpickok', 'corem', 'corep', 'cput', 'ctake', 'rput', 'reloff', 'relon', 'relswap', 'arpick', 'arenadom']);
+function coopPlayBlock(d) {
+  if (!isCoop() || st.coopReplay || st.coopHold || !st.coop.net || !st.av || st.av.rest || st.av.over) return false;
+  if (!Object.keys(d).some(k => COOP_REST_ONLY.has(k))) return false;
+  log(_t('No co-op, o equipamento muda-se no descanso entre vagas.')); Sound.play('error'); ui(); return true;
+}
 function coopReplayRest(i, acts) { st.coop.ruiOf = []; for (const d of acts || []) coopApplyRest(i, d, false); }
 // PRONTO do jogador local: manda a lista e espera pelo colega
 function coopReadyLocal() {
@@ -13599,7 +13857,7 @@ const CoopNet = (() => {
    o J2 manda { t: 'act' } ao J1; com as 2, o J1 decide a ordem (quem escolheu primeiro), resolve e manda { t: 'turn', turn, acts, order, hash };
    o J2 resolve igual e compara o hash; se divergir pede { t: 'desync' } e o J1 manda o estado inteiro ({ t: 'state' }).
    Descanso: { t: 'rest', i, acts } (coop.js). Sinal de vida a cada 2 s; 5 s sem nada: pausa com 60 s de espera; depois, continuar sozinho ou acabar. */
-const coopS = { ch: null, role: null, local: 0, kinds: [null, null], looks: [null, null], names: ['J1', 'J2'], lastSeen: 0, hb: null, H: null, J: null, scan: null, code: '', msg: '', paused: false, pausedAt: 0 };
+const coopS = { ch: null, role: null, local: 0, kinds: [null, null], looks: [null, null], names: ['J1', 'J2'], lastSeen: 0, hb: null, H: null, J: null, scan: null, code: '', msg: '', paused: false, pausedAt: 0, q: [], begun: false, lastTurn: null, resyncT: 0 };
 const coopNow = () => Date.now(); // o relógio só serve para o sinal de vida e a pausa (nunca entra no estado do jogo)
 // ---------- ligação ----------
 async function coopHost() {
@@ -13630,17 +13888,17 @@ async function coopScanned(code) {
 function coopBc(room, j) { coopReset(); coopS.role = j === 1 ? 'host' : 'guest'; coopS.local = j - 1; coopConnected(CoopNet.bc(room, 'J' + j)); }
 function coopConnected(ch) {
   coopS.ch = ch; coopS.lastSeen = coopNow(); ch.msg = coopOnMsg; ch.closed = () => coopPeerLost();
-  clearInterval(coopS.hb); coopS.hb = setInterval(coopBeat, 2000);
+  clearInterval(coopS.hb); coopS.hb = setInterval(coopBeat, 2000); clearInterval(coopS.rt); coopS.rt = setInterval(coopRestTick, 1000); coopS.restAt = 0;
   if (coopS.scan) { coopS.scan.stop(); coopS.scan = null; }
-  coopS.looks[coopS.local] = { skin: Math.floor(rngNext(RNG_FREE) * SKINS.length), hair: Math.floor(rngNext(RNG_FREE) * HAIRS.length), cloth: Math.floor(rngNext(RNG_FREE) * CLOTHS.length), style: Object.keys(A.HAIR)[0] };
+  const me = arenaMe(); coopS.looks[coopS.local] = { ...me.look }; coopS.names[coopS.local] = me.nick; // v0.12.3: a personagem da arena
   st = { screen: 'cooppick' }; coopS.msg = _t('Ligados! Escolhe a tua arma.'); Sound.play('menu'); ui();
 }
-function coopReset() { if (coopS.scan) coopS.scan.stop(); clearInterval(coopS.hb); if (coopS.ch) coopS.ch.close(); Object.assign(coopS, { ch: null, role: null, kinds: [null, null], looks: [null, null], H: null, J: null, scan: null, code: '', msg: '', paused: false }); }
+function coopReset() { if (coopS.scan) coopS.scan.stop(); clearInterval(coopS.hb); clearInterval(coopS.rt); if (coopS.ch) coopS.ch.close(); Object.assign(coopS, { ch: null, role: null, kinds: [null, null], looks: [null, null], H: null, J: null, scan: null, code: '', msg: '', paused: false, q: [], begun: false, lastTurn: null, restPend: null }); }
 const coopTx = m => { if (coopS.ch) coopS.ch.send(m); };
 // ---------- escolha da arma e início ----------
 function coopPickKind(k) {
   if (!TRAITS[k] || !coopS.ch) return;
-  coopS.kinds[coopS.local] = k; coopTx({ t: 'kind', k, look: coopS.looks[coopS.local] });
+  coopS.kinds[coopS.local] = k; coopTx({ t: 'kind', k, look: coopS.looks[coopS.local], nick: coopS.names[coopS.local] });
   coopS.msg = _t('À espera do teu colega…'); ui(); coopMaybeStart();
 }
 function coopMaybeStart() {
@@ -13648,10 +13906,12 @@ function coopMaybeStart() {
   const seed = newSeed(); coopTx({ t: 'start', seed, kinds: coopS.kinds, looks: coopS.looks, names: coopS.names }); coopBegin(seed, coopS.kinds, coopS.looks, coopS.names);
 }
 function coopBegin(seed, kinds, looks, names) {
+  coopS.begun = true; // v0.12.3 (OBS 87): o que chegar durante a transição de entrada fica na fila (coopS.q) e corre no fim
   transitionTo(_t('ARENA CO-OP'), _t('{a} e {b}', { a: _t(TRAITS[kinds[0]].nome), b: _t(TRAITS[kinds[1]].nome) }), () => {
     coopStart(kinds, { seed, looks, names, local: coopS.local });
     st.coop.net = { send: coopTx }; st.coop.acts = [null, null]; st.coop.arr = []; st.coop.mine = null; st.coop.peerChose = false;
     log(_t('Entram os dois na arena. Cada um escolhe a sua ação; o turno passa quando os dois tiverem escolhido.')); ui();
+    const q = coopS.q; coopS.q = []; q.forEach(coopOnMsg);
   }, { load: true });
 }
 // ---------- turno ----------
@@ -13680,24 +13940,30 @@ function coopGotAct(i, a) {
   if (need.some(Boolean)) { ui(); return; }
   const order = C.arr.concat([0, 1].filter(j => !C.arr.includes(j))), acts = C.acts.map(x => x || { k: 'wait' }), T = C.turn;
   const r = coopResolve(acts, order);
-  coopTx({ t: 'turn', turn: T, acts, order, hash: r.hash });
+  coopS.lastTurn = { t: 'turn', turn: T, acts, order, hash: r.hash }; coopTx(coopS.lastTurn);
   coopTurnDone(); ui();
 }
 function coopTurnDone() { const C = st.coop; C.acts = [null, null]; C.arr = []; C.mine = null; C.peerChose = false; }
 // o J2 recebe o turno do J1: resolve igual e confere o hash
 function coopApplyTurn(m) {
   const C = st.coop;
+  if (m.turn < C.turn) return; // v0.12.3: repetido (reenvio), já aplicado
   if (m.turn !== C.turn) { coopTx({ t: 'desync', why: 'turn', mine: C.turn }); return; }
-  const r = coopResolve(m.acts, m.order); coopTurnDone();
+  const r = coopResolve(m.acts, m.order); coopTurnDone(); coopRestPend();
   if (r.hash !== m.hash) { C.desyncs = (C.desyncs || 0) + 1; coopTx({ t: 'desync', why: 'hash' }); }
   ui();
 }
 // estado inteiro (recuperação, sempre do J1): o st sem o apelido p (repõe-se pelo índice local)
 function coopStateJSON() { const net = st.coop.net; st.coop.net = null; try { return JSON.stringify(st); } finally { st.coop.net = net; } }
 function coopLoadState(s) {
-  const dz = (st.coop && st.coop.desyncs) || 0, o = JSON.parse(s); o.coop.local = coopS.local; o.coop.desyncs = dz; // a contagem de dessincronizações fica (diagnóstico) o.p = o.heroes[coopS.local]; o.av.kind = o.av.kinds[coopS.local]; o.av.offer = o.av.offers ? o.av.offers[coopS.local] : null;
+  // a contagem de dessincronizações fica (diagnóstico). v0.12.3 (OBS 87): o p é o herói local DESTE telemóvel (o JSON trazia uma cópia solta do J1)
+  const dz = (st.coop && st.coop.desyncs) || 0, o = JSON.parse(s); o.coop.local = coopS.local; o.coop.desyncs = dz;
+  o.p = o.heroes[coopS.local]; o.av.kind = o.av.kinds[coopS.local]; o.av.offer = o.av.offers ? o.av.offers[coopS.local] : null;
   st = o; st.coop.net = { send: coopTx }; coopTurnDone(); st.screen = st.av.rest ? 'camp' : 'play';
-  floats = []; fx = []; cam.snap = true; applyBiome(biomeOf(st.floor)); fov(); log(_t('Estado acertado com o anfitrião.')); ui();
+  floats = []; fx = []; cam.snap = true; applyBiome(biomeOf(st.floor)); fov(); log(_t('Estado acertado com o anfitrião.')); coopRestPend(); ui();
+}
+// v0.12.3: o PRONTO do colega que chegou antes de este telemóvel entrar no descanso
+function coopRestPend() { const m = coopS.restPend; if (m && isCoop() && st.av.rest) { coopS.restPend = null; coopOnRest(m); }
 }
 // ---------- validação (Sábio): o que vem do outro telemóvel são DADOS NÃO CONFIÁVEIS; uma mensagem inválida é ignorada e registada ----------
 const COOP_REST_KEYS = new Set(['arenadom', 'dsel', 'dpickok', 'arpick', 'arrumar', 'arrumarback', 'htab', 'bagsel', 'bagclose', 'bagf', 'drop', 'drink', 'eat', 'eqdo', 'eqprev', 'eqslot', 'equip', 'equn',
@@ -13705,7 +13971,8 @@ const COOP_REST_KEYS = new Set(['arenadom', 'dsel', 'dpickok', 'arpick', 'arruma
 const coopInt = (v, lo, hi) => Number.isInteger(v) && v >= lo && v <= hi;
 function coopValidAct(a) {
   if (!a || typeof a !== 'object' || Array.isArray(a)) return false;
-  if (a.k === 'wait') return true;
+  if (a.k === 'wait' || a.k === 'knock') return true;
+  if (a.k === 'shoot') return coopInt(a.fid, 0, 1e6); // v0.12.3
   if (a.k === 'pot') return a.kind == null || a.kind === 'pot' || a.kind === 'food';
   const dir = coopInt(a.dx == null ? 0 : a.dx, -1, 1) && coopInt(a.dy == null ? 0 : a.dy, -1, 1), fid = a.fid == null || coopInt(a.fid, 0, 1e6);
   if (a.k === 'move') return dir && fid && (a.dx || a.dy) && !(a.dx && a.dy);
@@ -13723,17 +13990,17 @@ function coopOnMsg(m) {
   if (!m || !m.t) return;
   if (m.t === 'ping') return;
   const look = o => !o || (typeof o === 'object' && ['skin', 'hair', 'cloth'].every(k => coopInt(o[k], 0, 99)) && (o.style == null || (typeof o.style === 'string' && o.style.length <= 20)));
-  if (m.t === 'kind') { if (!TRAITS[m.k] || !look(m.look)) return coopBad(m, 'kind'); coopS.kinds[1 - coopS.local] = m.k; coopS.looks[1 - coopS.local] = m.look || null; ui(); coopMaybeStart(); return; }
+  if (m.t === 'kind') { if (!TRAITS[m.k] || !look(m.look)) return coopBad(m, 'kind'); coopS.kinds[1 - coopS.local] = m.k; coopS.looks[1 - coopS.local] = m.look || null; if (typeof m.nick === 'string' && m.nick.trim().length && m.nick.length <= 16) coopS.names[1 - coopS.local] = m.nick.replace(/[<>&"]/g, '').trim() || coopS.names[1 - coopS.local]; ui(); coopMaybeStart(); return; }
   if (m.t === 'start' && coopS.role === 'guest') {
     if (!coopInt(m.seed, 0, 0xFFFFFFFF) || !Array.isArray(m.kinds) || m.kinds.length !== 2 || !m.kinds.every(k => TRAITS[k]) || !Array.isArray(m.looks) || !m.looks.every(look)) return coopBad(m, 'start');
     const names = Array.isArray(m.names) && m.names.length === 2 && m.names.every(n => typeof n === 'string' && n.length <= 16) ? m.names : ['J1', 'J2'];
     coopS.kinds = m.kinds; coopS.looks = m.looks; coopBegin(m.seed, m.kinds, m.looks, names); return;
   }
   if (m.t === 'bye') { coopPeerLost(true); return; }
-  if (!isCoop()) return;
+  if (!isCoop()) { if (coopS.begun && coopS.q.length < 500) coopS.q.push(m); return; } // v0.12.3: a partida ainda está a entrar
   const other = 1 - coopS.local;
-  if (m.t === 'rest') { if (m.i !== other || !coopValidRest(m.acts)) return coopBad(m, 'rest'); coopOnRest(m); }
-  else if (m.t === 'act' && coopS.role === 'host') { if (!coopValidAct(m.a)) return coopBad(m, 'act'); if (m.turn === st.coop.turn) coopGotAct(1, m.a); else coopTx({ t: 'state', s: coopStateJSON() }); }
+  if (m.t === 'rest') { if (m.i !== other || !coopValidRest(m.acts)) return coopBad(m, 'rest'); if (!st.av.rest) coopS.restPend = m; else coopOnRest(m); } // v0.12.3: o colega já está no descanso e este ainda não: guarda
+  else if (m.t === 'act' && coopS.role === 'host') { if (!coopValidAct(m.a)) return coopBad(m, 'act'); if (m.turn === st.coop.turn) coopGotAct(1, m.a); else if (coopS.lastTurn && m.turn === coopS.lastTurn.turn) coopTx(coopS.lastTurn); else coopTx({ t: 'state', s: coopStateJSON() }); } // v0.12.3: o J2 não recebeu o último turno
   else if (m.t === 'chose') { st.coop.peerChose = true; ui(); }
   else if (m.t === 'turn' && coopS.role === 'guest') {
     if (!Array.isArray(m.acts) || m.acts.length !== 2 || !m.acts.every(coopValidAct) || !Array.isArray(m.order) || m.order.slice().sort().join() !== '0,1' || typeof m.hash !== 'string') return coopBad(m, 'turn');
@@ -13749,9 +14016,38 @@ function coopOnMsg(m) {
 // ---------- sinal de vida, pausa e saída ----------
 function coopBeat() {
   if (!coopS.ch) return; coopTx({ t: 'ping' });
+  // v0.12.3 (OBS 87): a ação escolhida pelo J2 volta a ir enquanto o turno não chega (o J1 ignora as repetidas)
+  if (coopS.role === 'guest' && isCoop() && st.coop.mine && !st.av.rest && !coopS.paused) coopTx({ t: 'act', turn: st.coop.turn, a: st.coop.mine });
   const gap = coopNow() - coopS.lastSeen;
   if (!coopS.paused && gap > 5000) { coopS.paused = true; coopS.pausedAt = coopNow(); ui(); }
   else if (coopS.paused) ui(); // a contagem dos 60 s
+}
+// v0.12.3 (OBS 87): acertar com o J1 (o J1 manda o estado; o J2 pede-o); no máximo 1 vez por segundo
+function coopResync(why) {
+  if (!isCoop() || !coopS.ch || coopNow() < coopS.resyncT) return; coopS.resyncT = coopNow() + 1000;
+  console.warn('co-op: acerto do estado', why); (coopS.bad = coopS.bad || []).push({ t: 'resync', why, at: coopNow() });
+  setTimeout(() => { if (!isCoop() || !coopS.ch) return; if (coopS.role === 'host') coopTx({ t: 'state', s: coopStateJSON() }); else coopTx({ t: 'desync', why }); }, 0);
+}
+// v0.12.3 (utilizador): no descanso a dois, cada um tem 30 s para escolher e arrumar; depois o jogo escolhe por ele e dá o PRONTO
+// (os cliques automáticos passam pelo ovAct como os outros, por isso vão na lista do descanso e o colega repete-os igual)
+const COOP_REST_S = 30;
+const coopRestLeft = () => coopS.restAt ? Math.max(0, COOP_REST_S - Math.floor((coopNow() - coopS.restAt) / 1000)) : COOP_REST_S;
+const coopRestTxt = () => _t('Tens {n} s; depois o jogo escolhe por ti e avança.', { n: coopRestLeft() });
+function coopRestTick() {
+  if (!coopS.ch || !isCoop() || !st.av || st.av.over || !st.av.rest) { coopS.restAt = 0; return; }
+  const C = st.coop, i = C.local; if (C.ready[i]) return;
+  if (!coopS.restAt) coopS.restAt = coopNow();
+  const el = document.querySelector('[data-resttimer]'); if (el) el.textContent = coopRestTxt();
+  if (coopRestLeft() <= 0) coopRestAuto();
+}
+function coopRestAuto() {
+  const C = st.coop, i = C.local, h = st.heroes[i];
+  for (let n = 0; n < 12 && h.domQ && h.domQ.length; n++) { if (st.screen !== 'dompick') ovAct({ arenadom: '1' }); if (st.screen === 'dompick') ovAct({ dpickok: '1' }); else break; }
+  const heal = st.av.offer ? st.av.offer.findIndex(o => o.k === 'heal') : -1;
+  if (!st.av.picked[i] && st.av.offer) ovAct({ arpick: String(h.hp < h.max / 2 && heal >= 0 ? heal : 0) }); // vida abaixo de metade: a cura; senão a relíquia (ou o ouro)
+  if (!st.av.picked[i] && st.av.offer && heal >= 0) ovAct({ arpick: String(heal) }); // a 1.ª não deu (ex.: mochila cheia)
+  log(_t('O tempo acabou: o jogo escolheu por ti.'));
+  st.screen = 'camp'; ovAct({ campleave: '1' });
 }
 function coopResume() { coopS.paused = false; ui(); }
 function coopPeerLost(bye) { if (!coopS.paused) { coopS.paused = true; coopS.pausedAt = bye ? coopNow() - 60000 : coopNow(); } ui(); }
@@ -13777,7 +14073,7 @@ function coopScreenHtml() {
       <button class="opt mm-go" data-coopjoin="1"><span><b>${_t('ENTRAR')}</b><small>${_t('Lês o código do anfitrião com a câmara.')}</small></span><em>›</em></button></div>
       <p class="foot">${_t('A câmara só funciona na app (no site do jogo).')}</p>
       <p class="foot co-priv">${_t('Para ligar os 2 telemóveis, o jogo contacta um servidor STUN público (Google), que vê o endereço IP público; nenhum dado de jogo passa por ele.')}</p>
-      <div class="btn-row"><button class="box again" data-arena="1">‹ ${_t('VOLTAR')}</button></div></div>`;
+      <div class="btn-row"><button class="box again" data-arcoop="1">‹ ${_t('VOLTAR')}</button></div></div>`;
   if (S === 'coopqr') return `<div class="ov-in co-qr">
       <div class="box ov-head"><h2>${_t(coopS.role === 'host' ? 'A TUA SALA' : 'A TUA RESPOSTA')}</h2></div>
       <div class="box co-qrbox">${coopS.code ? `<canvas data-coopqr="1" aria-label="${_t('código de ligação')}"></canvas>` : ''}</div>${foot}
@@ -13835,6 +14131,7 @@ function heroTodo(p) {
 }
 function ui() {
   if (typeof coopPaint === 'function') setTimeout(coopPaint, 0); // v0.12.0: o QR do co-op desenha-se depois do ecrã
+  if (typeof arPaint === 'function') setTimeout(arPaint, 0); // v0.12.3: os avatares de frente da arena (desenho da Imagem)
   if (st.screen !== fitScr) { fitScr = st.screen; setTimeout(fitCheck, 0); } // v0.10.6 (OBS 77): ao mudar de ecrã, confirma a escala (a largura da coluna depende do ecrã); só nessa altura (Sábio: evita um layout a cada render)
   const inRun = !!st.p;
   // v97: dicas da Velha que se veem no ecrã (o Vigia à vista, a alma de execução); só se calculam enquanto não foram vistas
@@ -14211,7 +14508,7 @@ function renderOverlay() {
       <div class="box opts-grid">${G[tab]}
       </div>
       <p class="foot">GODSPIRE v${GAME_SEMVER} (${GAME_BUILD})<br>${_t('Forjado por Rune Weaver · design: Sábio · som: Mestre do Som')}<br>${_t('Fontes: Departure Mono (Helena Zhang) e Pixelify Sans (Stefie Justprince), licença SIL OFL 1.1')}<br><a class="opt-priv" href="https://godspiregame.github.io/godspire/privacy.html#${langNow()}" target="_blank" rel="noopener">${_t('Política de privacidade')}</a></p>
-      <div class="btn-row"><button class="box again" data-closeopts="1">${_t('VOLTAR')}</button>${st.optsBack === 'play' ? `<button class="box again" data-tochars="1">${_t('HERÓIS')}</button>` : ''}</div>
+      <div class="btn-row"><button class="box again" data-closeopts="1">${_t('VOLTAR')}</button>${st.optsBack === 'play' ? `<button class="box again" data-tochars="1">${_t('HERÓIS')}</button>` : ''}${st.p && !st.dying && !['dead', 'victory', 'arenaend'].includes(st.optsBack) ? `<button class="box again" data-abandon="1">${_t('ABANDONAR PARTIDA')}</button>` : ''}</div>
     </div>`;
   } else if (st.screen === 'shop') {
     const m = st.npcs[st.shopAt], buyTab = st.shopTab === 'buy', c = st.cart, T = cartTotals();
@@ -14329,6 +14626,11 @@ function renderOverlay() {
     </div>`;
   } else if (['coopmenu', 'coopqr', 'coopscan', 'cooppick'].includes(st.screen)) { html = coopScreenHtml(); // v0.12.0: co-op
   } else if (st.screen === 'arenapick') { html = arenaPickHtml();
+  } else if (st.screen === 'arenahub') { html = arenaHubHtml(); // v0.12.3: entrada nova da arena
+  } else if (st.screen === 'arenaedit') { html = arenaEditHtml();
+  } else if (st.screen === 'arenasolo' || st.screen === 'arenacoop') { html = arenaModeHtml(st.screen === 'arenacoop' ? 'coop' : 'solo');
+  } else if (st.screen === 'arenarank') { html = arenaRankHtml();
+  } else if (st.screen === 'abandon') { html = abandonHtml(); // v0.12.3
   } else if (st.screen === 'arenaend') { html = arenaEndHtml();
   } else if (st.screen === 'camp' && isArena()) { html = arenaCampHtml(); // v0.11.0: descanso entre vagas
   } else if (st.screen === 'camp') {
@@ -14337,7 +14639,7 @@ function renderOverlay() {
       <div class="box ov-head"><h2>${_t(fire && fire.merchant ? 'ACAMPAMENTO DO MERCADOR' : 'ACAMPAMENTO ABANDONADO')}</h2><p>${_t(fire && fire.lit ? 'A fogueira arde e aquece a pedra fria.' : 'Uma fogueira apagada e uma manta velha. Alguém passou por aqui.')}</p></div>
       <div class="box"><p class="lead">${_t(used ? 'Já descansaste aqui: não recuperas HP outra vez.' : 'Descansar acende a fogueira, recupera o HP e enche o frasco. Só podes descansar uma vez em cada acampamento. Se caíres, a morte é para sempre.')}</p></div>
       <p class="foot">${esc(st.campMsg || `HP ${p.hp}/${p.max}`)}</p>
-      <div class="btn-row hx-camp">${used ? '' : `<button class="box again go" data-rest="1">${_t('DESCANSAR')}</button>`}<button class="box again hx-arr${heroTodo(p) || p.relicHint ? ' go' : ''}" data-arrumar="1" data-pulse="${heroTodo(p) ? 1 : 0}">${_t('ARRUMAR')}${heroTodo(p) ? ` (${heroTodo(p)})` : ''}</button><button class="box again" data-tomenu="1">${_t('MENU')}</button><button class="box again" data-campleave="1">${_t('CONTINUAR')}</button></div>
+      <div class="btn-row hx-camp">${used ? '' : `<button class="box again go" data-rest="1">${_t('DESCANSAR')}</button>`}<button class="box again hx-arr${heroTodo(p) || p.relicHint ? ' go' : ''}" data-arrumar="1" data-pulse="${heroTodo(p) ? 1 : 0}">${_t('ARRUMAR')}${heroTodo(p) ? ` (${heroTodo(p)})` : ''}</button><button class="box again" data-tomenu="1">${_t('ABANDONAR PARTIDA')}</button><button class="box again" data-campleave="1">${_t('CONTINUAR')}</button></div>
     </div>`;
   } else if (st.screen === 'relics' || st.screen === 'relicfull') {
     // v71 (Sábio, aprovado pelo utilizador): relicário. 'relics' = trocar na fogueira; 'relicfull' = cartão ao apanhar com o relicário cheio
@@ -14507,7 +14809,7 @@ function renderOverlay() {
     html = `<div class="ov-in">
       <div class="dead-card">${prevCanvas('dead')}<b>${HERO()}</b><small>${esc(hybridLabel(st.p))}</small><i class="crack"></i></div>
       <p class="you-died">${_t('MORRESTE')}</p>
-      <div class="box ov-head"><h2>${_t('{h} CAIU', { h: HERO() })}</h2><p>${_t('Morto por {k} no andar {n}.', { k: esc((st.killer ? fname({ nome: st.killer }) : _t('a escuridão'))), n: st.floor })} ${_t(st.endless ? 'Já venceu o Rei: fica no Salão dos Vencedores.' : 'Vai descansar na Cripta.')}</p><p class="epi">“${esc(r.epitaph ? _t(r.epitaph) : '')}”</p></div>
+      <div class="box ov-head"><h2>${_t('{h} CAIU', { h: HERO() })}</h2><p>${st.killer === 'a desistência' ? _t('Desististe no andar {n}.', { n: st.floor }) : _t('Morto por {k} no andar {n}.', { k: esc((st.killer ? fname({ nome: st.killer }) : _t('a escuridão'))), n: st.floor })} ${_t(st.endless ? 'Já venceu o Rei: fica no Salão dos Vencedores.' : 'Vai descansar na Cripta.')}</p><p class="epi">“${esc(r.epitaph ? _t(r.epitaph) : '')}”</p></div>
       <div class="box summary">
         <span>${_t('NÍVEL')}</span><span>${p.lvl}</span>
         <span>${_t('BAIXAS')}</span><span>${p.kills}</span>
@@ -14720,6 +15022,7 @@ $('ov').addEventListener('click', e => {
 // (coopRestRec) para o outro telemóvel o repetir no mesmo herói, e corre com o gerador próprio desse herói (o st.rng da partida não mexe)
 function ovAct(d) {
   if (typeof coopRestRec === 'function' && coopRestRec(d)) return;
+  if (typeof coopPlayBlock === 'function' && coopPlayBlock(d)) return; // v0.12.3 (OBS 87)
   if (d.tknext) { talkNext(); return; } // v88: diálogo
   if (d.create) openCreator();
   else if (d.cardgo) diveCard(d.cardgo);
@@ -14809,6 +15112,15 @@ function ovAct(d) {
   else if (d.tochars) toChars();
   else if (d.arena) { if (isCoop() || coopS.ch) coopLeave(); openArenaPick(); } // v0.11.0: modo ARENA
   else if (d.coop) { st = { screen: 'coopmenu' }; coopS.msg = ''; Sound.play('menu'); ui(); } // v0.12.0: co-op na mesma rede
+  else if (d.arsolo) arenaModeOpen('solo'); // v0.12.3: entrada nova da arena (modos, personagem, ranking deste aparelho)
+  else if (d.arcoop) arenaModeOpen('coop');
+  else if (d.arplay) arenaPlay(d.arplay);
+  else if (d.arrank) arenaRankOpen(d.arrank);
+  else if (d.arrkw) { if (st.rk && (d.arrkw === 'todas' || TRAITS[d.arrkw])) { st.rk.w = d.arrkw; Sound.play('menu'); ui(); } }
+  else if (d.arrkp) { if (st.rk) { st.rk.per = d.arrkp === 'semana' ? 'semana' : 'sempre'; Sound.play('menu'); ui(); } }
+  else if (d.aredit) arenaEditOpen();
+  else if (d.arlook) { if (st.ed) arenaEditLook(d.arlook); }
+  else if (d.aredsave) { if (st.ed) arenaEditSave(); }
   else if (d.coophost) coopHost();
   else if (d.coopjoin) coopJoin();
   else if (d.coopscan) coopScanOpen(_t('Lê o código do teu colega.'));
@@ -14820,7 +15132,11 @@ function ovAct(d) {
   else if (d.arenaload) arenaLoad();
   else if (d.arpick) arenaPick(+d.arpick);
   else if (d.arenadom) { if (!openDomPick()) ui(); }
-  else if (d.tomenu) menuAsk('#ov [data-tomenu]'); // v96: menu principal. v0.10.10 (OBS 85, Sábio): com partida, pede o 2.º toque
+  else if (d.tomenu) menuAsk(); // v96: menu principal. v0.12.3: com partida, abre o ecrã ABANDONAR PARTIDA
+  else if (d.abandon) abandonOpen();
+  else if (d.abkeep) abandonKeep();
+  else if (d.abquit) abandonQuit();
+  else if (d.abno) abandonBack();
   else if (d.totower) toTower();
   else if (d.attrs) { openLevel(false); }
   else if (d.wipe) { app.wipeAsk = true; Sound.play('error'); ui(); }
@@ -14976,6 +15292,7 @@ function digGrave() {
   log(st.graveMsg); Sound.play('coin'); ui();
 }
 $('ov').addEventListener('input', e => {
+  if (e.target.id === 'arNick' && st.ed) { st.ed.nick = e.target.value; const c = $('arCnt'); if (c) c.textContent = e.target.value.length + '/16'; return; } // v0.12.3
   if (e.target.id === 'crName') { app.cr.nome = e.target.value; const f = $('ov').querySelector('.cr-prev .foot'); if (f) f.textContent = (e.target.value || CLASSES[app.cr.cls].nome).toUpperCase(); return; }
   if (e.target.id === 'volMusic') { opts.music = e.target.value / 100; $('lblMusic').textContent = `${_t('MÚSICA')} · ${e.target.value}%`; }
   else if (e.target.id === 'volSfx') { opts.sfx = e.target.value / 100; $('lblSfx').textContent = `${_t('EFEITOS')} · ${e.target.value}%`; }
@@ -15011,18 +15328,11 @@ $('bHero').addEventListener('click', () => ['equip', 'disc'].includes(st.screen)
 $('bMap').addEventListener('click', () => st.screen === 'map' ? closePanel() : openPanel('map'));
 $('bPot').addEventListener('click', () => { walk.stop(); consume(); });
 $('bWait').addEventListener('click', () => act(0, 0));
-// v96: a barra de cima volta ao menu principal. v0.10.9 (OBS 81, tester): a meio de uma partida pede um 2.º toque e diz que fica gravada
-// v0.10.10 (OBS 85): a mesma regra no MENU da fogueira (sel = o botão a marcar; o ui() redesenha o #ov, por isso procura-se de novo)
-let menuAskT = 0;
-function menuAsk(sel) {
-  const mark = (txt, ol) => { const b = document.querySelector(sel); if (b) { b.textContent = txt; b.style.outline = ol; } };
-  if (st.p && !st.dying && !['dead', 'victory'].includes(st.screen) && performance.now() > menuAskT) { // em todos os ecrãs da partida; a confirmação vê-se no próprio botão durante os 3 s (Sábio)
-    menuAskT = performance.now() + 3000; log(_t('A partida fica gravada: toca outra vez em MENU para sair.')); ui();
-    mark(_t('SAIR?'), '2px solid #f2c14e'); setTimeout(() => { if (performance.now() >= menuAskT) mark(_t('MENU'), ''); }, 3050); return;
-  }
-  menuAskT = 0; mark(_t('MENU'), ''); toMenu();
-}
-$('bMenu').addEventListener('click', () => menuAsk('#bMenu'));
+// v96: a barra de cima volta ao menu principal. v0.12.3 (utilizador): a meio de uma partida abre o ecrã ABANDONAR PARTIDA,
+// onde o jogador escolhe GUARDAR E SAIR ou DESISTIR (substitui o 2.º toque das OBS 81, 85 e 88)
+const inRun = () => !!(st.p && !st.dying && !['dead', 'victory', 'arenaend', 'abandon'].includes(st.screen));
+function menuAsk() { if (inRun()) { abandonOpen(); return; } toMenu(); }
+$('bMenu').addEventListener('click', () => menuAsk());
 $('bOpts').addEventListener('click', () => st.screen === 'opts' ? closeOpts() : openOpts());
 $('bOpts2').addEventListener('click', () => st.screen === 'opts' ? closeOpts() : openOpts());
 $('bRange').addEventListener('click', () => knockMode() ? knockAct() : toggleRange()); // v67: com a adaga (sem arma de distância), o botão bate na parede
@@ -15091,6 +15401,7 @@ cv.addEventListener('click', e => {
   // habilidade armada: tocar numa casa lança-a nessa direção (ou contra o inimigo tocado)
   if (st.armed != null && (dx || dy)) { castArmed(dx, dy, tf && vis[idx(tx, ty)] ? tf : null); return; }
   if (ri && tf && vis[idx(tx, ty)] && Math.max(Math.abs(dx), Math.abs(dy)) <= ri.range && los(p.x, p.y, tx, ty)) {
+    if (typeof coopIntercept === 'function' && isCoop() && !st.coopHold && coopIntercept({ k: 'shoot', fid: tf.fid })) return; // v0.12.3 (OBS 87): co-op
     if (ready()) { shoot(tf, ri); endTurn(); }
     return;
   }
