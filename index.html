@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.14.8 (build 121). Fontes embutidas:
+<!-- GODSPIRE v0.14.9 (build 122). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -286,7 +286,7 @@ canvas#cv { display: block; width: 100%; height: 100%; image-rendering: pixelate
 .ov-head h2 { font-size: clamp(10px, 2.8vw, 14px); margin: 0 0 8px; line-height: 1.5; text-wrap: balance; font-weight: 400; }
 .ov-head p { font-size: clamp(8px, 1.9vw, 9px); margin: 0; line-height: 1.7; color: var(--g2); }
 .ov-head.row { display: flex; justify-content: space-between; align-items: center; text-align: left; font-size: clamp(8px, 2.2vw, 11px); }
-.menu { display: flex; flex-direction: column; gap: 2px; padding: 8px 8px 8px 6px; }
+.menu:not(html) { display: flex; flex-direction: column; gap: 2px; padding: 8px 8px 8px 6px; } /* v0.14.6 (Imagem): sem o :not(html), o <html class="menu"> ganhava 8 px em cima e virava flex (a moldura do compacto no PC descia 8 px nos menus) */
 .opt { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 8px; align-items: center; text-align: left; padding: 5px 4px; border-radius: 4px; }
 .opt.ic { grid-template-columns: 14px 40px minmax(0, 1fr) auto; }
 .opt::before { content: "▶"; font-size: 10px; visibility: hidden; }
@@ -331,6 +331,28 @@ canvas#cv { display: block; width: 100%; height: 100%; image-rendering: pixelate
 .ov-in.ar2 > .scr > :is(.btn, .row2):last-child { position: sticky; bottom: 0; z-index: 3; background: var(--g0); box-shadow: 0 -10px 10px -6px var(--g0); }
 .ov-in.ar2 > .scr > .row2:last-child { padding-top: 6px; }
 .ov-in.ar2:has(> .mebar) > .scr > .btn:last-child { position: static; box-shadow: none; }
+/* v0.14.6 (utilizador, no PC): a moldura da caixa do meio fica parada e só o conteúdo desfila dentro dela, com a barra dentro da moldura.
+   A caixa marcada com .ov-scroll (no HTML) fica entre o cabeçalho e a fila de botões e desliza por dentro. Sem .ov-scroll, desliza o .ov-in inteiro (cabeçalho e botões presos, como acima). Nos .ar2 o .scr encolhe
+   para a caixa .ov-scroll de dentro (por exemplo a lista do RANK) poder deslizar */
+.overlay > .ov-in:not(.tk):not(.title-scr):not(.co-paused) > .ov-scroll, .overlay > .ov-in.ar2 > .scr > .ov-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: 8px; }
+.overlay > .ov-in.ar2 > .scr:has(> .ov-scroll) { flex: 1 1 auto; min-height: 0; }
+/* decisão do utilizador (desenhou-o): com caixa .ov-scroll, o ecrã ocupa a altura toda do #ov e a caixa enche o espaço entre o cabeçalho e o VOLTAR,
+   mesmo com pouco conteúdo (fica no topo da caixa): o jogo nunca muda de tamanho e o VOLTAR está sempre no mesmo sítio */
+.overlay > .ov-in:has(> .ov-scroll), .overlay > .ov-in.ar2:has(> .scr > .ov-scroll) { height: 100%; margin-top: 0; margin-bottom: 0; }
+.overlay > .ov-in.ar2 > .scr:has(> .ov-scroll) > .grow:not(.ov-scroll) { flex: 0 0 auto; } /* no RANK o espaçador deixa de crescer: é a lista que enche */
+.overlay > .ov-in:has(> .ov-scroll) > .box.again:last-child { margin-bottom: 2px; } /* o VOLTAR solto fica à altura do VOLTAR dentro de uma .btn-row */
+.overlay > .ov-in.ar2:has(> .scr > .ov-scroll) > .scr > .btn:last-child { margin-bottom: 2px; }
+/* com caixa .ov-scroll, a mesma margem de topo em todos os ecrãs (o Codex e o Altar perdiam-na pela regra do .ov-head.row; o herói ficava com os 10 px do hxopen) */
+#ov:has(> .ov-in > .ov-scroll), #ov:has(> .ov-in.ar2 > .scr > .ov-scroll) { padding-top: max(16px, calc(env(safe-area-inset-top, 0px) + 6px)); } /* pelo id, para ganhar à da safe-area do compacto (OBS 84) e à do .ov-head.row */
+/* entrada da ARENA: o painel da personagem é a caixa do meio (.ov-scroll) e, quando o ecrã é baixo (PC compacto), o boneco encolhe em passos
+   inteiros de pixel art em vez de deslizar (container queries pela altura do painel) */
+.ov-in.ar2-entrada > .scr > .hero-panel.ov-scroll { container-type: size; justify-content: center; }
+@container (max-height: 300px) { .ar2 .hero-panel .hero-big { zoom: 5; } }
+@container (max-height: 250px) { .ar2 .hero-panel .hero-big { zoom: 4; } .ar2 .hero-panel .hp-lbl { display: none; } }
+@container (max-height: 205px) { .ar2 .hero-panel .hero-big { zoom: 3; } .ar2 .hero-panel .nick-sub { display: none; } }
+@media (pointer: fine) { .ov-scroll { scrollbar-width: thin; scrollbar-color: #5a5068 transparent; } }
+/* a fila de baixo não cola ao fundo: a mesma distância do fundo que o título tem do topo (~16 px), mais a safe-area no telemóvel */
+.overlay:has(> .ov-in:not(.tk):not(.title-scr):not(.co-paused)) { padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
 .empty { font-size: 16px; color: var(--g2); padding: 6px 4px; margin: 0; }
 .lead { font-size: clamp(14px, 3.4vw, 17px); margin: 0; line-height: 1.3; }
 
@@ -3642,7 +3664,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.14.8', GAME_BUILD = 121;
+const GAME_SEMVER = '0.14.9', GAME_BUILD = 122;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -12641,6 +12663,7 @@ const EFEITOS = (() => {
   const live = [];
   // v0.14.3 (Imagem): Rodopio e teletransporte novos. FXV escolhe a variante ('old' é o desenho anterior)
   const FXV = window.FXV = window.FXV || { spin: 'B', passo: 'A', anc: 'P' }; // escolha do utilizador (v0.14.3): Rodopio B, Passo arcano A, Âncora P (poça de sombra)
+  Object.assign(FXV, { smash: FXV.smash || 'D', shield: FXV.shield || 'B', charge: FXV.charge || 'old', shout: FXV.shout || 'B' }); // v0.14.7, lote 1 (utilizador): Golpe esmagador D (martelo dos céus), Muralha B, Grito B, Investida como estava
   const RM = () => typeof reduceMotion === 'function' && reduceMotion();
   const VIO = ['#7a3aa0', '#b06ad0', '#e0b8f0'], DARK = ['#1a1024', '#2a1838', '#8a4ac0'];
   let curA = null;
@@ -12701,6 +12724,9 @@ const EFEITOS = (() => {
         if (age < (RM() ? 90 : sink ? 250 : 180) && (!sink || (st.p.x === tr.x1 && st.p.y === tr.y1))) return { hide: true };
       }
       if (L.id === 'spin' && FXV.spin === 'A' && !RM() && age < 50) return { sx: 1.1, sy: .86 };
+      if (L.id === 'smash' && FXV.smash === 'A' && !RM() && age < 40) return { sx: 1.12, sy: .86 }; // a antecipação da martelada
+      if (L.id === 'smash' && (FXV.smash === 'C' || FXV.smash === 'D') && !RM() && age < 90) return age < 55 ? { sx: 1.14, sy: .82 } : { sx: .92, sy: 1.12 }; // encolhe e estica antes da pancada
+      if (L.id === 'shout' && FXV.shout === 'A' && !RM() && age < 80) return { sx: 1.12, sy: 1.1 }; // o herói incha no rugido
     }
     return null;
   }
@@ -12712,9 +12738,11 @@ const EFEITOS = (() => {
       const r = f.apply(this, a);
       let mine = fx.slice(n0);
       if (id === 'spin' && FXV.spin !== 'old' && !RM()) for (const fl of floats.slice(nf0)) if (near.some(o => o.x === fl.x && o.y === fl.y)) fl.t += spinAt(hx, hy, fl.x, fl.y, FXV.spin); // v0.14.3: cada número sai quando o giro chega a esse inimigo (só o desenho; o hp já mudou)
+      if (id === 'smash' && (FXV.smash === 'C' || FXV.smash === 'D') && !RM()) { const bu = mine.find(e => e.k === 'burst'); if (bu) for (const fl of floats.slice(nf0)) if (fl.x === bu.x && fl.y === bu.y) fl.t = Math.max(fl.t, bu.t0); } // o número sai com a pancada
       if (id === 'anchor') { mine = mine.filter(e => e.k === 'trail'); if (!mine.length || FXV.anc === 'old') return r; } // v0.14.3: o lançar da âncora e a runa Explosão ficam com o drawFx
       mine.forEach(e => { e.ab = id; });
-      if (mine.length || id === 'shield') live.push({ id, t0, fx: mine, hx, hy, near, face: p.dir === 'l' ? -1 : 1, flags: {} });
+      const near2 = id === 'shout' ? st.foes.filter(o => !o.ally && Math.abs(o.x - hx) <= 2 && Math.abs(o.y - hy) <= 2).map(o => ({ x: o.x, y: o.y })) : null;
+      if (mine.length || id === 'shield') live.push({ id, t0, fx: mine, hx, hy, near, near2, face: p.dir === 'l' ? -1 : 1, flags: {} });
       return r;
     };
   }
@@ -12829,28 +12857,96 @@ const EFEITOS = (() => {
           if (L.flash && now - L.flash < 120) glow(tx, ty - 8, P[2], 16, (dark ? .35 : .6) * (1 - (now - L.flash) / 120));
           break;
         }
-        case 'smash': { // B: rachas no chão, pó em anel, pedras e o ecrã a tremer
-          const e = E('burst'); if (!e) break; const [sx, sy] = C(e.x, e.y), q = (now - e.t0) / 1600;
-          if (now >= e.t0 && once('impacto')) { A.shake(220); for (let k = 0; k < 18; k++) { const a = k / 18 * Math.PI * 2; part({ x: e.x * TS + 8, y: e.y * TS + 13, vx: Math.cos(a) * 30, vy: Math.sin(a) * 12, life: .7, max: .7, col: '#5d566c', t: 'dust', s: 2 }); } for (let k = 0; k < 8; k++) part({ x: e.x * TS + 8, y: e.y * TS + 13, z: 2, vx: R1(-40, 40), vy: R1(-15, 15), vz: R1(30, 70), life: R1(.6, 1), max: 1, col: k % 2 ? '#3a3546' : '#58516a', t: 'debris' }); L.seed = Math.random() * 9; }
-          if (q >= 0 && q < 1) { g.globalAlpha = 1 - q; for (let k = 0; k < 5; k++) { let x = sx, y = sy + 5, a = k * 1.25 + (L.seed || 0); for (let s = 0; s < 7; s++) { px(g, x, y, 1, 1, '#0b0a10'); x += Math.cos(a); y += Math.sin(a) * .6; a += Math.sin(k * 3 + s) * .4; } } g.globalAlpha = 1; }
+        case 'smash': { // v0.14.7: A martelada (antecipação, estrela de impacto, onda e rachas), B arco pesado que cai sobre o alvo
+          const e = E('burst'); if (!e) break; const [sx, sy] = C(e.x, e.y), v = FXV.smash, rm = RM(), q = (now - e.t0) / 1600, ia = now - e.t0;
+          const cracks = (a) => { g.globalAlpha = a; for (let k = 0; k < 5; k++) { let x = sx, y = sy + 5, an = k * 1.25 + (L.seed || 0); for (let s = 0; s < 7; s++) { px(g, x, y, 1, 1, '#0b0a10'); x += Math.cos(an); y += Math.sin(an) * .6; an += Math.sin(k * 3 + s) * .4; } } g.globalAlpha = 1; };
+          if (v === 'old' || rm) {
+            if (now >= e.t0 && once('impacto')) { if (!rm) A.shake(220); for (let k = 0; k < (rm ? 0 : 18); k++) { const a = k / 18 * Math.PI * 2; part({ x: e.x * TS + 8, y: e.y * TS + 13, vx: Math.cos(a) * 30, vy: Math.sin(a) * 12, life: .7, max: .7, col: '#5d566c', t: 'dust', s: 2 }); } for (let k = 0; k < (rm ? 0 : 8); k++) part({ x: e.x * TS + 8, y: e.y * TS + 13, z: 2, vx: R1(-40, 40), vy: R1(-15, 15), vz: R1(30, 70), life: R1(.6, 1), max: 1, col: k % 2 ? '#3a3546' : '#58516a', t: 'debris' }); L.seed = Math.random() * 9; }
+            if (rm && ia >= 0 && ia < 160) { glow(sx, sy - 2, '#ffffff', 10, .5 * (1 - ia / 160)); ring(sx, sy + 4, 6 + ia / 20, 3 + ia / 50, '#d2d5da', 1 - ia / 160); }
+            if (q >= 0 && q < 1) cracks(1 - q);
+            break;
+          }
+          if (v === 'C' || v === 'D') { // v0.14.7 (o utilizador quis o golpe a sentir-se esmagador; escolheu a D): C terramoto, D martelo dos céus
+            const big = (alpha) => { // rachas compridas, uma cratera escura e lascas claras na borda
+              g.globalAlpha = alpha; g.fillStyle = '#07060c'; g.beginPath(); g.ellipse(sx, sy + 5, 7, 3, 0, 0, Math.PI * 2); g.fill();
+              for (let k = 0; k < 7; k++) { let x = sx, y = sy + 5, an = k * .9 + (L.seed || 0); const n = 12 + (k % 3) * 4; for (let s = 0; s < n; s++) { px(g, x, y, s < 5 ? 2 : 1, 1, '#0b0a10'); if (s % 3 === 0) px(g, x, y - 1, 1, 1, '#4e535d'); x += Math.cos(an) * 1.2; y += Math.sin(an) * .55; an += Math.sin(k * 3 + s * .7) * .35; } }
+              g.globalAlpha = 1; };
+            if (v === 'D' && ia < 0) { const u = cl(1 + ia / 90), y = sy - 46 + u * 40, a = .35 + .55 * u; // o martelo enorme cai do alto
+              g.globalAlpha = a * .5; for (let s = 1; s < 6; s++) px(g, sx - 6, y - 8 - s * 4, 12, 1, '#fff4d8');
+              g.globalAlpha = a; px(g, sx - 1, y - 16, 3, 12, '#b07d22'); px(g, sx - 7, y - 6, 15, 7, '#f2c14e'); px(g, sx - 7, y - 6, 15, 2, '#fff4d8'); px(g, sx - 6, y + 1, 13, 1, '#b07d22'); g.globalAlpha = 1; glow(sx, y - 3, '#f2c14e', 14, .35 * u); }
+            if (ia >= 0 && once('impacto')) { A.shake(v === 'C' ? 300 : 260); L.seed = Math.random() * 9;
+              for (let k = 0; k < 24; k++) { const a = k / 24 * Math.PI * 2, sp = R1(30, 55); part({ x: e.x * TS + 8 + Math.cos(a) * 4, y: e.y * TS + 13 + Math.sin(a) * 2, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp * .4, life: R1(.6, .9), max: .9, col: k % 3 ? '#5d566c' : '#7a7088', t: 'dust', s: 2 }); }
+              for (let k = 0; k < 14; k++) part({ x: e.x * TS + 8 + R1(-4, 4), y: e.y * TS + 12, z: 2, vx: R1(-55, 55), vy: R1(-20, 20), vz: R1(60, 115), life: R1(.7, 1.1), max: 1.1, col: ['#3a3546', '#58516a', '#7a808a'][k % 3], t: 'debris', s: 2 });
+              for (let k = 0; k < 12; k++) { const a = -Math.PI / 2 + R1(-1.4, 1.4), sp = R1(40, 90); part({ x: e.x * TS + 8, y: e.y * TS + 8, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: R1(.15, .3), max: .3, col: k % 2 ? '#ffffff' : '#f2c14e', t: 'spark', add: k < 3 }); } }
+            if (ia >= 0 && ia < 120) { const f = 1 - ia / 120; g.globalAlpha = .85 * f; g.fillStyle = '#ffffff'; g.beginPath(); g.ellipse(sx, sy, 9 * (1 - f * .4), 7 * (1 - f * .4), 0, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1; glow(sx, sy - 2, v === 'D' ? '#fff4d8' : '#ffffff', 24, .7 * f); }
+            if (v === 'D' && ia >= 0 && ia < 160) { const f = 1 - ia / 160; g.globalAlpha = .55 * f; px(g, sx - 3, sy - 40, 7, 42, '#fff4d8'); px(g, sx - 1, sy - 40, 3, 42, '#ffffff'); g.globalAlpha = 1; }
+            for (const [d, R, col, w] of [[0, 28, '#ffffff', 2], [70, 18, v === 'D' ? '#f2c14e' : '#d2d5da', 1]]) { const u = (ia - d) / 320; if (u < 0 || u >= 1) continue; const ez = 1 - (1 - u) * (1 - u); g.globalAlpha = 1 - u; g.strokeStyle = col; g.lineWidth = w; g.beginPath(); g.ellipse(sx, sy + 5, 4 + ez * R, 2 + ez * R * .42, 0, 0, Math.PI * 2); g.stroke(); g.lineWidth = 1; g.globalAlpha = 1; }
+            if (ia >= 0 && ia < 1600) big(ia < 1100 ? 1 : 1 - (ia - 1100) / 500);
+            break;
+          }
+          if (v === 'B' && ia < 0) { const u = cl(1 + ia / 90), a0 = -Math.PI * .95, a1 = a0 + u * Math.PI * .9, hx = sx - (e.x - L.hx) * 8, hy = sy - (e.y - L.hy) * 8 - 6; // o arco nasce por cima do herói e cai no alvo
+            for (let s = 0; s < 18; s++) { const an = a1 - s * .06; if (an < a0) break; const r = 15 - s * .15; g.globalAlpha = 1 - s / 18; px(g, hx + (sx - hx) * .5 + Math.cos(an) * r, hy + (sy - hy) * .5 + Math.sin(an) * r * .9, 2, 2, s < 5 ? '#ffffff' : '#d2d5da'); } g.globalAlpha = 1; }
+          if (ia >= 0 && once('impacto')) { A.shake(v === 'A' ? 170 : 130); L.seed = Math.random() * 9;
+            for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; part({ x: e.x * TS + 8, y: e.y * TS + 13, vx: Math.cos(a) * 34, vy: Math.sin(a) * 13, life: .55, max: .55, col: '#5d566c', t: 'dust', s: 2 }); }
+            for (let k = 0; k < 8; k++) part({ x: e.x * TS + 8, y: e.y * TS + 11, z: 2, vx: R1(-45, 45), vy: R1(-15, 15), vz: R1(30, 80), life: R1(.5, .9), max: .9, col: k % 2 ? '#3a3546' : '#7a808a', t: 'debris' });
+            for (let k = 0; k < 7; k++) { const a = Math.random() * Math.PI * 2, s = R1(30, 70); part({ x: e.x * TS + 8, y: e.y * TS + 6, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.12, .22), max: .22, col: k % 2 ? '#ffffff' : '#f2c14e', t: 'spark', add: k < 2 }); } }
+          if (ia >= 0 && ia < 110) { const f = 1 - ia / 110; // a estrela do impacto: 8 riscos brancos que encolhem
+            if (v === 'A') for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4, L1 = (k % 2 ? 6 : 10) * f + 2; for (let s = 2; s < L1; s++) px(g, sx + Math.cos(a) * s, sy - 3 + Math.sin(a) * s * .8, 1, 1, s < 4 ? '#ffffff' : '#e8dcc4'); }
+            glow(sx, sy - 3, '#ffffff', 12, .55 * f); }
+          if (ia >= 0 && ia < 260) { const u = ia / 260; ring(sx, sy + 5, 5 + u * (v === 'A' ? 16 : 12), 2 + u * (v === 'A' ? 6 : 4.5), '#d2d5da', .8 * (1 - u)); }
+          if (q >= 0 && q < 1) cracks(1 - q);
           break;
         }
-        case 'shield': { // B: cúpula azul translúcida que se forma à volta do herói
-          const q = cl(age / 300); if (age > 600) break;
-          const [sx, sy] = W2(A.hero.x, A.hero.y), r = 4 + q * 10, a = age < 300 ? 1 : 1 - (age - 300) / 300;
-          g.globalAlpha = .25 * a; g.fillStyle = '#64b4f4'; g.beginPath(); g.ellipse(sx, sy - 7, r, r * 1.05, 0, Math.PI, 0); g.lineTo(sx + r, sy); g.lineTo(sx - r, sy); g.fill();
-          g.globalAlpha = .9 * a; g.strokeStyle = '#9fd8ff'; g.beginPath(); g.ellipse(sx, sy - 7, r, r * 1.05, 0, Math.PI, 0); g.stroke(); g.globalAlpha = 1; glow(sx, sy - 7, '#64b4f4', 16, .3 * a);
+        case 'shield': { // v0.14.7: A placas de ferro que fecham a cúpula; B um escudo de torre que cai à frente e abre a cúpula
+          const v = FXV.shield, rm = RM(), [sx, sy] = W2(A.hero.x, A.hero.y);
+          if (v === 'old' || rm) { const D = rm ? 160 : 300, qq = cl(age / D); if (age > D * 2) break;
+            const r = 4 + qq * 10, a = age < D ? 1 : 1 - (age - D) / D;
+            g.globalAlpha = .25 * a; g.fillStyle = '#64b4f4'; g.beginPath(); g.ellipse(sx, sy - 7, r, r * 1.05, 0, Math.PI, 0); g.lineTo(sx + r, sy); g.lineTo(sx - r, sy); g.fill();
+            g.globalAlpha = .9 * a; g.strokeStyle = '#9fd8ff'; g.beginPath(); g.ellipse(sx, sy - 7, r, r * 1.05, 0, Math.PI, 0); g.stroke(); g.globalAlpha = 1; glow(sx, sy - 7, '#64b4f4', 16, .3 * a);
+            break; }
+          if (age > 700) break;
+          const R = 13, cx = sx, cy = sy - 7;
+          if (v === 'A') { // 7 placas que voam para o lugar, uma a uma, e uma luz que passa pela cúpula fechada
+            for (let k = 0; k < 7; k++) { const t0 = k * 30, u = cl((age - t0) / 120); if (u <= 0) continue; const a = Math.PI + (k + .5) / 7 * Math.PI, d = R + (1 - u) * 14, x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d * 1.05;
+              const fade = age < 450 ? 1 : 1 - (age - 450) / 250; g.globalAlpha = .9 * fade; px(g, x - 2, y - 2, 4, 4, '#4e535d'); px(g, x - 2, y - 2, 4, 1, '#a3a9b1'); px(g, x - 1, y - 1, 2, 2, '#9fd8ff'); }
+            if (age >= 300 && age < 500) { const u = (age - 300) / 200, a = Math.PI + u * Math.PI; g.globalAlpha = 1 - u; px(g, cx + Math.cos(a) * R - 1, cy + Math.sin(a) * R * 1.05 - 1, 3, 3, '#ffffff'); }
+            if (age >= 210 && age < 700) { const f = age < 450 ? 1 : 1 - (age - 450) / 250; g.globalAlpha = .22 * f; g.fillStyle = '#64b4f4'; g.beginPath(); g.ellipse(cx, cy, R, R * 1.05, 0, Math.PI, 0); g.lineTo(cx + R, sy); g.lineTo(cx - R, sy); g.fill(); glow(cx, cy, '#64b4f4', 16, .3 * f); }
+            if (once('tinido', 210)) for (let k = 0; k < 6; k++) { const a = Math.PI + Math.random() * Math.PI; part({ x: A.hero.x + Math.cos(a) * R, y: A.hero.y - 7 + Math.sin(a) * R, vx: Math.cos(a) * 30, vy: Math.sin(a) * 30, life: .2, max: .2, col: '#ffffff', t: 'spark', add: k < 2 }); }
+          } else { // B: o escudo de torre desce à frente do herói, bate no chão com pó, e a cúpula abre-se dele
+            const fx = cx + (L.face || 1) * 9, drop = cl(age / 110), y = cy - 20 * (1 - drop * drop);
+            if (age < 520) { const f = age < 360 ? 1 : 1 - (age - 360) / 160; g.globalAlpha = f; px(g, fx - 3, y - 6, 6, 13, '#4e535d'); px(g, fx - 3, y - 6, 6, 1, '#d2d5da'); px(g, fx - 3, y - 6, 1, 13, '#a3a9b1'); px(g, fx - 1, y - 3, 2, 7, '#9fd8ff'); px(g, fx - 2, y, 4, 1, '#9fd8ff'); }
+            if (once('bate', 110)) { A.shake(80); for (let k = 0; k < 8; k++) part({ x: A.hero.x + (L.face || 1) * 9 + R1(-3, 3), y: A.hero.y, vx: R1(-28, 28), vy: R1(-6, 6), life: .45, max: .45, col: '#5d566c', t: 'dust', s: 2 }); }
+            if (age >= 130 && age < 700) { const u = cl((age - 130) / 180), r = 4 + u * (R - 4), f = age < 450 ? 1 : 1 - (age - 450) / 250; g.globalAlpha = .22 * f; g.fillStyle = '#64b4f4'; g.beginPath(); g.ellipse(cx, cy, r, r * 1.05, 0, Math.PI, 0); g.lineTo(cx + r, sy); g.lineTo(cx - r, sy); g.fill(); g.globalAlpha = .9 * f; g.strokeStyle = '#9fd8ff'; g.beginPath(); g.ellipse(cx, cy, r, r * 1.05, 0, Math.PI, 0); g.stroke(); glow(cx, cy, '#64b4f4', 16, .3 * f); }
+          }
+          g.globalAlpha = 1;
           break;
         }
-        case 'charge': { // C: cópias frias do herói ao longo da corrida e uma onda em cone no choque
-          const tr = E('trail'), b = E('burst');
-          if (tr) { const q = (now - tr.t0) / 300; if (q >= 0 && q < 1) for (let k = 1; k <= 3; k++) { const f = Math.max(0, q - k * .12), [gx, gy] = C(lerp(tr.x0, tr.x1, f), lerp(tr.y0, tr.y1, f)); A.ghost(gx, gy + 5, .32 - k * .08, '#9fd8ff'); } }
-          if (b) { const q = (now - b.t0) / 400, [bx, by] = C(b.x, b.y); if (q >= 0 && q < 1) { const dx = tr ? Math.sign(tr.x1 - tr.x0) : 1, dy = tr ? Math.sign(tr.y1 - tr.y0) : 0, a0 = Math.atan2(dy, dx); g.globalAlpha = 1 - q; g.strokeStyle = '#9fd8ff'; g.beginPath(); g.arc(bx - dx * 8, by - dy * 8, 4 + q * 14, a0 - .8, a0 + .8); g.stroke(); g.globalAlpha = 1; } }
+        case 'charge': { // v0.14.7: A aríete (riscos de velocidade e pó nos pés), B cometa (rasto esticado e anel de choque)
+          const tr = E('trail'), b = E('burst'), v = FXV.charge, rm = RM();
+          if (v === 'old' || rm) {
+            if (tr && !rm) { const q = (now - tr.t0) / 300; if (q >= 0 && q < 1) for (let k = 1; k <= 3; k++) { const f = Math.max(0, q - k * .12), [gx, gy] = C(lerp(tr.x0, tr.x1, f), lerp(tr.y0, tr.y1, f)); A.ghost(gx, gy + 5, .32 - k * .08, '#9fd8ff'); } }
+            if (b) { const q = (now - b.t0) / (rm ? 200 : 400), [bx, by] = C(b.x, b.y); if (q >= 0 && q < 1) { const dx = tr ? Math.sign(tr.x1 - tr.x0) : 1, dy = tr ? Math.sign(tr.y1 - tr.y0) : 0, a0 = Math.atan2(dy, dx); g.globalAlpha = 1 - q; g.strokeStyle = '#9fd8ff'; g.beginPath(); g.arc(bx - dx * 8, by - dy * 8, 4 + q * 14, a0 - .8, a0 + .8); g.stroke(); g.globalAlpha = 1; } }
+            break;
+          }
+          const dx = tr ? Math.sign(tr.x1 - tr.x0) : 0, dy = tr ? Math.sign(tr.y1 - tr.y0) : 0;
+          if (tr) { const q = (now - tr.t0) / 220; if (q >= 0 && q < 1.3) { const f = Math.min(1, q), [hx, hy] = C(lerp(tr.x0, tr.x1, f), lerp(tr.y0, tr.y1, f)), [ox, oy] = C(tr.x0, tr.x1 === tr.x0 ? tr.y0 : tr.y0);
+            if (v === 'A') { for (let k = 0; k < 6; k++) { const off = (k - 2.5) * 3, len = 8 + (k % 3) * 4, back = 4 + (k * 7) % 10; g.globalAlpha = .7 * (1 - Math.max(0, q - 1) / .3); for (let s = 0; s < len; s++) px(g, hx - dx * (back + s) - dy * off, hy - 4 - dy * (back + s) + dx * off * .6, 1, 1, '#d2d5da'); }
+              if (once('pó0')) L.dn = 0; if (q < 1 && (L.dn = (L.dn || 0) + 1) % 2) part({ x: (lerp(tr.x0, tr.x1, f)) * TS + 8, y: lerp(tr.y0, tr.y1, f) * TS + 13, vx: -dx * 20 + R1(-6, 6), vy: -dy * 20 + R1(-4, 2), life: .4, max: .4, col: '#5d566c', t: 'dust', s: 2 }); }
+            else { const [x0, y0] = C(tr.x0, tr.y0); g.globalAlpha = .5 * (1 - Math.max(0, q - .8) / .5); for (let s = 0; s <= 10; s++) { const u = s / 10, x = lerp(x0, hx, u), y = lerp(y0, hy, u) - 4; px(g, x - 1, y - 2, 3, 4 + Math.round(u * 3), u > .8 ? '#ffffff' : '#9fd8ff'); } A.ghost(hx, hy + 5, .4 * (1 - Math.max(0, q - 1) / .3), '#c8ecff'); }
+            g.globalAlpha = 1; } }
+          if (b) { const ia = now - b.t0, [bx, by] = C(b.x, b.y); if (ia >= 0 && once('choque')) { A.shake(v === 'A' ? 150 : 110); for (let k = 0; k < 9; k++) { const a = Math.atan2(dy, dx) + R1(-.9, .9), s = R1(30, 70); part({ x: b.x * TS + 8 - dx * 6, y: b.y * TS + 8 - dy * 6, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.15, .28), max: .28, col: k % 2 ? '#ffffff' : '#f2c14e', t: 'spark', add: k < 2 }); } }
+            if (ia >= 0 && ia < 260) { const u = ia / 260; if (v === 'B') { ring(bx - dx * 6, by - dy * 6 - 2, 3 + u * 14, 3 + u * 10, '#c8ecff', 1 - u); ring(bx - dx * 6, by - dy * 6 - 2, 2 + u * 9, 2 + u * 6, '#ffffff', .7 * (1 - u)); } else { const a0 = Math.atan2(dy, dx); g.globalAlpha = 1 - u; g.strokeStyle = '#d2d5da'; g.beginPath(); g.arc(bx - dx * 8, by - dy * 8, 5 + u * 12, a0 - .9, a0 + .9); g.stroke(); g.globalAlpha = 1; } glow(bx, by - 3, '#ffffff', 10, .5 * (1 - u)); } }
           break;
         }
-        case 'shout': { // B: ondas de som douradas em anel
-          const e = E('burst'); if (!e) break; const [sx, sy] = C(e.x, e.y);
-          for (let k = 0; k < 3; k++) { const q = (now - e.t0 - k * 120) / 500; if (q < 0 || q >= 1) continue; ring(sx, sy - 2, 6 + q * 34, 4 + q * 20, '#f2c14e', 1 - q); }
+        case 'shout': { // v0.14.7: A rugido (o herói incha, ondas em ziguezague douradas), B estandarte (anel de pó e faíscas em cada inimigo atingido)
+          const e = E('burst'); if (!e) break; const [sx, sy] = C(e.x, e.y), v = FXV.shout, rm = RM();
+          if (v === 'old' || rm) { for (let k = 0; k < (rm ? 1 : 3); k++) { const q = (now - e.t0 - k * 120) / (rm ? 260 : 500); if (q < 0 || q >= 1) continue; ring(sx, sy - 2, 6 + q * 34, 4 + q * 20, '#f2c14e', 1 - q); } break; }
+          if (v === 'A') for (let k = 0; k < 3; k++) { const q = (now - e.t0 - 40 - k * 90) / 420; if (q < 0 || q >= 1) continue; const rx = 8 + q * 30, ry = rx * .6, n = 36; g.globalAlpha = 1 - q;
+              for (let s = 0; s < n; s++) { const a = s / n * Math.PI * 2, z = s % 2 ? 1 : -1, r = 1 + z * .08 * (1 - q); px(g, sx + Math.cos(a) * rx * r, sy - 3 + Math.sin(a) * ry * r, 2, 1, k === 0 ? '#fff4d8' : '#f2c14e'); } g.globalAlpha = 1; }
+          else { const q = (now - e.t0) / 380; if (q >= 0 && q < 1) { ring(sx, sy + 4, 6 + q * 30, 3 + q * 13, '#d2d5da', .8 * (1 - q)); ring(sx, sy - 3, 4 + q * 24, 3 + q * 15, '#f2c14e', 1 - q); }
+            if (once('pó')) for (let k = 0; k < 20; k++) { const a = k / 20 * Math.PI * 2; part({ x: e.x * TS + 8 + Math.cos(a) * 8, y: e.y * TS + 13 + Math.sin(a) * 3, vx: Math.cos(a) * 45, vy: Math.sin(a) * 16, life: .5, max: .5, col: '#5d566c', t: 'dust', s: 2 }); } }
+          for (const [i, n] of (L.near2 || []).entries()) { const at2 = 60 + Math.hypot(n.x - L.hx, n.y - L.hy) * 70; // cada inimigo apanhado acende quando a onda lá chega (estrelas douradas)
+            if (once('n' + i, at2)) for (let k = 0; k < 5; k++) { const a = -Math.PI / 2 + R1(-1, 1), s = R1(18, 36); part({ x: n.x * TS + 8, y: n.y * TS + 2, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: .3, max: .3, col: k % 2 ? '#fff4d8' : '#f2c14e', t: 'spark', add: k === 0 }); } }
           break;
         }
         case 'fire': { // B: bola de fogo com cauda e fumo; rebenta em brasas com um clarão
@@ -13757,7 +13853,7 @@ function arenaHubHtml() {
     <h2>${_t('ARENA')}</h2><p class="sub">${_t('Escolhe o modo.')}</p>
     <button class="box mode-card" data-arsolo="1"><div class="mc-av">${arAv(me.look, mk, 'av me-av')}</div><b>${_t('ARENA SOLO')}</b>${arenaSaved() ? `<span class="tag">${_t('PARTIDA A MEIO')}</span>` : ''}<small>${arenaSaved() ? _t('Vaga {n} · {w}', { n: Math.max(1, arenaSaved().av.wave), w: _t(TRAITS[arenaSaved().av.kind].nome) }) : _t('Vagas sem fim, a arma que escolheres')}</small><span class="me">${a.best ? _t('O teu melhor: vaga {n} · {w}', { n: a.best.wave, w: _t(TRAITS[a.best.kind].nome) }) + (typeof rkWeekPos === 'function' && rkWeekPos('solo') ? ' · ' + _t('{n}.º esta semana', { n: rkWeekPos('solo') }) : '') : _t('Ainda sem recorde.')}</span><em>›</em></button>
     <button class="box mode-card" data-arcoop="1"><div class="mc-av">${arAv(me.look, cb ? cb.mk : mk, 'av me-av')}${cb ? arAv(cb.plook, cb.pk) : ''}</div><b>${_t('ARENA CO-OP')}</b><small>${_t('A dois, na mesma rede Wi-Fi')}</small><span class="me">${cb ? _t('O teu melhor: vaga {n} com {p}', { n: cb.wave, p: esc(cb.partner) }) + (typeof rkWeekPos === 'function' && rkWeekPos('coop') ? ' · ' + _t('{n}.º esta semana', { n: rkWeekPos('coop') }) : '') : _t('Ainda sem recorde.')}</span><em>›</em></button>
-    <div class="box hero-panel grow"><span class="hp-lbl">${_t('A TUA PERSONAGEM')}</span>${arAv(me.look, mk, 'hero-big me-big')}<div class="hero-floor"></div><span class="nick">${esc(me.nick)}</span><span class="nick-sub">${arIcon(mk)} ${_t('a tua arma mais usada: {w}', { w: _t(TRAITS[mk].nome) })}</span><button class="btn" data-aredit="1">${_t('EDITAR')}</button></div>
+    <div class="box hero-panel grow ov-scroll"><span class="hp-lbl">${_t('A TUA PERSONAGEM')}</span>${arAv(me.look, mk, 'hero-big me-big')}<div class="hero-floor"></div><span class="nick">${esc(me.nick)}</span><span class="nick-sub">${arIcon(mk)} ${_t('a tua arma mais usada: {w}', { w: _t(TRAITS[mk].nome) })}</span><button class="btn" data-aredit="1">${_t('EDITAR')}</button></div>
     <button class="btn" data-tomenu="1">‹ ${_t('MENU')}</button>
     ${typeof rkAcct === 'function' && !rkAcct().seen ? `<div class="box ar-note"><b>${_t('RANKING GLOBAL')}</b><p>${_t('A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro. Podes desligar isto em Opções › Privacidade.')}</p>
       <a class="opt-priv" href="https://godspiregame.github.io/godspire/privacy.html#${langNow()}" target="_blank" rel="noopener">${_t('Política de privacidade')}</a><button class="btn go" data-rknote="1">${_t('OK')}</button></div>` : ''}</div></div>`;
@@ -13768,12 +13864,12 @@ function arenaEditHtml() {
   const sw = (k, list) => `<div class="sw">${list.map((c, i) => `<button title="${esc(_t(c[0]))}" style="background:${c[1]}" data-arlook="${k}:${i}" aria-pressed="${L[k] === i}"></button>`).join('')}</div>`;
   return `<div class="ov-in ar2 ar2-editar"><div class="scr">
     <h2>${_t('A TUA PERSONAGEM')}</h2><p class="sub">${_t('É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).')}</p><p class="sub ar-pub">${_t('A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro.')}</p>
-    <div class="ed-prev">${arAv(L, mk, 'hero-big')}</div>
+    <div class="ov-scroll"><div class="ed-prev">${arAv(L, mk, 'hero-big')}</div>
     <label class="field"><span>${_t('ALCUNHA (3 a 16)')}</span><input id="arNick" type="text" maxlength="16" autocomplete="off" value="${esc(E.nick)}"><span class="count" id="arCnt">${E.nick.length}/16</span></label>
     <div class="field"><span>${_t('PELE')}</span>${sw('skin', SKINS)}</div>
     <div class="field"><span>${_t('CABELO')}</span><div class="seg">${Object.keys(A.HAIR).map(k => `<button data-arlook="style:${k}" aria-pressed="${L.style === k}">${_t(AR_STYLE_TXT[k] || k.toUpperCase())}</button>`).join('')}</div>${sw('hair', HAIRS)}</div>
     <div class="field"><span>${_t('ROUPA')}</span>${sw('cloth', CLOTHS)}</div>
-    ${E.msg ? `<p class="foot">${esc(E.msg)}</p>` : ''}
+    ${E.msg ? `<p class="foot">${esc(E.msg)}</p>` : ''}</div>
     <div class="row2"><button class="btn" data-arena="1">${_t('CANCELAR')}</button><button class="btn go" data-aredsave="1">${_t('GUARDAR')}</button></div></div></div>`;
 }
 function arenaEditOpen() { const me = arenaMe(); st = { screen: 'arenaedit', ed: { nick: me.nick, look: { ...me.look }, msg: '' } }; Sound.play('menu'); ui(); }
@@ -13822,7 +13918,7 @@ function arenaRankLocalHtml(box) { // os recordes deste aparelho (sem rede, no a
   return `<div class="ov-in ar2 ar2-rank"><div class="scr"><h2>${_t(coop ? 'ARENA CO-OP' : 'ARENA SOLO')} · ${_t('RANK')}</h2>${tabs}
     ${box}
     <div class="thead"><span>#</span><span>${_t(coop ? 'DUPLA · ARMAS' : 'ARMA')}</span><span class="r">${_t('VAGA')}</span><span class="r">${_t('TURNOS')}</span></div>
-    <div class="box list">${rows.length ? rows.map(row).join('') : `<p class="foot">${_t(week ? 'Ainda sem recordes esta semana.' : 'Ainda sem recordes.')}</p>`}</div>
+    <div class="box list ov-scroll">${rows.length ? rows.map(row).join('') : `<p class="foot">${_t(week ? 'Ainda sem recordes esta semana.' : 'Ainda sem recordes.')}</p>`}</div>
     <div class="grow"></div><button class="btn" data-${coop ? 'arcoop' : 'arsolo'}="1">‹ ${_t('VOLTAR')}</button></div></div>`;
 }
 
@@ -14636,7 +14732,7 @@ function arenaRankHtml() {
   const empty = !top.length ? `<p class="foot">${_t(week ? 'Ainda ninguém esta semana. Sê o primeiro!' : 'Ainda ninguém no ranking. Sê o primeiro!')}</p>` : '';
   return `<div class="ov-in ar2 ar2-rank"><div class="scr">${head}
     ${top.length ? `<div class="podium">${pod(top[1], 2)}${pod(top[0], 1)}${pod(top[2], 3)}</div>` : empty}
-    ${list ? `<div class="thead"><span>#</span><span>${_t(coop ? 'DUPLA · ARMAS' : 'ALCUNHA · ARMAS')}</span><span class="r">${_t('VAGA')}</span><span class="r">${_t('TURNOS')}</span></div><div class="box list">${list}</div>` : ''}
+    ${list ? `<div class="thead"><span>#</span><span>${_t(coop ? 'DUPLA · ARMAS' : 'ALCUNHA · ARMAS')}</span><span class="r">${_t('VAGA')}</span><span class="r">${_t('TURNOS')}</span></div><div class="box list ov-scroll">${list}</div>` : ''}
     ${foot}<p class="foot rk-ttl">${_t('O ranking atualiza a cada 5 minutos.')}</p>
     ${back}</div>${bar}</div>`;
 }
@@ -14870,6 +14966,16 @@ function heroTabs(cur) {
     <div class="hx-tabs" role="tablist">${T.map(([k, n, c]) => `<button role="tab" class="hx-tab" data-htab="${k}" aria-selected="${k === cur}">${_t(n)}<span class="hx-n"${c ? '' : ' hidden'}>${c}</span></button>`).join('')}</div>
     ${lock ? `<p class="hx-lock">${lock}</p>` : ''}</div>`;
 }
+// v0.14.8 (Imagem, regra do utilizador): nos ecrãs do HERÓI e da MOCHILA (.hx em cima), tudo o que fica entre o .hx e a fila de baixo
+// (.btn-row ou .box.again no fim) vai para uma caixa .ov-scroll: o cabeçalho e as abas ficam presos, só o meio desliza e o tamanho não muda entre abas
+function hxWrap(ov) {
+  const inn = ov.querySelector(':scope > .ov-in'); if (!inn || inn.querySelector(':scope > .ov-scroll')) return;
+  const kids = [...inn.children], h = kids.findIndex(e => e.classList.contains('hx')); if (h < 0) return;
+  let end = kids.length; const last = kids[end - 1];
+  if (last && (last.classList.contains('btn-row') || (last.classList.contains('box') && last.classList.contains('again')))) end--;
+  const mid = kids.slice(h + 1, end); if (!mid.length) return;
+  const box = document.createElement('div'); box.className = 'ov-scroll'; inn.insertBefore(box, mid[0]); mid.forEach(e => box.appendChild(e));
+}
 function renderOverlay() {
   const ov = $('ov');
   renderTree();
@@ -14946,19 +15052,19 @@ function renderOverlay() {
     const known = FOES.filter(f => C.foes[f.id]).length + BOSSES.filter(b => C.bosses[b.type]).length;
     html = `<div class="ov-in">
       <div class="box ov-head row"><span>${_t('CODEX')}</span><span class="ecos">${known}/${FOES.length + BOSSES.length}</span></div>
-      <div class="box"><p class="lead">${_t('Tudo o que os teus heróis aprenderam na masmorra fica escrito aqui. Vencer um inimigo pela primeira vez dá Ecos; aos 5 vencidos sabes como funciona, aos 25 a história (nos chefes: 1 e 3).')}</p></div>
+      <div class="ov-scroll"><div class="box"><p class="lead">${_t('Tudo o que os teus heróis aprenderam na masmorra fica escrito aqui. Vencer um inimigo pela primeira vez dá Ecos; aos 5 vencidos sabes como funciona, aos 25 a história (nos chefes: 1 e 3).')}</p></div>
       <div class="box ov-head row"><span>${_t('LUGARES')}</span><span>${Object.keys(bio).length}/${BIOME_KEYS.length}</span></div>
       <div class="box cdx-places">${places}</div>
       <div class="box ov-head row"><span>${_t('INIMIGOS')}</span></div>
       <div class="box menu">${foes}</div>
       <div class="box ov-head row"><span>${_t('CHEFES')}</span></div>
-      <div class="box menu">${bosses}</div>
+      <div class="box menu">${bosses}</div></div>
       <button class="box again" data-codexback="1">${_t('VOLTAR')}</button>
     </div>`;
   } else if (st.screen === 'altar') {
     html = `<div class="ov-in">
       <div class="box ov-head row"><span>${_t('ALTAR DOS ECOS')}</span><span class="ecos">${_t('{n} ECOS', { n: acct.ecos })}</span></div>
-      <div class="box"><p class="lead">${_t('Ganhas Ecos ao descer, ao vencer chefes e provações e ao enfrentar um inimigo pela primeira vez. Aqui trocas os Ecos por coisas que ficam para todos os heróis. As bênçãos são pequenas de propósito: a masmorra continua a ser perigosa.')}</p></div>
+      <div class="ov-scroll"><div class="box"><p class="lead">${_t('Ganhas Ecos ao descer, ao vencer chefes e provações e ao enfrentar um inimigo pela primeira vez. Aqui trocas os Ecos por coisas que ficam para todos os heróis. As bênçãos são pequenas de propósito: a masmorra continua a ser perigosa.')}</p></div>
       <div class="box menu">${ALTAR.map(a => {
         const lv = altarLv(a.id), cost = altarNext(a), tiers = Array.isArray(a.cost), locked = a.req && !has(a.req);
         const maxed = cost == null, can = !maxed && !locked && acct.ecos >= cost;
@@ -14976,7 +15082,7 @@ function renderOverlay() {
         const avg = k => Math.round(R.reduce((a, r) => a + r[k], 0) / R.length * 10) / 10;
         return `<p class="foot">${_t('Últimas {n} partidas: morreste em média no andar {f} e ganhaste {e} Ecos por partida.', { n: R.length, f: avg('floor'), e: avg('ecos') })}</p>`;
       })()}
-      <p class="foot">${esc(app.altarMsg || '')}</p>
+      <p class="foot">${esc(app.altarMsg || '')}</p></div>
       <button class="box again" data-altarback="1">${_t('VOLTAR')}</button>
     </div>`;
   } else if (st.screen === 'event') {
@@ -15042,7 +15148,7 @@ function renderOverlay() {
     const open = app.manOpen == null ? 0 : app.manOpen;
     html = `<div class="ov-in manual">
       <div class="box ov-head"><h2>${_t('COMO JOGAR')}</h2><p>${_t('Toca numa secção para a abrir.')}</p></div>
-      <div class="box menu">${MANUAL.map(([t, d], i) => `<button class="opt man-sec${i === open ? ' on' : ''}" data-mansec="${i}" aria-expanded="${i === open}"><span><b>${i + 1}. ${_t(t)}</b>${i === open ? `<span class="man-art" data-manart="${i}"></span><small>${_t(d)}</small>` : ''}</span><em>${i === open ? '▾' : '▸'}</em></button>`).join('')}</div>
+      <div class="box menu ov-scroll">${MANUAL.map(([t, d], i) => `<button class="opt man-sec${i === open ? ' on' : ''}" data-mansec="${i}" aria-expanded="${i === open}"><span><b>${i + 1}. ${_t(t)}</b>${i === open ? `<span class="man-art" data-manart="${i}"></span><small>${_t(d)}</small>` : ''}</span><em>${i === open ? '▾' : '▸'}</em></button>`).join('')}</div>
       <div class="btn-row"><button class="box again" data-manback="1">${_t('VOLTAR')}</button></div>
     </div>`;
   } else if (st.screen === 'opts') {
@@ -15078,9 +15184,9 @@ function renderOverlay() {
     html = `<div class="ov-in">
       <div class="box ov-head"><h2>${_t('OPÇÕES')}</h2></div>
       <div class="tabs opt-tabs">${[['som', 'SOM'], ['imagem', 'IMAGEM'], ['controlos', 'CONTROLOS'], ['jogo', 'JOGO'], ['priv', 'PRIVACIDADE']].map(([k, n]) => `<button data-otab="${k}" aria-pressed="${tab === k}">${_t(n)}</button>`).join('')}</div>
-      <div class="box opts-grid">${G[tab]}
+      <div class="ov-scroll"><div class="box opts-grid">${G[tab]}
       </div>
-      <p class="foot">GODSPIRE v${GAME_SEMVER} (${GAME_BUILD})<br>${_t('Forjado por Rune Weaver · design: Sábio · som: Mestre do Som')}<br>${_t('Fontes: Departure Mono (Helena Zhang) e Pixelify Sans (Stefie Justprince), licença SIL OFL 1.1')}<br><a class="opt-priv" href="https://godspiregame.github.io/godspire/privacy.html#${langNow()}" target="_blank" rel="noopener">${_t('Política de privacidade')}</a></p>
+      <p class="foot">GODSPIRE v${GAME_SEMVER} (${GAME_BUILD})<br>${_t('Forjado por Rune Weaver · design: Sábio · som: Mestre do Som')}<br>${_t('Fontes: Departure Mono (Helena Zhang) e Pixelify Sans (Stefie Justprince), licença SIL OFL 1.1')}<br><a class="opt-priv" href="https://godspiregame.github.io/godspire/privacy.html#${langNow()}" target="_blank" rel="noopener">${_t('Política de privacidade')}</a></p></div>
       <div class="btn-row"><button class="box again" data-closeopts="1">${_t('VOLTAR')}</button>${st.optsBack === 'play' ? `<button class="box again" data-tochars="1">${_t('HERÓIS')}</button>` : ''}${st.p && !st.dying && !['dead', 'victory', 'arenaend'].includes(st.optsBack) ? `<button class="box again" data-abandon="1">${_t('ABANDONAR PARTIDA')}</button>` : ''}</div>
     </div>`;
   } else if (st.screen === 'shop') {
@@ -15404,9 +15510,9 @@ function renderOverlay() {
     </div>`;
   }
   // v0.14.8 (Imagem, regra do utilizador): quem desliza é o .ov-in (título e botões fixos); guarda e repõe o sítio dele no mesmo ecrã
-  const oldIn = ov.querySelector(':scope > .ov-in'), scroll = lastScreen === st.screen ? (oldIn ? oldIn.scrollTop : 0) || ov.scrollTop : 0;
+  const box0 = ov.querySelector(':scope > .ov-in .ov-scroll') || ov.querySelector(':scope > .ov-in'), scroll = lastScreen === st.screen ? (box0 ? box0.scrollTop : 0) || ov.scrollTop : 0;
   const carX = lastScreen === st.screen && $('carousel') ? $('carousel').scrollLeft : null;
-  ov.innerHTML = html; ov.hidden = false; ov.scrollTop = 0; { const n = ov.querySelector(':scope > .ov-in'); if (n) n.scrollTop = scroll; }
+  ov.innerHTML = html; ov.hidden = false; ov.scrollTop = 0; hxWrap(ov); { const n = ov.querySelector(':scope > .ov-in .ov-scroll') || ov.querySelector(':scope > .ov-in'); if (n && scroll) { n.scrollTop = scroll; const again = () => { if (n.isConnected && n.scrollTop < scroll) n.scrollTop = scroll; }; setTimeout(again, 0); n.querySelectorAll('img').forEach(i => { if (!i.complete || !i.getAttribute('src')) i.addEventListener('load', again, { once: true }); }); } } // v0.14.8: as imagens que chegam depois (o herói de frente) não podem levar a caixa ao topo
   ov.classList.toggle('full', st.screen === 'create');
   // sem som de tochas: confundia-se com a música e estragava-a (pedido do utilizador)
   if (lastScreen !== st.screen) Sound.torch(false);
