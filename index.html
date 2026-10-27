@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.14.7 (build 120). Fontes embutidas:
+<!-- GODSPIRE v0.14.8 (build 121). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -317,6 +317,20 @@ canvas#cv { display: block; width: 100%; height: 100%; image-rendering: pixelate
 /* v75 (utilizador): nas listas compridas (ALTAR, CODEX, Cripta, MOCHILA, Coleção, Relíquias, loja...) o título em linha fica preso em cima e o botão de saída em baixo; só a lista corre */
 .ov-in > .ov-head.row:first-child { position: sticky; top: 0; z-index: 3; } .overlay:has(> .ov-in > .ov-head.row:first-child) { padding-top: 0; } /* cola ao topo, sem a lista a espreitar por cima */
 .ov-in > .box.again:last-child { position: sticky; bottom: 0; z-index: 2; align-self: stretch; } .overlay:has(> .ov-in > .box.again:last-child), .overlay:has(> .ov-in > .btn-row:last-child) { padding-bottom: 0; } /* o botão sozinho ocupa a largura toda e cola ao fundo */
+/* v0.14.6 (Imagem, regra do utilizador para os ecrãs compridos do #ov): o cabeçalho fica fixo em cima, a fila de botões fixa em baixo e só o meio desliza.
+   Quem desliza é o .ov-in (já não o #ov): nada espreita por cima do cabeçalho e, se tudo couber, nada desliza. As abas logo a seguir ao cabeçalho
+   ficam presas por baixo dele; o --ovh (altura do cabeçalho) e o sítio do conteúdo ao redesenhar o mesmo ecrã vêm do js/visual.js (ovScrollDecorate) */
+.overlay > .ov-in:not(.tk):not(.title-scr):not(.co-paused) { max-height: 100%; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: calc(var(--ovh, 0px) + 16px); scroll-padding-bottom: 56px; }
+.overlay > .ov-in:not(.tk):not(.title-scr):not(.co-paused) > * { flex-shrink: 0; } /* com a altura limitada, os blocos não encolhem: desliza o .ov-in */
+.overlay > .ov-in > .ov-head:first-child, .overlay > .ov-in > .hx:first-child { position: sticky; top: 0; z-index: 3; } .overlay > .ov-in > .hx:first-child { background: var(--g0); }
+.overlay > .ov-in > .ov-head:first-child + .tabs, .overlay > .ov-in > .hx:first-child + .tabs { position: sticky; top: calc(var(--ovh, 0px) + 10px); z-index: 3; background: var(--g0); box-shadow: 0 -10px 0 var(--g0), 0 6px 0 var(--g0); }
+@media (pointer: fine) { .overlay > .ov-in { scrollbar-width: thin; scrollbar-color: #5a5068 transparent; } }
+/* os ecrãs da arena (.ar2) têm o título e os botões dentro do .scr: o h2 fica preso em cima e o último botão (voltar, menu ou guardar) em baixo.
+   No RANK quem fica em baixo é a .mebar (a tua posição), que já era fixa; aí o botão de voltar desliza com a lista */
+.ov-in.ar2 > .scr > h2:first-child { position: sticky; top: 0; z-index: 3; background: var(--g0); margin-top: 0; padding: 4px 0 6px; }
+.ov-in.ar2 > .scr > :is(.btn, .row2):last-child { position: sticky; bottom: 0; z-index: 3; background: var(--g0); box-shadow: 0 -10px 10px -6px var(--g0); }
+.ov-in.ar2 > .scr > .row2:last-child { padding-top: 6px; }
+.ov-in.ar2:has(> .mebar) > .scr > .btn:last-child { position: static; box-shadow: none; }
 .empty { font-size: 16px; color: var(--g2); padding: 6px 4px; margin: 0; }
 .lead { font-size: clamp(14px, 3.4vw, 17px); margin: 0; line-height: 1.3; }
 
@@ -3628,7 +3642,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.14.7', GAME_BUILD = 120;
+const GAME_SEMVER = '0.14.8', GAME_BUILD = 121;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -7959,7 +7973,8 @@ const manScroll = () => requestAnimationFrame(() => {
   const s = document.querySelector('.man-sec.on'); if (!s) return;
   let box = s.parentElement;
   while (box && box !== document.body) { const o = getComputedStyle(box).overflowY; if ((o === 'auto' || o === 'scroll') && box.scrollHeight > box.clientHeight) break; box = box.parentElement; }
-  if (box && box !== document.body) { const top = box.scrollTop + s.getBoundingClientRect().top - box.getBoundingClientRect().top; box.scrollTo({ top, behavior: reduceMotion() ? 'auto' : 'smooth' }); }
+  // v0.14.8: a secção fica logo abaixo do cabeçalho fixo (o scroll-padding-top do contentor diz quanto ele ocupa); continua a nunca mexer na página
+  if (box && box !== document.body) { const pad = parseFloat(getComputedStyle(box).scrollPaddingTop) || 0, top = box.scrollTop + s.getBoundingClientRect().top - box.getBoundingClientRect().top - pad; box.scrollTo({ top: Math.max(0, top), behavior: reduceMotion() ? 'auto' : 'smooth' }); }
   const se = document.scrollingElement; if (se && se.scrollTop) se.scrollTop = 0; // e desfaz o deslize da página que as versões antigas deixavam
 });
 function tip(id) {
@@ -12460,8 +12475,15 @@ function arenaEndDecorate() {
     if (nb && !nbOn) { nb.classList.add('rv-in'); wake(700); } else if (nb) wake(Math.max(0, newAt + 700 - (performance.now() - res._t0))); else wake(0); });
   res._t0 = performance.now();
 }
+/* v0.14.6 (Imagem): nos ecrãs do #ov quem desliza é o .ov-in (o cabeçalho e os botões ficam fixos, CSS). Aqui a altura do cabeçalho vai para --ovh:
+   as abas ficam logo por baixo dele e o scrollIntoView (scroll-padding-top) não esconde nada atrás. ovTop() leva o conteúdo ao topo (era $('ov').scrollTop = 0) */
+function ovScrollDecorate() {
+  const ov = document.getElementById('ov'), o = ov && !ov.hidden ? ov.querySelector(':scope > .ov-in') : null; if (!o) return;
+  const h = o.firstElementChild; if (h && (h.classList.contains('ov-head') || h.classList.contains('hx'))) o.style.setProperty('--ovh', h.offsetHeight + 'px');
+}
+function ovTop() { const ov = document.getElementById('ov'), o = ov && ov.querySelector(':scope > .ov-in'); if (o) o.scrollTop = 0; if (ov) ov.scrollTop = 0; }
 function relDecorate() {
-  croneDecorate(); talkDecorate(); titleDecorate(); arenaEndDecorate();
+  ovScrollDecorate(); croneDecorate(); talkDecorate(); titleDecorate(); arenaEndDecorate();
   const ov = document.getElementById('ov'); if (!ov || ov.hidden || ov.querySelector('.rel-medals') || typeof RELIC === 'undefined' || !st || !st.p) return;
   const p = st.p, act = (p.relics || []).filter(id => RELIC[id] && !RELIC[id].conta), slots = typeof relicSlots === 'function' ? relicSlots() : 3;
   if (st.screen === 'relics') { const b = ov.querySelector('[data-reloff], .box.menu'); const menu = b && b.closest('.box.menu'); if (menu) { const f = menu.querySelector('.foot'); (f || menu.firstChild).after(relMedals(act, slots, 'data-reloff')); menu.classList.add('rel-act'); } }
@@ -15381,9 +15403,10 @@ function renderOverlay() {
       </div>
     </div>`;
   }
-  const scroll = lastScreen === st.screen ? ov.scrollTop : 0;
+  // v0.14.8 (Imagem, regra do utilizador): quem desliza é o .ov-in (título e botões fixos); guarda e repõe o sítio dele no mesmo ecrã
+  const oldIn = ov.querySelector(':scope > .ov-in'), scroll = lastScreen === st.screen ? (oldIn ? oldIn.scrollTop : 0) || ov.scrollTop : 0;
   const carX = lastScreen === st.screen && $('carousel') ? $('carousel').scrollLeft : null;
-  ov.innerHTML = html; ov.hidden = false; ov.scrollTop = scroll;
+  ov.innerHTML = html; ov.hidden = false; ov.scrollTop = 0; { const n = ov.querySelector(':scope > .ov-in'); if (n) n.scrollTop = scroll; }
   ov.classList.toggle('full', st.screen === 'create');
   // sem som de tochas: confundia-se com a música e estragava-a (pedido do utilizador)
   if (lastScreen !== st.screen) Sound.torch(false);
@@ -15645,14 +15668,14 @@ function ovAct(d) {
   else if (d.smith) smithUpgrade(+d.smith);
   else if (d.smithback) { st.screen = 'play'; Sound.play('back'); ui(); }
   else if (d.campleave) { st.heroEdit = false; closeCamp(); }
-  else if (d.arrumar) { st.heroEdit = true; st.memFrom = 'camp'; st.bagSel = null; st.screen = 'equip'; Sound.play('menu'); ui(); $('ov').scrollTop = 0; } // v96 (OBS 41 parte 5): ARRUMAR junta tudo o que se edita na fogueira
+  else if (d.arrumar) { st.heroEdit = true; st.memFrom = 'camp'; st.bagSel = null; st.screen = 'equip'; Sound.play('menu'); ui(); if (typeof ovTop === 'function') ovTop(); else $('ov').scrollTop = 0; } // v96 (OBS 41 parte 5): ARRUMAR junta tudo o que se edita na fogueira
   else if (d.arrumarback) { st.heroEdit = false; st.coll = null; st.screen = 'camp'; Sound.play('back'); ui(); }
   else if (d.runefor) { st.runeSel = +d.runefor; st.memFrom = st.heroEdit ? 'camp' : null; st.runesAtCamp = !!st.heroEdit; st.runeMsg = ''; st.screen = 'runes'; Sound.play('menu'); ui(); } // v96 (OBS 41 parte 3): runa de uma habilidade
   else if (d.portalgo) enterPortal();
   else if (d.portalno) { st.screen = 'play'; Sound.play('back'); ui(); }
   else if (d.equip) equip(+d.equip);
   else if (d.drop) { dropItem(+d.drop); st.bagSel = null; ui(); }
-  else if (d.bagsel) { st.bagSel = st.bagSel === +d.bagsel ? null : +d.bagsel; Sound.play('menu'); ui(); $('ov').scrollTop = 0; }
+  else if (d.bagsel) { st.bagSel = st.bagSel === +d.bagsel ? null : +d.bagsel; Sound.play('menu'); ui(); if (typeof ovTop === 'function') ovTop(); else $('ov').scrollTop = 0; }
   else if (d.bagclose) { st.bagSel = null; Sound.play('back'); ui(); }
   else if (d.drink) { st.screen = 'play'; lastAct = 0; consume('pot'); }
   else if (d.eat) { st.screen = 'play'; lastAct = 0; consume('food'); }
@@ -15736,7 +15759,7 @@ function ovAct(d) {
   else if (d.rput) socketRune(+d.rput);
   else if (d.bagf) { st.bagFilter = d.bagf; st.bagSel = null; Sound.play('menu'); ui(); } // v90: filtro da mochila
   else if (d.htab && st.heroEdit) { st.bagSel = null; if (d.htab === 'equip') { st.coll = null; st.screen = 'equip'; Sound.play('menu'); ui(); } else if (d.htab === 'build') { st.memFrom = 'camp'; openColl(); } else { st.coreMsg = ''; openCores(true); } $('ov').scrollTop = 0; } // v96: separadores em modo ARRUMAR
-  else if (d.htab) { st.bagSel = null; st.coreMsg = ''; if (d.htab === 'equip') st.screen = 'equip'; else if (d.htab === 'bag') st.screen = 'bag'; else if (d.htab === 'build') { const p = st.p; st.coll = { tab: (discNow(p) || DISC[0]).id, sel: null, msg: '', ro: true }; st.screen = 'disc'; } else { st.coresAtCamp = false; st.coresFrom = 'equip'; st.screen = 'cores'; } Sound.play('menu'); ui(); $('ov').scrollTop = 0; } // v87 (OBS 41): separadores do HERÓI
+  else if (d.htab) { st.bagSel = null; st.coreMsg = ''; if (d.htab === 'equip') st.screen = 'equip'; else if (d.htab === 'bag') st.screen = 'bag'; else if (d.htab === 'build') { const p = st.p; st.coll = { tab: (discNow(p) || DISC[0]).id, sel: null, msg: '', ro: true }; st.screen = 'disc'; } else { st.coresAtCamp = false; st.coresFrom = 'equip'; st.screen = 'cores'; } Sound.play('menu'); ui(); if (typeof ovTop === 'function') ovTop(); else $('ov').scrollTop = 0; } // v87 (OBS 41): separadores do HERÓI
   else if (d.lang) { opts.lang = d.lang; saveOpts(); document.documentElement.lang = langNow(); langStatic(); Sound.play('menu'); ui(); } // v95: língua
   else if (d.otab) { st.optsTab = d.otab; app.wipeAsk = false; Sound.play('menu'); ui(); } // v85: abas das Opções
   else if (d.ctab) { app.tab = d.ctab; Sound.play('menu'); Sound.music(d.ctab === 'hall' ? 'salao' : 'title'); ui(); }
