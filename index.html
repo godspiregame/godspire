@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.13.1 (build 112). Fontes embutidas:
+<!-- GODSPIRE v0.14.0 (build 113). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -784,7 +784,7 @@ html:not(.compact) #coopMate { margin-top: 6px; }
 .ar2 .btn { font: inherit; font-family: var(--display); font-size: 11px; letter-spacing: .06em; color: var(--a2ink); background: var(--a2box); border: 2px solid var(--a2line); border-radius: 8px; padding: 10px; cursor: pointer; width: 100%; }
 .ar2 .btn.go { border-color: var(--a2gold); background: #2a2010; color: var(--a2gold); } .ar2 .btn.big { font-size: 15px; padding: 16px 10px; }
 .ar2 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; } .ar2 .grow { flex: 1 1 auto; }
-.ar2 .scr { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-height: 0; } .ar2 .scr > *, .ar2 .field > * { flex-shrink: 0; } .ar2 .field { gap: 6px; } /* sem encolher: a fila do cabelo nao cai por cima do rotulo ROUPA */ .ar2 .mode-card, .ar2 .hero-panel, .ar2 .mode-hero { width: 100%; } /* os ecras vem dentro de div.scr, como na maqueta */
+.ar2 .scr { display: flex; flex-direction: column; gap: 8px; flex: 1 0 auto; min-height: 0; } .ar2 .scr > *, .ar2 .field > * { flex-shrink: 0; } .ar2 .field { gap: 6px; } /* sem encolher: a fila do cabelo nao cai por cima do rotulo ROUPA */ .ar2 .mode-card, .ar2 .hero-panel, .ar2 .mode-hero { width: 100%; } /* os ecras vem dentro de div.scr, como na maqueta */
 .ar2 .av { height: auto; width: auto; zoom: 2; image-rendering: pixelated; } /* o heroFrontURL e o sprite do mapa (~17x20): sempre ampliado por inteiros */
 .ar2 .mode-card { display: grid; grid-template-columns: 64px 1fr 14px; column-gap: 10px; align-items: center; text-align: left; font: inherit; color: var(--a2ink); padding: 10px 12px; cursor: pointer; }
 .ar2 .mode-card .mc-av { grid-row: 1 / 4; display: flex; justify-content: center; align-items: flex-end; height: 58px; background: radial-gradient(circle at 50% 70%, rgba(255, 154, 60, .18), transparent 65%); }
@@ -832,8 +832,12 @@ html:not(.compact) #coopMate { margin-top: 6px; }
 .ar2 .ok { color: #7fc8a8; font-size: 10px; margin-left: 2px; }
 .ar2 .wpn { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; color: var(--a2dim); font-size: 10px; } .ar2 .wpn span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; } .ar2 .wpn i { font-style: normal; opacity: .5; }
 .ar2 .gap { text-align: center; color: var(--a2dim); font-family: var(--display); font-size: 11px; padding: 2px 0; letter-spacing: .2em; }
+.ar2 .lrow .wpn { flex-wrap: nowrap; white-space: nowrap; overflow: hidden; } /* as 2 armas numa so linha */
+@media (max-width: 420px) { .ar2 .lrow .wpn span + i + span { font-size: 0; gap: 0; } .ar2 .lrow .wpn span + i + span img { margin: 0; } } /* telemovel: a 2.a arma so com o icone */
+.ar2 .lrow .nm { line-height: 1.15; } .ar2 .lrow { min-height: 0; } .ar2 .mebar .lrow { padding-top: 3px; padding-bottom: 3px; }
 .ar2 .lrow.me { background: #2a2312; box-shadow: inset 0 0 0 2px var(--a2gold); border-radius: 6px; border-top-color: transparent; } .ar2 .lrow.me .pos, .ar2 .lrow.me .nm { color: var(--a2gold); }
 .ar2 .mebar { position: sticky; bottom: 0; z-index: 2; border-top: 2px solid var(--a2gold); background: #1b1610; padding: 4px 12px 8px; }
+.overlay:has(> .ov-in.ar2 > .mebar) { padding-bottom: 0; } .ov-in.ar2 > .mebar { margin-top: 4px; } /* sem a margem de baixo do #ov a barra fixa nao sobe por cima do ultimo botao */
 .ar2 .mebar .lbl { font-family: var(--display); font-size: 9px; letter-spacing: .06em; color: var(--a2gold); text-align: center; margin: 2px 0; }
 .ar2 .nosrv { padding: 10px 12px; font-size: 12px; line-height: 1.5; color: var(--a2ink); border-color: #4a6a8a; background: #141a24; }
 .ar2 .nosrv b { font-family: var(--display); font-size: 10px; letter-spacing: .08em; color: var(--a2blue); display: block; margin-bottom: 2px; }
@@ -3348,7 +3352,7 @@ LANGS.en = {
   'Câmara: {e}': 'Camera: {e}', 'A ligar…': 'Connecting…', 'A preparar a resposta…': 'Preparing the reply…', 'Mostra este código ao anfitrião, para ele o ler.': 'Show this code to the host so they can scan it.',
   'Código errado: {e}': 'Wrong code: {e}', 'Ligados! Escolhe a tua arma.': 'Connected! Choose your weapon.', 'ARENA CO-OP': 'CO-OP ARENA', '{a} e {b}': '{a} and {b}',
   'Entram os dois na arena. Cada um escolhe a sua ação; o turno passa quando os dois tiverem escolhido.': 'You both enter the arena. Each one picks an action; the turn passes when both have chosen.',
-  'O teu melhor neste aparelho. O ranking global chega quando houver servidor.': 'Your best on this device. The global ranking arrives once there is a server.', 'RANK': 'RANK', 'Escolhe o modo.': 'Choose the mode.', 'ARENA SOLO': 'SOLO ARENA', 'Vagas sem fim, a arma que escolheres': 'Endless waves, the weapon you choose', 'O teu melhor: vaga {n} · {w}': 'Your best: wave {n} · {w}', 'A dois, na mesma rede Wi-Fi': 'Two players, same Wi-Fi network', 'O teu melhor: vaga {n} com {p}': 'Your best: wave {n} with {p}', 'A TUA PERSONAGEM': 'YOUR CHARACTER', 'a tua arma mais usada: {w}': 'your most used weapon: {w}', 'EDITAR': 'EDIT', 'É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).': 'This is how others see you on the podium, in the ranking and in the arena (your co-op partner too).', 'ALCUNHA (3 a 16)': 'NICKNAME (3 to 16)', 'GUARDAR': 'SAVE', 'A alcunha precisa de 3 a 16 letras.': 'The nickname needs 3 to 16 letters.', 'MELHOR VAGA': 'BEST WAVE', 'NO RANKING': 'IN THE RANKING', 'MESMA REDE': 'SAME NETWORK', 'ECOS HOJE': 'ECHOES TODAY', 'JOGAR': 'PLAY', 'TODAS': 'ALL', 'ESTA SEMANA': 'THIS WEEK', '{n}.º': '#{n}', 'AINDA SEM SERVIDOR': 'NO SERVER YET', 'O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.': 'The global ranking is coming soon. For now you only see your records on this device.', 'DUPLA · ARMAS': 'DUO · WEAPONS', 'VAGA': 'WAVE', 'Ainda sem recordes esta semana.': 'No records yet this week.', 'Ainda sem recordes.': 'No records yet.', 'ABANDONAR PARTIDA': 'ABANDON RUN', 'Como queres sair?': 'How do you want to leave?', 'GUARDAR E SAIR': 'SAVE AND QUIT', 'A partida fica gravada; continuas onde estavas.': 'The run is saved; you continue where you left off.', 'DESISTIR': 'GIVE UP', 'Sais da arena; o teu colega continua sozinho.': 'You leave the arena; your partner carries on alone.', 'A partida acaba aqui; o recorde conta até à última vaga.': 'The run ends here; your record counts up to the last wave.', 'A partida acaba como uma morte: o herói vai para a Cripta.': 'The run ends like a death: the hero goes to the Crypt.', 'a desistência': 'giving up', 'Desististe no andar {n}.': 'You gave up on floor {n}.', 'DESISTIR?': 'GIVE UP?', 'Desistir mata {h} para sempre. Tens a certeza?': 'Giving up kills {h} for good. Are you sure?', 'SIM, DESISTIR': 'YES, GIVE UP', 'Desistiu': 'Gave up', 'desistiu no andar {n}': 'gave up on floor {n}', 'Tens {n} s; depois o jogo escolhe por ti e avança.': 'You have {n} s; then the game picks for you and moves on.', 'O tempo acabou: o jogo escolheu por ti.': 'Time is up: the game picked for you.', 'No co-op, o equipamento muda-se no descanso entre vagas.': 'In co-op, gear is changed during the rest between waves.', 'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
+  'O teu melhor neste aparelho. O ranking global chega quando houver servidor.': 'Your best on this device. The global ranking arrives once there is a server.', 'RANK': 'RANK', 'Escolhe o modo.': 'Choose the mode.', 'ARENA SOLO': 'SOLO ARENA', 'Vagas sem fim, a arma que escolheres': 'Endless waves, the weapon you choose', 'O teu melhor: vaga {n} · {w}': 'Your best: wave {n} · {w}', 'A dois, na mesma rede Wi-Fi': 'Two players, same Wi-Fi network', 'O teu melhor: vaga {n} com {p}': 'Your best: wave {n} with {p}', 'A TUA PERSONAGEM': 'YOUR CHARACTER', 'a tua arma mais usada: {w}': 'your most used weapon: {w}', 'EDITAR': 'EDIT', 'É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).': 'This is how others see you on the podium, in the ranking and in the arena (your co-op partner too).', 'ALCUNHA (3 a 16)': 'NICKNAME (3 to 16)', 'GUARDAR': 'SAVE', 'A alcunha precisa de 3 a 16 letras.': 'The nickname needs 3 to 16 letters.', 'MELHOR VAGA': 'BEST WAVE', 'NO RANKING': 'IN THE RANKING', 'MESMA REDE': 'SAME NETWORK', 'ECOS HOJE': 'ECHOES TODAY', 'JOGAR': 'PLAY', 'TODAS': 'ALL', 'ESTA SEMANA': 'THIS WEEK', '{n}.º': '#{n}', 'AINDA SEM SERVIDOR': 'NO SERVER YET', 'O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.': 'The global ranking is coming soon. For now you only see your records on this device.', 'DUPLA · ARMAS': 'DUO · WEAPONS', 'VAGA': 'WAVE', 'Ainda sem recordes esta semana.': 'No records yet this week.', 'Ainda sem recordes.': 'No records yet.', 'ABANDONAR PARTIDA': 'ABANDON RUN', 'Como queres sair?': 'How do you want to leave?', 'GUARDAR E SAIR': 'SAVE AND QUIT', 'A partida fica gravada; continuas onde estavas.': 'The run is saved; you continue where you left off.', 'DESISTIR': 'GIVE UP', 'Sais da arena; o teu colega continua sozinho.': 'You leave the arena; your partner carries on alone.', 'A partida acaba aqui; o recorde conta até à última vaga.': 'The run ends here; your record counts up to the last wave.', 'A partida acaba como uma morte: o herói vai para a Cripta.': 'The run ends like a death: the hero goes to the Crypt.', 'a desistência': 'giving up', 'Desististe no andar {n}.': 'You gave up on floor {n}.', 'DESISTIR?': 'GIVE UP?', 'Desistir mata {h} para sempre. Tens a certeza?': 'Giving up kills {h} for good. Are you sure?', 'SIM, DESISTIR': 'YES, GIVE UP', 'Desistiu': 'Gave up', 'desistiu no andar {n}': 'gave up on floor {n}', '{n}.º esta semana': '#{n} this week', 'A alcunha precisa de 3 a 16 letras ou números (espaço, _ e - também), sem palavrões.': 'The nickname needs 3 to 16 letters or numbers (space, _ and - too), no swear words.', 'RANKING GLOBAL': 'GLOBAL RANKING', 'Entra para apareceres no ranking de todos os jogadores com a tua alcunha ({n}). Aparece em público: não uses o teu nome verdadeiro.': 'Join to appear in the ranking of all players with your nickname ({n}). It is public: do not use your real name.', 'ENTRAR NO RANKING': 'JOIN THE RANKING', 'MUDAR ALCUNHA': 'CHANGE NICKNAME', 'SEM LIGAÇÃO AO SERVIDOR': 'NO CONNECTION TO THE SERVER', 'Não deu para ler o ranking global (sem internet, ou nesta versão de testes). Por agora vês só os teus recordes neste aparelho.': 'Could not read the global ranking (no internet, or in this test version). For now you only see your records on this device.', 'A carregar o ranking…': 'Loading the ranking…', 'ÉS O {p}.º ESTA SEMANA · DE {n}': 'YOU ARE #{p} THIS WEEK · OF {n}', 'ÉS O {p}.º DE SEMPRE · DE {n}': 'YOU ARE #{p} ALL-TIME · OF {n}', 'Fora do top 100 desta semana: precisas da vaga {n} para entrar.': 'Outside this week\'s top 100: you need wave {n} to get in.', 'Fora do top 100 de sempre: precisas da vaga {n} para entrar.': 'Outside the all-time top 100: you need wave {n} to get in.', 'Ainda ninguém esta semana. Sê o primeiro!': 'Nobody yet this week. Be the first!', 'Ainda ninguém no ranking. Sê o primeiro!': 'Nobody in the ranking yet. Be the first!', 'ALCUNHA · ARMAS': 'NICKNAME · WEAPONS', 'SAIR DO RANKING': 'LEAVE THE RANKING', 'Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).': 'First choose a valid nickname (3 to 16 letters or numbers, no swear words).', 'Colega': 'Partner', 'Saíste do ranking há pouco: podes voltar a partir de {d}.': 'You left the ranking recently: you can come back from {d}.', 'Tens {n} s; depois o jogo escolhe por ti e avança.': 'You have {n} s; then the game picks for you and moves on.', 'O tempo acabou: o jogo escolheu por ti.': 'Time is up: the game picked for you.', 'No co-op, o equipamento muda-se no descanso entre vagas.': 'In co-op, gear is changed during the rest between waves.', 'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
   'Dois jogadores na mesma rede Wi-Fi. Um cria a sala, o outro entra lendo o código com a câmara.': 'Two players on the same Wi-Fi network. One creates the room, the other joins by scanning the code with the camera.',
   'CRIAR SALA': 'CREATE ROOM', 'És o anfitrião: mostras o código ao teu colega.': 'You are the host: you show the code to your partner.', 'Lês o código do anfitrião com a câmara.': 'You scan the host\'s code with the camera.',
   'A câmara só funciona na app (no site do jogo).': 'The camera only works in the app (on the game\'s website).', 'A TUA SALA': 'YOUR ROOM', 'A TUA RESPOSTA': 'YOUR REPLY', 'código de ligação': 'connection code',
@@ -3533,7 +3537,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.13.1', GAME_BUILD = 112;
+const GAME_SEMVER = '0.14.0', GAME_BUILD = 113;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -5002,7 +5006,7 @@ function knockAct() {
   const w = knockWall(); if (!w) { log(_t('Para bater na parede tens de estar encostado a uma.')); Sound.play('bump'); ui(); return; }
   if (typeof coopIntercept === 'function' && isCoop() && !st.coopHold && coopIntercept({ k: 'knock' })) return; // v0.12.3 (OBS 87): co-op
   if (!ready()) return;
-  actAt = performance.now();
+  actAt = performance.now(); typeof arRec === 'function' && arRec({ k: 'knock' }); // v0.14.0
   p.knockCd = 5; // o fim deste turno já gasta 1: ficam 4
   makeNoise(w.x, w.y, 5, { x: p.x, y: p.y }); // v94 (utilizador): alcance 5 (era 4)
   float(w.x, w.y, _t('toc toc'), 'knock'); log(_t('Bates na parede: toc, toc.')); tip('bater'); Sound.play('knock'); // v73: som do Mestre do Som
@@ -6665,7 +6669,7 @@ function endTurnCore() {
   if (st.heroes) { coopDowns(); if (!anyHeroUp()) { coopAllDown(); return; } }
   const p = st.p;
   if (!st.heroes && p.hp <= 0) { p.hp = 0; die(); return; }
-  checkTrial(); checkArena(); // v0.11.0: fim da vaga da arena
+  checkTrial(); checkArenaWave(); // v0.11.0: fim da vaga da arena (v0.14.0: nome próprio, já não apaga o checkArena das grades)
   const live = st.attacks.filter(a => !a.frozen); // v66: os avisos parados (chefe congelado) não tocam
   if (live.some(a => a.t === 1)) {
     if (live.some(a => a.t === 1 && a.warn === 'decree')) { Sound.play('decree', 2); buzz([60, 60, 60]); } else buzz([15]);
@@ -6796,6 +6800,7 @@ function act(dx, dy) {
   if (st.screen !== 'play' || !ready()) return;
   actAt = performance.now();
   if (typeof coopIntercept === 'function' && isCoop() && !st.coopHold && coopIntercept(coopMoveAct(dx, dy))) return; // v0.12.0: co-op
+  typeof arRec === 'function' && arRec({ k: 'act', dx, dy }); // v0.14.0: a lista de ações da arena (para as provas do ranking)
   if (!dx && !dy && st.map[idx(st.p.x, st.p.y)] === 2 && !st.boss) { st.p.waitTurn = st.turn; endTurn(); if (st.p && st.p.hp > 0 && st.screen === 'play') { st.screen = 'stairs'; Sound.play('menu'); ui(); } return; } // v64: esperar em cima das escadas gasta o turno e volta a perguntar
   if (!dx && !dy) { st.p.waitTurn = st.turn; endTurn(); return; } // v63: esperar baixa o alcance de furtividade no turno seguinte
   // habilidade armada: a seta (ou o ataque a um inimigo encostado) lança-a nessa direção
@@ -7265,7 +7270,7 @@ function pressSkill(slot) {
   if (st.armed === slot) { st.armed = null; Sound.play('back'); ui(); return; }
   const aim = aimOf(slot);
   if (!aim && typeof coopIntercept === 'function' && isCoop() && !st.coopHold) { const w = blockedSkill(slot); if (w) { log(w); Sound.play('error'); ui(); return; } st.armed = null; coopIntercept({ k: 'skill', slot }); return; } // v0.12.0: co-op
-  if (!aim) { st.armed = null; useAbility(slot); return; }
+  if (!aim) { st.armed = null; typeof arRec === 'function' && arRec({ k: 'skill', slot }); useAbility(slot); return; }
   const why = blockedSkill(slot);
   if (why) { log(why); Sound.play('error'); ui(); return; }
   st.armed = slot;
@@ -7276,6 +7281,7 @@ function pressSkill(slot) {
 function castArmed(dx, dy, f) {
   const slot = st.armed, aim = aimOf(slot), p = st.p; if (slot == null || !aim) { st.armed = null; return; }
   if (typeof coopIntercept === 'function' && isCoop() && !st.coopHold) { st.armed = null; coopIntercept({ k: 'skill', slot, dx, dy, fid: f ? f.fid : null }); return; } // v0.12.0: co-op
+  typeof arRec === 'function' && arRec({ k: 'cast', dx, dy, fid: f ? f.fid : null }); // v0.14.0
   const sx = Math.abs(dx) >= Math.abs(dy) ? Math.sign(dx) : 0, sy = sx ? 0 : Math.sign(dy);
   if (!sx && !sy) return;
   if (aim[0] === 'tgt') {
@@ -7779,6 +7785,7 @@ function gainPot(n, quiet) {
 function consume(kind) {
   if (st.screen !== 'play' || !ready()) return;
   if (typeof coopIntercept === 'function' && isCoop() && !st.coopHold && coopIntercept({ k: 'pot', kind })) return; // v0.12.0: co-op
+  typeof arRec === 'function' && arRec({ k: 'pot', kind: kind || null }); // v0.14.0
   const p = st.p;
   if (!kind) kind = p.pot > 0 ? 'pot' : p.food > 0 ? 'food' : null;
   if (!kind || (kind === 'pot' ? p.pot : p.food) <= 0) { log(_t(p.food ? 'O frasco está vazio.' : 'O frasco está vazio e não tens comida.')); Sound.play('error'); ui(); return; }
@@ -13275,9 +13282,11 @@ function arenaFree(c) {
 }
 const arenaLeft = () => (st.foes || []).filter(f => !f.ally).length + (st.reinfPend && st.reinfPend.arena ? st.reinfPend.cells.length : 0);
 // no fim de cada turno (endTurn): sem inimigos nem portais, a vaga acabou
-function checkArena() {
+// v0.14.0: chamava-se checkArena, o mesmo nome da função das grades do chefe (combate.js) e apagava-a: as grades não fechavam desde a v0.11.0
+function checkArenaWave() {
   if (!isArena() || st.dying || !st.p || st.p.hp <= 0) return;
-  const A = st.av; if (A.rest || !A.wave || A.over || arenaLeft()) return;
+  const A = st.av; if (A.rest || !A.wave || A.over) return;
+  if (arenaLeft()) { if (!st.heroes && st.turn % 3 === 0) arenaSave(); return; } // v0.14.0: grava a meio da vaga (a cada 3 turnos): fechar a app não volta atrás no tempo
   A.done = A.wave;
   log(_t('Vaga {n} superada!', { n: A.wave })); Sound.play('level');
   arenaRest();
@@ -13332,6 +13341,7 @@ function arenaDie() {
   if (w > 0 && newW) a.byWeapon[kind] = { wave: w, turns: t };
   if (w > 0 && newB) { if (co) a.coop = { wave: w, turns: t, kinds: st.av.kinds.slice() }; else a.best = { wave: w, turns: t, kind }; } // v0.12.0: o co-op tem a sua tabela
   if (w > 0) arenaRecord(a, w, t, kind, used, co); // v0.12.3: o ranking local (sempre e esta semana)
+  if (w > 0 && typeof rkSync === 'function') setTimeout(() => rkSync().catch(() => {}), 0); // v0.14.0: o ranking global (só se o jogador aceitou entrar)
   const due = Math.floor(w / 3), give = Math.max(0, Math.min(due, ARENA_ECOS_DIA - a.day.n));
   if (give) { a.day.n += give; earnEcos(give, _t('arena: {n} vagas', { n: w })); }
   A.res = { wave: w, turns: t, kind, start: A.kind, used, newW: w > 0 && newW, newB: w > 0 && newB, ecos: give, capped: due > give, day: a.day.n, kills: p.kills };
@@ -13401,13 +13411,16 @@ function arenaEndHtml() {
    Até haver servidor, o RANK mostra só os recordes deste aparelho: a solo o melhor por arma, no co-op as 10 melhores duplas (sempre e desta semana). */
 const AR_STYLE_TXT = { curto: 'CURTO', comprido: 'LONGO', careca: 'CARECA', barba: 'BARBA' };
 const arCmp = (x, y) => y.wave - x.wave || x.turns - y.turns;
+// v0.14.0 (Sábio): a lista de ações da arena a solo, guardada já para o lote das provas do ranking (a semente + esta lista repetem a partida);
+// cada entrada é [turno, ação] e entra só depois de a ação passar as verificações de tempo (o que se repete é o que o jogo aceitou)
+function arRec(a) { if (!st.av || st.mode !== 'arena' || st.heroes || st.coopHold || st.av.over) return; const L = st.av.acts = st.av.acts || []; if (L.length < 20000) L.push([st.turn, a]); }
 function arenaMe() {
   const a = arenaAcct();
   if (!a.me || !a.me.look) a.me = { nick: _t('Gladiador'), look: { skin: 0, hair: 0, cloth: 0, style: Object.keys(A.HAIR)[0] } };
   return a.me;
 }
 // segunda-feira desta semana (a semana do ranking começa à segunda, como combinado para o servidor)
-function arenaWeekKey() { const d = new Date(); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function arenaWeekKey() { return 'w' + Math.floor((Date.now() / 86400000 + 3) / 7); } // v0.14.0: a semana UTC do servidor (segunda-feira 00:00 UTC)
 function arenaWeek(a) { if (!a.week || a.week.k !== arenaWeekKey()) a.week = { k: arenaWeekKey(), byWeapon: {}, coop: [] }; return a.week; }
 // a arma mais usada (para o avatar): a que aparece mais vezes como arma do recorde nas partidas da arena; sem partidas, a espada
 function arenaMainKind() {
@@ -13424,12 +13437,12 @@ function arenaRecord(a, w, t, kind, used, co) {
     return;
   }
   const o = st.heroes[1 - st.coop.local], me = st.heroes[st.coop.local];
-  const r = { wave: w, turns: t, partner: String(o.nome || '').slice(0, 16), plook: o.look ? { ...o.look } : null, pk: o.kind, mk: me.kind, used: u2, at };
+  const r = { wave: w, turns: t, partner: String(o.nome || '').slice(0, 16), plook: o.look ? { ...o.look } : null, pk: o.kind, mk: me.kind, used: u2, at, host: typeof coopS !== 'undefined' && coopS.role === 'host' };
   a.coopList = (a.coopList || []).concat(r).sort(arCmp).slice(0, 10); wk.coop = wk.coop.concat(r).sort(arCmp).slice(0, 10);
 }
 const arenaCoopTop = () => (arenaAcct().coopList || [])[0] || null;
 // o herói de frente com a arma: a Imagem desenha-o (heroFrontURL); aqui só fica a marca, e o arPaint enche-a depois de cada ui()
-const arAv = (look, kind, cls = 'av') => look ? `<img class="${cls}" data-hf="${TRAITS[kind] ? kind : 'espada'}" data-look="${look.skin},${look.hair},${look.cloth},${esc(String(look.style))}" alt="">` : '';
+const arAv = (look, kind, cls = 'av') => look ? `<img class="${cls}" data-hf="${TRAITS[kind] ? kind : 'espada'}" data-look="${look.skin | 0},${look.hair | 0},${look.cloth | 0},${Object.prototype.hasOwnProperty.call(A.HAIR, look.style) ? look.style : Object.keys(A.HAIR)[0]}" alt="">` : ''; // v0.14.0: números e estilo validados (o aspeto pode vir do servidor)
 function arPaint() {
   if (typeof heroFrontURL !== 'function') return;
   document.querySelectorAll('#ov img[data-hf]:not([data-done])').forEach(img => {
@@ -13445,8 +13458,8 @@ function arenaHubHtml() {
   const a = arenaAcct(), me = arenaMe(), mk = arenaMainKind(), cb = arenaCoopTop();
   return `<div class="ov-in ar2 ar2-entrada"><div class="scr">
     <h2>${_t('ARENA')}</h2><p class="sub">${_t('Escolhe o modo.')}</p>
-    <button class="box mode-card" data-arsolo="1"><div class="mc-av">${arAv(me.look, mk, 'av me-av')}</div><b>${_t('ARENA SOLO')}</b><small>${_t('Vagas sem fim, a arma que escolheres')}</small><span class="me">${a.best ? _t('O teu melhor: vaga {n} · {w}', { n: a.best.wave, w: _t(TRAITS[a.best.kind].nome) }) : _t('Ainda sem recorde.')}</span><em>›</em></button>
-    <button class="box mode-card" data-arcoop="1"><div class="mc-av">${arAv(me.look, cb ? cb.mk : mk, 'av me-av')}${cb ? arAv(cb.plook, cb.pk) : ''}</div><b>${_t('ARENA CO-OP')}</b><small>${_t('A dois, na mesma rede Wi-Fi')}</small><span class="me">${cb ? _t('O teu melhor: vaga {n} com {p}', { n: cb.wave, p: esc(cb.partner) }) : _t('Ainda sem recorde.')}</span><em>›</em></button>
+    <button class="box mode-card" data-arsolo="1"><div class="mc-av">${arAv(me.look, mk, 'av me-av')}</div><b>${_t('ARENA SOLO')}</b><small>${_t('Vagas sem fim, a arma que escolheres')}</small><span class="me">${a.best ? _t('O teu melhor: vaga {n} · {w}', { n: a.best.wave, w: _t(TRAITS[a.best.kind].nome) }) + (typeof rkWeekPos === 'function' && rkWeekPos('solo') ? ' · ' + _t('{n}.º esta semana', { n: rkWeekPos('solo') }) : '') : _t('Ainda sem recorde.')}</span><em>›</em></button>
+    <button class="box mode-card" data-arcoop="1"><div class="mc-av">${arAv(me.look, cb ? cb.mk : mk, 'av me-av')}${cb ? arAv(cb.plook, cb.pk) : ''}</div><b>${_t('ARENA CO-OP')}</b><small>${_t('A dois, na mesma rede Wi-Fi')}</small><span class="me">${cb ? _t('O teu melhor: vaga {n} com {p}', { n: cb.wave, p: esc(cb.partner) }) + (typeof rkWeekPos === 'function' && rkWeekPos('coop') ? ' · ' + _t('{n}.º esta semana', { n: rkWeekPos('coop') }) : '') : _t('Ainda sem recorde.')}</span><em>›</em></button>
     <div class="box hero-panel grow"><span class="hp-lbl">${_t('A TUA PERSONAGEM')}</span>${arAv(me.look, mk, 'hero-big me-big')}<div class="hero-floor"></div><span class="nick">${esc(me.nick)}</span><span class="nick-sub">${arIcon(mk)} ${_t('a tua arma mais usada: {w}', { w: _t(TRAITS[mk].nome) })}</span><button class="btn" data-aredit="1">${_t('EDITAR')}</button></div>
     <button class="btn" data-tomenu="1">‹ ${_t('MENU')}</button></div></div>`;
 }
@@ -13472,9 +13485,10 @@ function arenaEditLook(v) {
   Sound.play('menu'); ui();
 }
 function arenaEditSave() {
-  const E = st.ed, nick = String(E.nick || '').replace(/[<>&"]/g, '').trim();
-  if (nick.length < 3) { E.msg = _t('A alcunha precisa de 3 a 16 letras.'); Sound.play('error'); ui(); return; }
+  const E = st.ed, nick = String(E.nick || '').replace(/[<>&"]/g, '').trim().replace(/ {2,}/g, ' '); // v0.14.0: sem espaços duplos (as regras do ranking recusam-nos)
+  if (!(typeof rkNickOk === 'function' ? rkNickOk(nick) : nick.length >= 3)) { E.msg = _t('A alcunha precisa de 3 a 16 letras ou números (espaço, _ e - também), sem palavrões.'); Sound.play('error'); ui(); return; }
   const a = arenaAcct(); a.me = { nick: nick.slice(0, 16), look: { ...E.look } }; saveAcct(); Sound.play('menu'); openArenaPick();
+  if (typeof rkSync === 'function' && rkAcct().on) { rkAcct().sent = {}; rkSync().catch(() => {}); } // v0.14.0: a alcunha e o aspeto novos vão para o ranking
 }
 // 3. o ecrã de cada modo: JOGAR, RANK e VOLTAR
 function arenaModeHtml(mode) {
@@ -13483,7 +13497,7 @@ function arenaModeHtml(mode) {
   return `<div class="ov-in ar2 ar2-${mode}"><div class="scr">
     <h2>${_t(coop ? 'ARENA CO-OP' : 'ARENA SOLO')}</h2>
     <div class="box mode-hero"><div class="mh-avs">${arAv(me.look, coop && cb ? cb.mk : mk, 'av me-av')}${coop && cb ? arAv(cb.plook, cb.pk) : ''}</div><span class="nick">${esc(me.nick)}${coop && cb ? ' + ' + esc(cb.partner) : ''}</span>
-      <div class="best"><div><b>${best}</b><span>${_t('MELHOR VAGA')}</span></div><div><b>—</b><span>${_t('NO RANKING')}</span></div>${coop ? `<div><b>Wi-Fi</b><span>${_t('MESMA REDE')}</span></div>` : `<div><b>${a.day.n}/${ARENA_ECOS_DIA}</b><span>${_t('ECOS HOJE')}</span></div>`}</div></div>
+      <div class="best"><div><b>${best}</b><span>${_t('MELHOR VAGA')}</span></div>${(() => { const ps = typeof rkWeekPos === 'function' ? rkWeekPos(mode) : null; return `<div><b>${ps ? _t('{n}.º', { n: ps }) : '—'}</b><span>${_t(ps ? 'ESTA SEMANA' : 'NO RANKING')}</span></div>`; })()}${coop ? `<div><b>Wi-Fi</b><span>${_t('MESMA REDE')}</span></div>` : `<div><b>${a.day.n}/${ARENA_ECOS_DIA}</b><span>${_t('ECOS HOJE')}</span></div>`}</div></div>
     <div class="grow"></div>
     <button class="btn go big" data-arplay="${mode}">${_t('JOGAR')}</button>
     <button class="btn big" data-arrank="${mode}">${_t('RANK')}</button>
@@ -13497,7 +13511,7 @@ function arenaPlay(mode) {
 }
 // 4. ranking deste aparelho (o aprovado, no estado «sem servidor»)
 function arenaRankOpen(mode) { st = { screen: 'arenarank', rk: { mode: mode === 'coop' ? 'coop' : 'solo', w: 'todas', per: 'sempre' } }; Sound.play('menu'); ui(); }
-function arenaRankHtml() {
+function arenaRankLocalHtml(box) { // os recordes deste aparelho (sem rede, no artifact, ou fora do ranking)
   const R = st.rk, coop = R.mode === 'coop', week = R.per === 'semana', a = arenaAcct(), wk = arenaWeek(a), me = arenaMe();
   let rows;
   if (coop) rows = (week ? wk.coop : a.coopList || []).slice().sort(arCmp).map(r => ({ r, name: esc(me.nick) + ' + ' + esc(r.partner), av: arAv(me.look, r.mk, 'av me-av') }));
@@ -13506,7 +13520,7 @@ function arenaRankHtml() {
     <div class="seg"><button data-arrkp="sempre" aria-pressed="${!week}">${_t('SEMPRE')}</button><button data-arrkp="semana" aria-pressed="${week}">${_t('ESTA SEMANA')}</button></div>`;
   const row = (x, i) => `<div class="lrow${i === 0 ? ' me' : ''}"><span class="pos">${_t('{n}.º', { n: i + 1 })}</span><div class="who">${x.av}<div><div class="nm">${x.name}</div>${arWpn(x.r.used)}</div></div><span class="wv r">${x.r.wave}</span><span class="tu r">${x.r.turns}</span></div>`;
   return `<div class="ov-in ar2 ar2-rank"><div class="scr"><h2>${_t(coop ? 'ARENA CO-OP' : 'ARENA SOLO')} · ${_t('RANK')}</h2>${tabs}
-    <div class="box nosrv"><b>${_t('AINDA SEM SERVIDOR')}</b>${_t('O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.')}</div>
+    ${box}
     <div class="thead"><span>#</span><span>${_t(coop ? 'DUPLA · ARMAS' : 'ARMA')}</span><span class="r">${_t('VAGA')}</span><span class="r">${_t('TURNOS')}</span></div>
     <div class="box list">${rows.length ? rows.map(row).join('') : `<p class="foot">${_t(week ? 'Ainda sem recordes esta semana.' : 'Ainda sem recordes.')}</p>`}</div>
     <div class="grow"></div><button class="btn" data-${coop ? 'arcoop' : 'arsolo'}="1">‹ ${_t('VOLTAR')}</button></div></div>`;
@@ -14102,6 +14116,234 @@ function coopPauseHtml() {
 // desenha o QR depois de cada ui() (o ecrã redesenha-se e o canvas vem vazio)
 // a 1:1 (Imagem): 3 px por módulo nos ecrãs estreitos; margem de 4 módulos
 function coopPaint() { const c = document.querySelector('#ov canvas[data-coopqr]'); if (c && !c.dataset.done && coopS.code) { try { CoopNet.drawQR(c, coopS.code, innerWidth < 420 ? 3 : 4); c.dataset.done = '1'; } catch (e) {} } }
+
+</script>
+<script>
+/* GODSPIRE · js/rank.js (v0.14.0): o RANKING GLOBAL da Arena (Firebase, plano Spark, sem cartão; FIREBASE.md e PROPOSTA-modos §1c do Sábio).
+   Sem biblioteca: fala direto com os serviços da Google (o mesmo que a biblioteca do Firebase faz por dentro): o login anónimo dá um uid,
+   e o Firestore guarda 1 documento por jogador e por tabela (o id é o uid). As REGRAS do servidor garantem o resto: só o dono escreve o seu,
+   só para melhorar, ninguém apaga o de outro; a semana é uma subcoleção (weeks/<n.º da semana UTC>) que recomeça à segunda-feira 00:00 UTC.
+   Só se envia quando o jogador aceitou entrar no ranking (acct.fb.on) e bateu um recorde seu; as leituras ficam em cache 5 min (poupar o plano grátis).
+   No artifact do Claude a rede para fora está bloqueada: o ranking mostra só os recordes deste aparelho. */
+const FB = { key: 'AIzaSyDaX-9IXsAByFP0X0hVvIMnsZAx3i1FDcg', project: 'godspire-b1b6c' };
+const FB_DOCS = `https://firestore.googleapis.com/v1/projects/${FB.project}/databases/(default)/documents`;
+const RK_W = ['adaga', 'espada', 'machado', 'martelo', 'machadinha', 'cajado', 'arco'];
+const rkScore = (w, t) => w * 100000 + 99999 - Math.min(99999, t); // vaga primeiro, menos turnos desempata (1 só campo: os índices automáticos chegam)
+const rkWeek = () => Math.floor((Date.now() / 86400000 + 3) / 7); // n.º da semana UTC (a 1970-01-01 foi quinta: +3 põe o início à segunda)
+const rkAcct = () => (acct.fb = acct.fb || { on: false });
+const RK = { cache: {}, busy: {}, down: false, sendT: 0 };
+
+// ---------- valores tipados do Firestore (REST) ----------
+function fbVal(v) {
+  if (v === null || v === undefined) return { nullValue: null };
+  if (typeof v === 'boolean') return { booleanValue: v };
+  if (typeof v === 'number') return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+  if (typeof v === 'string') return { stringValue: v };
+  if (Array.isArray(v)) return { arrayValue: { values: v.map(fbVal) } };
+  return { mapValue: { fields: Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fbVal(x)])) } };
+}
+function fbGet(v) {
+  if (!v) return null;
+  if ('integerValue' in v) return +v.integerValue;
+  if ('doubleValue' in v) return v.doubleValue;
+  if ('stringValue' in v) return v.stringValue;
+  if ('booleanValue' in v) return v.booleanValue;
+  if ('arrayValue' in v) return (v.arrayValue.values || []).map(fbGet);
+  if ('mapValue' in v) return Object.fromEntries(Object.entries(v.mapValue.fields || {}).map(([k, x]) => [k, fbGet(x)]));
+  return null;
+}
+const fbDoc = d => ({ id: d.name.split('/').pop(), ...fbGet({ mapValue: { fields: d.fields || {} } }) });
+
+// ---------- rede ----------
+async function fbFetch(url, opt = {}, ms = 8000) {
+  const ac = typeof AbortController !== 'undefined' ? new AbortController() : null, t = ac && setTimeout(() => ac.abort(), ms);
+  try { const r = await fetch(url, { ...opt, signal: ac ? ac.signal : undefined }); const j = await r.json().catch(() => ({})); if (!r.ok) { const e = new Error((j.error && j.error.message) || ('HTTP ' + r.status)); e.status = r.status; throw e; } return j; }
+  finally { if (t) clearTimeout(t); }
+}
+// login anónimo: o uid fica na conta deste aparelho (acct.fb); o token renova-se a cada hora
+async function fbToken() {
+  const F = rkAcct();
+  if (F.id && F.exp > Date.now() + 60000) return F.id;
+  if (F.refresh) {
+    try {
+      const j = await fbFetch(`https://securetoken.googleapis.com/v1/token?key=${FB.key}`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(F.refresh) });
+      Object.assign(F, { id: j.id_token, refresh: j.refresh_token, uid: j.user_id, exp: Date.now() + (+j.expires_in || 3600) * 1000 }); saveAcct(); return F.id;
+    } catch (e) { if (e.status !== 400) throw e; F.refresh = null; } // 400: a conta anónima já não existe; cria-se outra
+  }
+  const j = await fbFetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FB.key}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ returnSecureToken: true }) });
+  Object.assign(F, { id: j.idToken, refresh: j.refreshToken, uid: j.localId, exp: Date.now() + (+j.expiresIn || 3600) * 1000 }); saveAcct(); return F.id;
+}
+const fbAuth = async () => ({ Authorization: 'Bearer ' + await fbToken(), 'Content-Type': 'application/json' });
+const rkPath = (mode, per) => per === 'semana' ? `weeks/${rkWeek()}/${mode}` : mode; // a tabela: solo, coop, weeks/<n>/solo, weeks/<n>/coop
+async function fbQuery(path, q) {
+  const i = path.lastIndexOf('/'), parent = i < 0 ? '' : '/' + path.slice(0, i), coll = path.slice(i + 1);
+  const r = await fbFetch(`${FB_DOCS}${parent}:runQuery`, { method: 'POST', headers: await fbAuth(), body: JSON.stringify({ structuredQuery: { from: [{ collectionId: coll }], ...q } }) });
+  return (r || []).filter(x => x.document).map(x => fbDoc(x.document));
+}
+async function fbCount(path, where) {
+  const i = path.lastIndexOf('/'), parent = i < 0 ? '' : '/' + path.slice(0, i), coll = path.slice(i + 1);
+  const r = await fbFetch(`${FB_DOCS}${parent}:runAggregationQuery`, { method: 'POST', headers: await fbAuth(), body: JSON.stringify({ structuredAggregationQuery: { structuredQuery: { from: [{ collectionId: coll }], ...(where ? { where } : {}) }, aggregations: [{ alias: 'n', count: {} }] } }) });
+  const a = r && r[0] && r[0].result && r[0].result.aggregateFields; return a && a.n ? +a.n.integerValue : 0;
+}
+const fbGt = (f, v) => ({ fieldFilter: { field: { fieldPath: f }, op: 'GREATER_THAN', value: { integerValue: String(v) } } });
+const fbLt = (f, v) => ({ fieldFilter: { field: { fieldPath: f }, op: 'LESS_THAN', value: { integerValue: String(v) } } });
+const fbOrd = (f, dir) => [{ field: { fieldPath: f }, direction: dir }];
+
+// ---------- alcunha (Sábio §1c: 3 a 16, letras, números, espaço, _ e -; sem palavrões) ----------
+const RK_BAD = ['merda', 'caralh', 'foda', 'fodi', 'puta', 'cona', 'piroca', 'porra', 'cabrao', 'cabrão', 'paneleir', 'fdp', 'fuck', 'shit', 'bitch', 'cunt', 'nigg', 'nazi', 'hitler', 'dick', 'cock', 'pussy', 'whore', 'slut', 'rape'];
+const rkNickClean = n => String(n || '').trim().replace(/ {2,}/g, ' '); // sem espaços nas pontas nem duplos (as regras recusam-nos)
+function rkNickOk(n) {
+  if (n !== rkNickClean(n) || n.length < 3 || n.length > 16 || !/^[\p{L}\p{N}_-]([\p{L}\p{N} _-]*[\p{L}\p{N}_-])?$/u.test(n)) return false;
+  const low = n.toLowerCase().replace(/[ _-]/g, ''); return !RK_BAD.some(w => low.includes(w));
+}
+
+// ---------- o que se envia (sai dos recordes deste aparelho; as regras só aceitam melhorar) ----------
+const rkEntry = r => ({ score: rkScore(r.wave, r.turns), wave: r.wave, turns: r.turns, used: (r.used || []).slice(0, 2).map(u => ({ k: u.k, lv: u.lv || 0 })) });
+function rkSoloDoc(byWeapon) {
+  const me = arenaMe(), by = {}; let best = null;
+  for (const k of RK_W) { const r = byWeapon[k]; if (!r || !r.wave) continue; by[k] = rkEntry(r); if (!best || by[k].score > best.score) best = by[k]; }
+  if (!best) return null;
+  return { nick: me.nick, av: { ...me.look, k: arenaMainKind() }, score: best.score, wave: best.wave, turns: best.turns, used: best.used, byWeapon: by, ver: GAME_BUILD, day: dayLocal(), out: false };
+}
+function rkCoopDoc(list) {
+  const r = (list || []).filter(x => x.host)[0]; if (!r) return null; // só o anfitrião (J1) envia a dupla, para ela não aparecer 2 vezes
+  const me = arenaMe();
+  return { nick: me.nick, nick2: rkNickOk(String(r.partner || '')) ? String(r.partner).slice(0, 16) : _t('Colega'), av: { ...me.look, k: r.mk || arenaMainKind() }, av2: { ...(r.plook || me.look), k: r.pk || 'espada' }, ...rkEntry(r), ver: GAME_BUILD, day: dayLocal(), out: false };
+}
+// escreve o documento inteiro e o campo t com a hora do SERVIDOR (REQUEST_TIME), num commit: as regras exigem-no e só deixam reescrever 20 s depois (Sábio)
+async function rkPut(path, doc) {
+  const h = await fbAuth(); // o login vem antes: é ele que dá o uid (o id do documento)
+  const name = `projects/${FB.project}/databases/(default)/documents/${path}/${rkAcct().uid}`;
+  await fbFetch(`${FB_DOCS}:commit`, { method: 'POST', headers: h, body: JSON.stringify({ writes: [{ update: { name, fields: fbVal(doc).mapValue.fields }, updateTransforms: [{ fieldPath: 't', setToServerValue: 'REQUEST_TIME' }] }] }) });
+}
+// envia o que mudou desde o último envio (chamado no fim da arena e ao entrar no ranking); falhas não estragam nada: tenta-se na próxima
+async function rkSync() {
+  const F = rkAcct(); if (!F.on || RK.down || !rkNickOk(arenaMe().nick)) return;
+  const a = arenaAcct(), wk = arenaWeek(a), W = rkWeek(), sent = F.sent = F.sent || {};
+  const jobs = [['solo', rkSoloDoc(a.byWeapon)], [`weeks/${W}/solo`, rkSoloDoc(wk.byWeapon)], ['coop', rkCoopDoc(a.coopList)], [`weeks/${W}/coop`, rkCoopDoc(wk.coop)]];
+  for (const [path, doc] of jobs) {
+    if (!doc) continue; const sig = JSON.stringify(doc).replace(/"day":"[^"]*"/, '');
+    if (sent[path] === sig) continue;
+    const at = F.putAt = F.putAt || {}; if (Date.now() - (at[path] || 0) < 25000) continue; // as regras só deixam reescrever 20 s depois: fica para o próximo envio
+    at[path] = Date.now();
+    try { await rkPut(path, doc); sent[path] = sig; RK.cache = {}; saveAcct(); }
+    catch (e) { if (!e.status) { RK.down = Date.now(); return; } console.warn('ranking:', path, e.message); sent[path] = sig; saveAcct(); } // recusado pelas regras (pior que o do servidor): não insistir
+  }
+}
+// sair do ranking (Sábio): as regras não deixam apagar; o documento fica out == true e a zero, por isso some das tabelas (as queries pedem score > 0).
+// Só se volta 7 dias depois. O apagamento a sério (RGPD) é a pedido, por email.
+const RK_BACK = 7 * 86400000;
+async function rkLeave() {
+  const F = rkAcct(); F.on = false; F.outAt = Date.now(); saveAcct();
+  if (!F.uid) return;
+  const me = arenaMe(), z = { nick: rkNickOk(me.nick) ? me.nick : 'Anon', av: { ...me.look, k: arenaMainKind() }, score: 0, wave: 0, turns: 0, used: [], ver: GAME_BUILD, day: dayLocal(), out: true };
+  for (const p of ['solo', 'coop', `weeks/${rkWeek()}/solo`, `weeks/${rkWeek()}/coop`]) {
+    const doc = p.endsWith('coop') ? { ...z, nick2: _t('Colega'), av2: { ...z.av } } : { ...z, byWeapon: {} };
+    try { await rkPut(p, doc); } catch (e) {} // as tabelas onde nunca entrou dão 403 (não há documento para esconder)
+  }
+  F.sent = {}; F.putAt = {}; RK.cache = {}; saveAcct();
+}
+const rkBackAt = () => (rkAcct().outAt || 0) + RK_BACK;
+
+// ---------- leitura (cache de 5 min por tabela) ----------
+const rkField = w => w && w !== 'todas' ? `byWeapon.${w}.score` : 'score';
+async function rkLoad(mode, w, per) {
+  const key = [mode, w, per].join('|'), c = RK.cache[key];
+  if (c && Date.now() - c.at < 300000) return c;
+  if (RK.busy[key]) return RK.busy[key];
+  const run = (async () => {
+    const path = rkPath(mode, per), f = rkField(mode === 'coop' ? 'todas' : w), F = rkAcct();
+    const top = await fbQuery(path, { where: fbGt(f, 0), orderBy: fbOrd(f, 'DESCENDING'), limit: 3 });
+    let mine = null, above = [], below = [], pos = 0, total = 0, cut = null;
+    if (F.uid) { try { mine = fbDoc(await fbFetch(`${FB_DOCS}/${path}/${F.uid}`, { headers: await fbAuth() })); } catch (e) { if (e.status !== 404) throw e; } }
+    const myS = mine ? (f === 'score' ? mine.score : (mine.byWeapon && mine.byWeapon[w] ? mine.byWeapon[w].score : 0)) : 0;
+    total = await fbCount(path, fbGt(f, 0));
+    if (myS) {
+      pos = (await fbCount(path, fbGt(f, myS))) + 1;
+      above = (await fbQuery(path, { where: fbGt(f, myS), orderBy: fbOrd(f, 'ASCENDING'), limit: 4 })).reverse();
+      below = await fbQuery(path, { where: { compositeFilter: { op: 'AND', filters: [fbGt(f, 0), fbLt(f, myS)] } }, orderBy: fbOrd(f, 'DESCENDING'), limit: 4 });
+      if (pos > 100) { const t100 = await fbQuery(path, { where: fbGt(f, 0), orderBy: fbOrd(f, 'DESCENDING'), limit: 100, select: { fields: [{ fieldPath: f }] } }); cut = t100.length >= 100 ? t100[99] : null; }
+    } else if (top.length) below = await fbQuery(path, { where: fbGt(f, 0), orderBy: fbOrd(f, 'DESCENDING'), offset: 3, limit: 7 });
+    const r = { at: Date.now(), top, mine, myS, pos, total, above, below, cut, w };
+    RK.cache[key] = r; return r;
+  })();
+  RK.busy[key] = run;
+  try { return await run; } finally { delete RK.busy[key]; }
+}
+// a posição do jogador numa tabela (para os cartões da entrada e o ecrã do modo); devolve null se não há rede ou entrada
+async function rkMyPos(mode, per) { try { const r = await rkLoad(mode, 'todas', per); return r.pos || null; } catch (e) { return null; } }
+const rkOnline = () => !RK.down || Date.now() - RK.down > 60000;
+// tenta a rede em segundo plano e redesenha o ecrã quando os dados chegam (só se ainda estiver no mesmo ecrã)
+function rkKick(mode, w, per) {
+  const scr = st.screen, key = [mode, w, per].join('|');
+  if (RK.cache[key] && Date.now() - RK.cache[key].at < 300000) return RK.cache[key];
+  rkLoad(mode, w, per).then(() => { RK.down = false; RK.err = null; if (st.screen === scr) ui(); }).catch(e => { if (!e.status) RK.down = Date.now(); RK.err = e.message; if (st.screen === scr) ui(); });
+  return null;
+}
+
+// ---------- dados do servidor são NÃO CONFIÁVEIS: tudo o que se mostra passa por aqui ----------
+const rkInt = (v, lo, hi) => Math.max(lo, Math.min(hi, Number.isInteger(v) ? v : 0));
+const rkLook = a => a && typeof a === 'object' ? { skin: rkInt(a.skin, 0, SKINS.length - 1), hair: rkInt(a.hair, 0, HAIRS.length - 1), cloth: rkInt(a.cloth, 0, CLOTHS.length - 1), style: Object.prototype.hasOwnProperty.call(A.HAIR, a.style) ? a.style : Object.keys(A.HAIR)[0], k: RK_W.includes(a.k) ? a.k : 'espada' } : null;
+const rkUsed = u => (Array.isArray(u) ? u : []).filter(x => x && RK_W.includes(x.k)).slice(0, 2).map(x => ({ k: x.k, lv: rkInt(x.lv, 0, 99) }));
+function rkRow(d, w) {
+  const e = w && w !== 'todas' ? (d.byWeapon && d.byWeapon[w]) || {} : d;
+  return { uid: d.id, nick: String(d.nick || '?').slice(0, 16), nick2: d.nick2 != null ? String(d.nick2).slice(0, 16) : null, av: rkLook(d.av), av2: rkLook(d.av2), wave: rkInt(e.wave, 0, 999), turns: rkInt(e.turns, 0, 99999), used: rkUsed(e.used) };
+}
+
+// ---------- o ecrã do RANK (o aprovado: pódio em cartas, janela de ±4, a linha do jogador fixa em baixo) ----------
+function rkJoinBox() {
+  return `<div class="box nosrv"><b>${_t('RANKING GLOBAL')}</b>${_t('Entra para apareceres no ranking de todos os jogadores com a tua alcunha ({n}). Aparece em público: não uses o teu nome verdadeiro.', { n: esc(arenaMe().nick) })}
+    <div class="row2" style="margin-top:6px"><button class="btn go" data-rkjoin="1">${_t('ENTRAR NO RANKING')}</button><button class="btn" data-aredit="1">${_t('MUDAR ALCUNHA')}</button></div></div>`;
+}
+function arenaRankHtml() {
+  if (st.rk && st.rk.k !== [st.rk.mode, st.rk.w, st.rk.per].join('|')) { st.rk.k = [st.rk.mode, st.rk.w, st.rk.per].join('|'); RK.err = null; } // outra tabela: tenta de novo
+  const R = st.rk, coop = R.mode === 'coop', week = R.per === 'semana', F = rkAcct();
+  const noSrv = `<div class="box nosrv"><b>${_t('SEM LIGAÇÃO AO SERVIDOR')}</b>${_t('Não deu para ler o ranking global (sem internet, ou nesta versão de testes). Por agora vês só os teus recordes neste aparelho.')}</div>`;
+  if (!rkOnline()) return arenaRankLocalHtml(noSrv);
+  const S = rkKick(R.mode, coop ? 'todas' : R.w, R.per);
+  const tabs = `${coop ? '' : `<div class="chips">${['todas'].concat(KINDS).map(k => `<button data-arrkw="${k}" aria-pressed="${R.w === k}">${k === 'todas' ? _t('TODAS') : arIcon(k) + _t(TRAITS[k].nome).toUpperCase()}</button>`).join('')}</div>`}
+    <div class="seg"><button data-arrkp="sempre" aria-pressed="${!week}">${_t('SEMPRE')}</button><button data-arrkp="semana" aria-pressed="${week}">${_t('ESTA SEMANA')}</button></div>`;
+  // BETA até haver provas e o ✓ (Sábio)
+  const head = `<h2>${_t(coop ? 'ARENA CO-OP' : 'ARENA SOLO')} · ${_t('RANK')} <span class="beta">BETA</span></h2>${tabs}`, back = `<button class="btn" data-${coop ? 'arcoop' : 'arsolo'}="1">‹ ${_t('VOLTAR')}</button>`;
+  if (!S && RK.err) return arenaRankLocalHtml(noSrv); // o servidor recusou ou falhou: os recordes deste aparelho
+  if (!S) return `<div class="ov-in ar2 ar2-rank"><div class="scr">${head}<p class="foot">${_t('A carregar o ranking…')}</p><div class="grow"></div>${back}</div></div>`;
+  const w = coop ? 'todas' : R.w, name = x => esc(x.nick) + (x.nick2 != null ? ' + ' + esc(x.nick2) : '');
+  const avs = (x, cls) => arAv(x.av, x.av && x.av.k, cls) + (x.av2 ? arAv(x.av2, x.av2.k, cls) : '');
+  const top = S.top.map(d => rkRow(d, w)).filter(x => x.wave);
+  const pod = (x, n) => x ? `<div class="box pod p${n}">${typeof medalURL === 'function' ? `<img class="medal" src="${medalURL(n)}" alt="">` : ''}<div class="avs">${avs(x, 'av')}</div><span class="nm">${name(x)}</span><span class="wv">${_t('VAGA {n}', { n: x.wave })}</span><span class="tu">${_t('{n} turnos', { n: x.turns })}</span></div>` : '<div></div>';
+  const row = (x, pos, me) => `<div class="lrow${me ? ' me' : ''}"><span class="pos">${_t('{n}.º', { n: pos })}</span><div class="who">${avs(x, 'av')}<div><div class="nm">${name(x)}</div>${arWpn(x.used)}</div></div><span class="wv r">${x.wave}</span><span class="tu r">${x.turns}</span></div>`;
+  let list = '', bar = '';
+  const mine = S.mine && S.myS ? rkRow(S.mine, w) : null;
+  if (mine) {
+    const ab = S.above.map(d => rkRow(d, w)), be = S.below.map(d => rkRow(d, w));
+    const p0 = S.pos - ab.length; // quem já está no pódio (1.º a 3.º) não se repete na lista; o jogador fica sempre
+    list = (p0 > 4 ? '<div class="gap">· · ·</div>' : '') + ab.map((x, i) => p0 + i > 3 ? row(x, p0 + i, false) : '').join('') + row(mine, S.pos, true) + be.map((x, i) => S.pos + 1 + i > 3 ? row(x, S.pos + 1 + i, false) : '').join('') + (be.length === 4 ? '<div class="gap">· · ·</div>' : '');
+    bar = `<div class="mebar"><div class="lbl">${_t(week ? 'ÉS O {p}.º ESTA SEMANA · DE {n}' : 'ÉS O {p}.º DE SEMPRE · DE {n}', { p: S.pos, n: S.total.toLocaleString(langNow() === 'en' ? 'en-GB' : 'pt-PT') })}</div>${row(mine, S.pos, true)}</div>`;
+  } else list = S.below.map(d => rkRow(d, w)).filter(x => x.wave).map((x, i) => row(x, 4 + i, false)).join('');
+  const cut = S.cut ? rkRow(S.cut, w) : null;
+  const foot = cut ? `<p class="foot">${_t(week ? 'Fora do top 100 desta semana: precisas da vaga {n} para entrar.' : 'Fora do top 100 de sempre: precisas da vaga {n} para entrar.', { n: cut.wave })}</p>` : '';
+  const empty = !top.length ? `<p class="foot">${_t(week ? 'Ainda ninguém esta semana. Sê o primeiro!' : 'Ainda ninguém no ranking. Sê o primeiro!')}</p>` : '';
+  return `<div class="ov-in ar2 ar2-rank"><div class="scr">${head}
+    ${F.on ? '' : rkJoinBox()}
+    ${top.length ? `<div class="podium">${pod(top[1], 2)}${pod(top[0], 1)}${pod(top[2], 3)}</div>` : empty}
+    ${list ? `<div class="thead"><span>#</span><span>${_t(coop ? 'DUPLA · ARMAS' : 'ALCUNHA · ARMAS')}</span><span class="r">${_t('VAGA')}</span><span class="r">${_t('TURNOS')}</span></div><div class="box list">${list}</div>` : ''}
+    ${foot}${F.on ? `<p class="foot"><button class="btn" data-rkleave="1">${_t('SAIR DO RANKING')}</button></p>` : ''}
+    ${back}</div>${bar}</div>`;
+}
+// entrar: a alcunha tem de passar no filtro; depois envia logo os recordes deste aparelho
+function rkJoin() {
+  const me = arenaMe();
+  if (!rkNickOk(me.nick)) { log(_t('Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).')); arenaEditOpen(); return; }
+  if (Date.now() < rkBackAt()) { log(_t('Saíste do ranking há pouco: podes voltar a partir de {d}.', { d: new Date(rkBackAt()).toLocaleDateString(langNow() === 'en' ? 'en-GB' : 'pt-PT') })); Sound.play('error'); ui(); return; }
+  rkAcct().on = true; saveAcct(); Sound.play('menu');
+  rkSync().then(() => { RK.cache = {}; ui(); }).catch(() => ui()); ui();
+}
+// a posição desta semana para os cartões da entrada e o ecrã do modo (da cache; se o jogador está no ranking, pede-a em segundo plano)
+function rkWeekPos(mode) {
+  const c = RK.cache[mode + '|todas|semana'];
+  if (rkAcct().on && rkOnline() && (!c || Date.now() - c.at > 300000)) rkKick(mode, 'todas', 'semana');
+  return c && c.pos ? c.pos : null;
+}
 
 </script>
 <script>
@@ -15028,6 +15270,7 @@ $('ov').addEventListener('click', e => {
 function ovAct(d) {
   if (typeof coopRestRec === 'function' && coopRestRec(d)) return;
   if (typeof coopPlayBlock === 'function' && coopPlayBlock(d)) return; // v0.12.3 (OBS 87)
+  typeof arRec === 'function' && arRec({ k: 'ui', d: { ...d } }); // v0.14.0: os cliques nos painéis da arena também (o descanso e a mochila)
   if (d.tknext) { talkNext(); return; } // v88: diálogo
   if (d.create) openCreator();
   else if (d.cardgo) diveCard(d.cardgo);
@@ -15124,6 +15367,8 @@ function ovAct(d) {
   else if (d.arrkw) { if (st.rk && (d.arrkw === 'todas' || TRAITS[d.arrkw])) { st.rk.w = d.arrkw; Sound.play('menu'); ui(); } }
   else if (d.arrkp) { if (st.rk) { st.rk.per = d.arrkp === 'semana' ? 'semana' : 'sempre'; Sound.play('menu'); ui(); } }
   else if (d.aredit) arenaEditOpen();
+  else if (d.rkjoin) rkJoin(); // v0.14.0: ranking global
+  else if (d.rkleave) { rkLeave().finally(() => ui()); Sound.play('menu'); ui(); }
   else if (d.arlook) { if (st.ed) arenaEditLook(d.arlook); }
   else if (d.aredsave) { if (st.ed) arenaEditSave(); }
   else if (d.coophost) coopHost();
@@ -15409,7 +15654,7 @@ cv.addEventListener('click', e => {
   if (st.armed != null && (dx || dy)) { castArmed(dx, dy, tf && vis[idx(tx, ty)] ? tf : null); return; }
   if (ri && tf && vis[idx(tx, ty)] && Math.max(Math.abs(dx), Math.abs(dy)) <= ri.range && los(p.x, p.y, tx, ty)) {
     if (typeof coopIntercept === 'function' && isCoop() && !st.coopHold && coopIntercept({ k: 'shoot', fid: tf.fid })) return; // v0.12.3 (OBS 87): co-op
-    if (ready()) { shoot(tf, ri); endTurn(); }
+    if (ready()) { typeof arRec === 'function' && arRec({ k: 'shoot', fid: tf.fid }); shoot(tf, ri); endTurn(); }
     return;
   }
   // v43 (pedido do utilizador): tocar no mapa já não põe o herói a andar. Só interage: a própria casa espera um turno,
@@ -15424,7 +15669,8 @@ const isTyping = e => { const t = e.target && (e.target.nodeType === 1 ? e.targe
 // trocar de app ou fechar o separador guarda a partida exatamente onde estava
 // v0.11.0 (Sábio, pergunta de um jogador no Reddit): ao trocar de app a meio de uma animação a gravação era saltada (sem force). O estado lógico
 // do turno já está resolvido (a investida fica em st.endPending e acaba ao carregar); só não se grava a meio de uma passagem de andar (transRun)
-function hideSave() { try { if (!st || !st.p || st.dying || (typeof transRun !== 'undefined' && transRun)) return; if (isArena()) { if (st.av.rest) arenaSave(); return; } saveSuspend({ force: true }); } catch (e) {} }
+// v0.14.0: na arena grava também a meio da vaga (o ponto em que se está), para fechar a app não voltar atrás no tempo
+function hideSave() { try { if (!st || !st.p || st.dying || (typeof transRun !== 'undefined' && transRun)) return; if (isArena()) { arenaSave(); return; } saveSuspend({ force: true }); } catch (e) {} }
 document.addEventListener('visibilitychange', () => { if (document.hidden) hideSave(); });
 window.addEventListener('pagehide', hideSave);
 
