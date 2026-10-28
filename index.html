@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.14.11 (build 124). Fontes embutidas:
+<!-- GODSPIRE v0.14.12 (build 125). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -2142,10 +2142,11 @@ window.Sound = (() => {
       bp.frequency.setValueAtTime(2200, s0); bp.frequency.exponentialRampToValueAtTime(500, s0 + 0.11);
       g.gain.setValueAtTime(0.0001, s0); g.gain.exponentialRampToValueAtTime(0.18, s0 + 0.1); g.gain.exponentialRampToValueAtTime(0.0001, s0 + 0.12);
       src.connect(bp); bp.connect(g); g.connect(sfxOut || sfxG); src.start(s0, Math.random() * 0.5); src.stop(s0 + 0.13);
-      tone({ type: 'square', f: 220, f2: 180, t: 0.11, dur: 0.06, v: 0.07 }); tone({ type: 'square', f: 330, t: 0.11, dur: 0.05, v: 0.04 });
-      tone({ type: 'triangle', f: 130, f2: 60, t: 0.11, dur: 0.14, v: 0.22 });
-      noise({ t: 0.11, dur: 0.2, v: 0.12, f: 900, f2: 200 });
-      [57, 64].forEach(n => tone({ type: 'sine', f: mtof(n), t: 0.13, dur: 0.3, v: 0.04, a: 0.12, out: sfxEcho }));
+      const Ti = Math.max(0.05, 0.11 - lead()); // o baque aos 110 ms, adiantado pela latência de saída
+      tone({ type: 'square', f: 220, f2: 180, t: Ti, dur: 0.06, v: 0.07 }); tone({ type: 'square', f: 330, t: Ti, dur: 0.05, v: 0.04 });
+      tone({ type: 'triangle', f: 130, f2: 60, t: Ti, dur: 0.14, v: 0.22 });
+      noise({ t: Ti, dur: 0.2, v: 0.12, f: 900, f2: 200 });
+      [57, 64].forEach(n => tone({ type: 'sine', f: mtof(n), t: Ti + 0.02, dur: 0.3, v: 0.04, a: 0.12, out: sfxEcho }));
     },
     // §17 GRITO: um tlim dourado por inimigo atordoado, quando a onda lá chega
     stun_star: () => { tone({ wave: pulse12, f: mtof(91), dur: 0.05, v: 0.04 }); tone({ wave: pulse12, f: mtof(96), t: 0.04, dur: 0.08, v: 0.035, out: sfxEcho }); },
@@ -2156,14 +2157,14 @@ window.Sound = (() => {
       bp.frequency.setValueAtTime(4000, s0); bp.frequency.exponentialRampToValueAtTime(900, s0 + 0.09);
       g.gain.setValueAtTime(0.0001, s0); g.gain.exponentialRampToValueAtTime(0.16, s0 + 0.08); g.gain.exponentialRampToValueAtTime(0.0001, s0 + 0.095);
       src.connect(bp); bp.connect(g); g.connect(sfxOut || sfxG); src.start(s0, Math.random() * 0.5); src.stop(s0 + 0.1);
-      const T = 0.09;
+      const T = Math.max(0.04, 0.09 - lead()); preHit(0.09); // o impacto adiantado pela latência; a música cala-se um instante antes
       noise({ t: T, dur: 0.45, v: 0.5, f: 900, f2: 50 }); tone({ type: 'square', f: 90, f2: 32, t: T, dur: 0.4, v: 0.26 });
       tone({ type: 'triangle', f: 260, f2: 100, t: T, dur: 0.06, v: 0.16 });
       tone({ type: 'sine', f: mtof(74), t: T, dur: 0.35, v: 0.05, a: 0.005, out: sfxEcho });
       tone({ type: 'sine', f: mtof(81), t: T + 0.01, dur: 0.3, v: 0.03, a: 0.005, out: sfxEcho });
       noise({ t: T + 0.07, dur: 0.3, v: 0.08, f: 400, f2: 120 });
       for (let i = 0; i < 6; i++) noise({ t: 0.3 + Math.random() * 0.4, dur: 0.03, v: 0.05 + Math.random() * 0.04, f: 1500 + Math.random() * 1500, type: 'bandpass', q: 3 });
-      setTimeout(() => duck(0.8, 260), 90);
+      setTimeout(() => duck(0.8, 260), T * 1000);
     },
     // §19 BOLA DE FOGO: o lançamento (0) e o rebentamento em cruz (no impacto)
     fire_cast: () => { noise({ dur: 0.12, v: 0.14, f: 500, f2: 1800, type: 'bandpass', q: 1.2 }); tone({ type: 'sawtooth', f: 180, f2: 260, dur: 0.1, v: 0.05 }); },
@@ -2192,6 +2193,22 @@ window.Sound = (() => {
       duck(0.8, 120);
     },
     zap_jump: () => { for (let i = 0; i < 3; i++) noise({ t: i * 0.02, dur: 0.02, v: 0.18, f: 5000, type: 'highpass' }); tone({ type: 'square', f: 1100, f2: 400, dur: 0.08, v: 0.05 }); },
+    // §20 ROLAMENTO A: salta com pó, dá uma volta no ar a recuar e aterra com pó (~200 ms, adiantado pela latência)
+    roll_flip: () => {
+      noise({ dur: 0.06, v: 0.1, f: 700, f2: 300 });
+      const s0 = ctx.currentTime, src = ctx.createBufferSource(), bp = ctx.createBiquadFilter(), g = ctx.createGain();
+      src.buffer = noiseBuf; bp.type = 'bandpass'; bp.Q.value = 2;
+      bp.frequency.setValueAtTime(700, s0); bp.frequency.exponentialRampToValueAtTime(2200, s0 + 0.1); bp.frequency.exponentialRampToValueAtTime(800, s0 + 0.19);
+      g.gain.setValueAtTime(0.0001, s0); g.gain.exponentialRampToValueAtTime(0.14, s0 + 0.05); g.gain.exponentialRampToValueAtTime(0.0001, s0 + 0.2);
+      src.connect(bp); bp.connect(g); g.connect(sfxOut || sfxG); src.start(s0, Math.random() * 0.5); src.stop(s0 + 0.21);
+      const T = Math.max(0.12, 0.2 - lead());
+      tone({ type: 'triangle', f: 170, f2: 90, t: T, dur: 0.05, v: 0.14 }); noise({ t: T, dur: 0.1, v: 0.1, f: 900, f2: 250 });
+    },
+    // §20: o golpe final da execução (pausa pesada): um baque surdo de 60 Hz com os harmónicos de 120 e 240 Hz que se ouvem no altifalante do telemóvel
+    exec_thud: () => {
+      tone({ type: 'sine', f: 60, dur: 0.1, v: 0.1 }); tone({ type: 'sine', f: 120, dur: 0.09, v: 0.06 }); tone({ type: 'sine', f: 240, dur: 0.07, v: 0.03 });
+      duck(0.8, 130);
+    },
     spin_hit: () => { noise({ dur: 0.05, v: 0.2, f: 2400, f2: 700 }); tone({ type: 'square', f: 170, f2: 90, dur: 0.05, v: 0.1 }); },
     // §15: Passo arcano, a CHEGADA (aos 180 ms): um pio a descer + Lá6/Mi7 de cristal com eco + um brilho; abaixo do 'hit'
     blink_in: () => {
@@ -2463,11 +2480,15 @@ window.Sound = (() => {
   };
   // efeitos que se repetem muito e ganham com uma pequena variação de tom (±4%)
   // v55: os sons de ruído variam ±4%; os sons com nota só ±0,5% (com mais, desafinavam em relação à música)
-  const VARY = new Set(['step', 'bump', 'swing', 'hit', 'crit', 'miss', 'hurt', 'dodge', 'arrow', 'equip', 'eat', 'dash', 'execute', 'knock', 'bark', 'anchor_drop', 'anchor_back', 'anchor_rise', 'spin', 'spin_hit', 'wall', 'smash_sky', 'fire_cast', 'fire_burst', 'thunder', 'zap_jump', 'ice_shatter', 'trap_set', 'trap_snap', 'riposte', 'leap', 'blood']);
+  const VARY = new Set(['step', 'bump', 'swing', 'hit', 'crit', 'miss', 'hurt', 'dodge', 'arrow', 'equip', 'eat', 'dash', 'execute', 'knock', 'bark', 'anchor_drop', 'anchor_back', 'anchor_rise', 'spin', 'spin_hit', 'roll_flip', 'wall', 'smash_sky', 'fire_cast', 'fire_burst', 'thunder', 'zap_jump', 'ice_shatter', 'trap_set', 'trap_snap', 'riposte', 'leap', 'blood']);
   const VARY_NOTE = new Set(['blink_in', 'stun_star', 'ice_cast', 'ice_form', 'heal_fount', 'hshield', 'hshield_break', 'kill', 'coin', 'take', 'cart', 'stun', 'magic', 'relic_ping']);
   // vol (opcional, 0–1): toca o efeito mais baixo, por exemplo o 2.º som de uma runa em área
   let sfxOut = null;
   // v0.14.11 (Sábio §19): estes sons longos têm uma só instância; um novo corta o anterior em ~30 ms (não se acumulam)
+  // v0.14.12 (Mestre do Som): quanto adiantar os impactos (s): a latência de saída do aparelho, até 60 ms; sem ela, 20 ms
+  const lead = () => { const L = (ctx && (ctx.outputLatency || ctx.baseLatency)) || 0.02; return Math.min(0.06, Math.max(0, L)); };
+  // a música desce para 70% nos 80 ms antes de um grande golpe e volta com ele
+  const preHit = tImpact => { const at = Math.max(0, tImpact - 0.08 - lead()); setTimeout(() => duck(0.7, 80 + 260), at * 1000); };
   const EXCL = new Set(['heal_fount', 'ice_shatter', 'ice_form', 'wall', 'smash_sky', 'thunder']), exclG = {};
   function play(name, arg, volume) {
     if (!ctx || ctx.state !== 'running' || !SFX[name] || vol.sfx <= 0) return;
@@ -2879,7 +2900,7 @@ window.Sound = (() => {
     calmG.gain.setTargetAtTime(on ? 0.5 : 1, now, fast ? 0.02 : on ? 0.5 : 0.25); // descer ~1,5 s; subir ~0,8 s; rápido: imediato
     if (on) { lpOpen = null; combat(false); } // filtro fechado (1,5 kHz)
   }
-  return { unlock, play, music, setVolumes, torch, stopAll, cut, combat, calm, prerender };
+  return { unlock, play, music, setVolumes, torch, stopAll, cut, combat, calm, prerender, lead, preHit };
 })();
 
 </script>
@@ -3540,7 +3561,7 @@ LANGS.en = {
   'Câmara: {e}': 'Camera: {e}', 'A ligar…': 'Connecting…', 'A preparar a resposta…': 'Preparing the reply…', 'Mostra este código ao anfitrião, para ele o ler.': 'Show this code to the host so they can scan it.',
   'Código errado: {e}': 'Wrong code: {e}', 'Ligados! Escolhe a tua arma.': 'Connected! Choose your weapon.', 'ARENA CO-OP': 'CO-OP ARENA', '{a} e {b}': '{a} and {b}',
   'Entram os dois na arena. Cada um escolhe a sua ação; o turno passa quando os dois tiverem escolhido.': 'You both enter the arena. Each one picks an action; the turn passes when both have chosen.',
-  'O teu melhor neste aparelho. O ranking global chega quando houver servidor.': 'Your best on this device. The global ranking arrives once there is a server.', 'RANK': 'RANK', 'Escolhe o modo.': 'Choose the mode.', 'ARENA SOLO': 'SOLO ARENA', 'Vagas sem fim, a arma que escolheres': 'Endless waves, the weapon you choose', 'O teu melhor: vaga {n} · {w}': 'Your best: wave {n} · {w}', 'A dois, na mesma rede Wi-Fi': 'Two players, same Wi-Fi network', 'O teu melhor: vaga {n} com {p}': 'Your best: wave {n} with {p}', 'A TUA PERSONAGEM': 'YOUR CHARACTER', 'a tua arma mais usada: {w}': 'your most used weapon: {w}', 'EDITAR': 'EDIT', 'É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).': 'This is how others see you on the podium, in the ranking and in the arena (your co-op partner too).', 'ALCUNHA (3 a 16)': 'NICKNAME (3 to 16)', 'GUARDAR': 'SAVE', 'A alcunha precisa de 3 a 16 letras.': 'The nickname needs 3 to 16 letters.', 'MELHOR VAGA': 'BEST WAVE', 'NO RANKING': 'IN THE RANKING', 'MESMA REDE': 'SAME NETWORK', 'ECOS HOJE': 'ECHOES TODAY', 'JOGAR': 'PLAY', 'TODAS': 'ALL', 'ESTA SEMANA': 'THIS WEEK', '{n}.º': '#{n}', 'AINDA SEM SERVIDOR': 'NO SERVER YET', 'O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.': 'The global ranking is coming soon. For now you only see your records on this device.', 'DUPLA · ARMAS': 'DUO · WEAPONS', 'VAGA': 'WAVE', 'Ainda sem recordes esta semana.': 'No records yet this week.', 'Ainda sem recordes.': 'No records yet.', 'ABANDONAR PARTIDA': 'ABANDON RUN', 'Como queres sair?': 'How do you want to leave?', 'GUARDAR E SAIR': 'SAVE AND QUIT', 'A partida fica gravada; continuas onde estavas.': 'The run is saved; you continue where you left off.', 'DESISTIR': 'GIVE UP', 'Sais da arena; o teu colega continua sozinho.': 'You leave the arena; your partner carries on alone.', 'A partida acaba aqui; o recorde conta até à última vaga.': 'The run ends here; your record counts up to the last wave.', 'A partida acaba como uma morte: o herói vai para a Cripta.': 'The run ends like a death: the hero goes to the Crypt.', 'a desistência': 'giving up', 'Desististe no andar {n}.': 'You gave up on floor {n}.', 'DESISTIR?': 'GIVE UP?', 'Desistir mata {h} para sempre. Tens a certeza?': 'Giving up kills {h} for good. Are you sure?', 'SIM, DESISTIR': 'YES, GIVE UP', 'Desistiu': 'Gave up', 'desistiu no andar {n}': 'gave up on floor {n}', '{n}.º esta semana': '#{n} this week', 'A alcunha precisa de 3 a 16 letras ou números (espaço, _ e - também), sem palavrões.': 'The nickname needs 3 to 16 letters or numbers (space, _ and - too), no swear words.', 'RANKING GLOBAL': 'GLOBAL RANKING', 'Entra para apareceres no ranking de todos os jogadores com a tua alcunha ({n}). Aparece em público: não uses o teu nome verdadeiro.': 'Join to appear in the ranking of all players with your nickname ({n}). It is public: do not use your real name.', 'ENTRAR NO RANKING': 'JOIN THE RANKING', 'MUDAR ALCUNHA': 'CHANGE NICKNAME', 'SEM LIGAÇÃO AO SERVIDOR': 'NO CONNECTION TO THE SERVER', 'Não deu para ler o ranking global (sem internet, ou nesta versão de testes). Por agora vês só os teus recordes neste aparelho.': 'Could not read the global ranking (no internet, or in this test version). For now you only see your records on this device.', 'A carregar o ranking…': 'Loading the ranking…', 'ÉS O {p}.º ESTA SEMANA · DE {n}': 'YOU ARE #{p} THIS WEEK · OF {n}', 'ÉS O {p}.º DE SEMPRE · DE {n}': 'YOU ARE #{p} ALL-TIME · OF {n}', 'Fora do top 100 desta semana: precisas da vaga {n} para entrar.': 'Outside this week\'s top 100: you need wave {n} to get in.', 'Fora do top 100 de sempre: precisas da vaga {n} para entrar.': 'Outside the all-time top 100: you need wave {n} to get in.', 'Ainda ninguém esta semana. Sê o primeiro!': 'Nobody yet this week. Be the first!', 'Ainda ninguém no ranking. Sê o primeiro!': 'Nobody in the ranking yet. Be the first!', 'ALCUNHA · ARMAS': 'NICKNAME · WEAPONS', 'SAIR DO RANKING': 'LEAVE THE RANKING', 'Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).': 'First choose a valid nickname (3 to 16 letters or numbers, no swear words).', 'Colega': 'Partner', 'Continuar: {n} · andar {f}': 'Continue: {n} · floor {f}', '{h} heróis prontos · {c} na Cripta': '{h} heroes ready · {c} in the Crypt', 'Cria o teu primeiro herói.': 'Create your first hero.', 'A MEIO': 'IN PROGRESS', 'vaga {n} · {w}': 'wave {n} · {w}', 'Melhor: vaga {n} · {p}.º esta semana': 'Best: wave {n} · #{p} this week', 'Melhor: vaga {n} · {w}': 'Best: wave {n} · {w}', 'Desce os 25 andares até ao Rei.': 'Descend the 25 floors to the King.', 'A mesma torre para todos.': 'The same tower for everyone.', 'uma arma por dia': 'one weapon per day', 'Experimenta armas e habilidades.': 'Try out weapons and abilities.', 'sem morrer': 'no dying', 'O ranking atualiza a cada 5 minutos.': 'The ranking updates every 5 minutes.', 'Saíste do ranking há pouco: voltas a aparecer quando o servidor deixar (até 7 dias depois de saíres).': 'You left the ranking recently: you will show up again when the server allows it (up to 7 days after leaving).', 'OK': 'OK', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro. Podes desligar isto em Opções › Privacidade.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name. You can turn this off in Options › Privacy.', 'PRIVACIDADE': 'PRIVACY', 'Mostra a tua alcunha e os teus recordes da arena no ranking de todos os jogadores. Com NÃO, os teus recordes saem do ranking (ficam só neste aparelho); para voltar, espera 7 dias.': 'Shows your nickname and your arena records in the ranking of all players. With NO, your records leave the ranking (they stay only on this device); to come back, wait 7 days.', 'POLÍTICA DE PRIVACIDADE': 'PRIVACY POLICY', 'LER': 'READ', 'O que o jogo guarda, onde e os teus direitos. Para apagar os teus dados do ranking, escreve para godspire.game@gmail.com.': 'What the game stores, where, and your rights. To delete your ranking data, write to godspire.game@gmail.com.', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name.', 'Versões diferentes: este aparelho tem a {a} e o outro a {b}. Fechem e abram o jogo nos dois para atualizar.': 'Different versions: this device has {a} and the other has {b}. Close and reopen the game on both to update.', 'O outro aparelho tem uma versão antiga do jogo. Fechem e abram o jogo nos dois para atualizar.': 'The other device has an old version of the game. Close and reopen the game on both to update.', 'PARTIDA A MEIO': 'RUN IN PROGRESS', 'Tens uma partida na vaga {n} ({w}). Começar outra apaga-a.': 'You have a run on wave {n} ({w}). Starting another deletes it.', 'CONTINUAR A GRAVADA': 'CONTINUE SAVED RUN', 'COMEÇAR NOVA': 'START NEW', 'NOVA PARTIDA': 'NEW RUN', 'Saíste do ranking há pouco: podes voltar a partir de {d}.': 'You left the ranking recently: you can come back from {d}.', 'Tens {n} s; depois o jogo escolhe por ti e avança.': 'You have {n} s; then the game picks for you and moves on.', 'O tempo acabou: o jogo escolheu por ti.': 'Time is up: the game picked for you.', 'No co-op, o equipamento muda-se no descanso entre vagas.': 'In co-op, gear is changed during the rest between waves.', 'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
+  'O teu melhor neste aparelho. O ranking global chega quando houver servidor.': 'Your best on this device. The global ranking arrives once there is a server.', 'RANK': 'RANK', 'Escolhe o modo.': 'Choose the mode.', 'ARENA SOLO': 'SOLO ARENA', 'Vagas sem fim, a arma que escolheres': 'Endless waves, the weapon you choose', 'O teu melhor: vaga {n} · {w}': 'Your best: wave {n} · {w}', 'A dois, na mesma rede Wi-Fi': 'Two players, same Wi-Fi network', 'O teu melhor: vaga {n} com {p}': 'Your best: wave {n} with {p}', 'A TUA PERSONAGEM': 'YOUR CHARACTER', 'a tua arma mais usada: {w}': 'your most used weapon: {w}', 'EDITAR': 'EDIT', 'É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).': 'This is how others see you on the podium, in the ranking and in the arena (your co-op partner too).', 'ALCUNHA (3 a 16)': 'NICKNAME (3 to 16)', 'GUARDAR': 'SAVE', 'A alcunha precisa de 3 a 16 letras.': 'The nickname needs 3 to 16 letters.', 'MELHOR VAGA': 'BEST WAVE', 'NO RANKING': 'IN THE RANKING', 'MESMA REDE': 'SAME NETWORK', 'ECOS HOJE': 'ECHOES TODAY', 'JOGAR': 'PLAY', 'TODAS': 'ALL', 'ESTA SEMANA': 'THIS WEEK', '{n}.º': '#{n}', 'AINDA SEM SERVIDOR': 'NO SERVER YET', 'O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.': 'The global ranking is coming soon. For now you only see your records on this device.', 'DUPLA · ARMAS': 'DUO · WEAPONS', 'VAGA': 'WAVE', 'Ainda sem recordes esta semana.': 'No records yet this week.', 'Ainda sem recordes.': 'No records yet.', 'ABANDONAR PARTIDA': 'ABANDON RUN', 'Como queres sair?': 'How do you want to leave?', 'GUARDAR E SAIR': 'SAVE AND QUIT', 'A partida fica gravada; continuas onde estavas.': 'The run is saved; you continue where you left off.', 'DESISTIR': 'GIVE UP', 'Sais da arena; o teu colega continua sozinho.': 'You leave the arena; your partner carries on alone.', 'A partida acaba aqui; o recorde conta até à última vaga.': 'The run ends here; your record counts up to the last wave.', 'A partida acaba como uma morte: o herói vai para a Cripta.': 'The run ends like a death: the hero goes to the Crypt.', 'a desistência': 'giving up', 'Desististe no andar {n}.': 'You gave up on floor {n}.', 'DESISTIR?': 'GIVE UP?', 'Desistir mata {h} para sempre. Tens a certeza?': 'Giving up kills {h} for good. Are you sure?', 'SIM, DESISTIR': 'YES, GIVE UP', 'Desistiu': 'Gave up', 'desistiu no andar {n}': 'gave up on floor {n}', '{n}.º esta semana': '#{n} this week', 'A alcunha precisa de 3 a 16 letras ou números (espaço, _ e - também), sem palavrões.': 'The nickname needs 3 to 16 letters or numbers (space, _ and - too), no swear words.', 'RANKING GLOBAL': 'GLOBAL RANKING', 'Entra para apareceres no ranking de todos os jogadores com a tua alcunha ({n}). Aparece em público: não uses o teu nome verdadeiro.': 'Join to appear in the ranking of all players with your nickname ({n}). It is public: do not use your real name.', 'ENTRAR NO RANKING': 'JOIN THE RANKING', 'MUDAR ALCUNHA': 'CHANGE NICKNAME', 'SEM LIGAÇÃO AO SERVIDOR': 'NO CONNECTION TO THE SERVER', 'Não deu para ler o ranking global (sem internet, ou nesta versão de testes). Por agora vês só os teus recordes neste aparelho.': 'Could not read the global ranking (no internet, or in this test version). For now you only see your records on this device.', 'A carregar o ranking…': 'Loading the ranking…', 'ÉS O {p}.º ESTA SEMANA · DE {n}': 'YOU ARE #{p} THIS WEEK · OF {n}', 'ÉS O {p}.º DE SEMPRE · DE {n}': 'YOU ARE #{p} ALL-TIME · OF {n}', 'Fora do top 100 desta semana: precisas da vaga {n} para entrar.': 'Outside this week\'s top 100: you need wave {n} to get in.', 'Fora do top 100 de sempre: precisas da vaga {n} para entrar.': 'Outside the all-time top 100: you need wave {n} to get in.', 'Ainda ninguém esta semana. Sê o primeiro!': 'Nobody yet this week. Be the first!', 'Ainda ninguém no ranking. Sê o primeiro!': 'Nobody in the ranking yet. Be the first!', 'ALCUNHA · ARMAS': 'NICKNAME · WEAPONS', 'SAIR DO RANKING': 'LEAVE THE RANKING', 'Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).': 'First choose a valid nickname (3 to 16 letters or numbers, no swear words).', 'Colega': 'Partner', 'TREMOR': 'SCREEN SHAKE', 'SUAVE': 'SOFT', 'DESLIGADO': 'OFF', 'O ecrã treme com os golpes fortes. Suave é metade.': 'The screen shakes on heavy hits. Soft is half.', 'NÚMEROS DE DANO': 'DAMAGE NUMBERS', 'PEQUENOS': 'SMALL', 'DESLIGADOS': 'OFF', 'Os números do dano por cima dos inimigos. Desligados, as curas, as palavras e o diário ficam.': 'The damage numbers above enemies. When off, heals, words and the journal stay.', 'Continuar: {n} · andar {f}': 'Continue: {n} · floor {f}', '{h} heróis prontos · {c} na Cripta': '{h} heroes ready · {c} in the Crypt', 'Cria o teu primeiro herói.': 'Create your first hero.', 'A MEIO': 'IN PROGRESS', 'vaga {n} · {w}': 'wave {n} · {w}', 'Melhor: vaga {n} · {p}.º esta semana': 'Best: wave {n} · #{p} this week', 'Melhor: vaga {n} · {w}': 'Best: wave {n} · {w}', 'Desce os 25 andares até ao Rei.': 'Descend the 25 floors to the King.', 'A mesma torre para todos.': 'The same tower for everyone.', 'uma arma por dia': 'one weapon per day', 'Experimenta armas e habilidades.': 'Try out weapons and abilities.', 'sem morrer': 'no dying', 'O ranking atualiza a cada 5 minutos.': 'The ranking updates every 5 minutes.', 'Saíste do ranking há pouco: voltas a aparecer quando o servidor deixar (até 7 dias depois de saíres).': 'You left the ranking recently: you will show up again when the server allows it (up to 7 days after leaving).', 'OK': 'OK', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro. Podes desligar isto em Opções › Privacidade.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name. You can turn this off in Options › Privacy.', 'PRIVACIDADE': 'PRIVACY', 'Mostra a tua alcunha e os teus recordes da arena no ranking de todos os jogadores. Com NÃO, os teus recordes saem do ranking (ficam só neste aparelho); para voltar, espera 7 dias.': 'Shows your nickname and your arena records in the ranking of all players. With NO, your records leave the ranking (they stay only on this device); to come back, wait 7 days.', 'POLÍTICA DE PRIVACIDADE': 'PRIVACY POLICY', 'LER': 'READ', 'O que o jogo guarda, onde e os teus direitos. Para apagar os teus dados do ranking, escreve para godspire.game@gmail.com.': 'What the game stores, where, and your rights. To delete your ranking data, write to godspire.game@gmail.com.', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name.', 'Versões diferentes: este aparelho tem a {a} e o outro a {b}. Fechem e abram o jogo nos dois para atualizar.': 'Different versions: this device has {a} and the other has {b}. Close and reopen the game on both to update.', 'O outro aparelho tem uma versão antiga do jogo. Fechem e abram o jogo nos dois para atualizar.': 'The other device has an old version of the game. Close and reopen the game on both to update.', 'PARTIDA A MEIO': 'RUN IN PROGRESS', 'Tens uma partida na vaga {n} ({w}). Começar outra apaga-a.': 'You have a run on wave {n} ({w}). Starting another deletes it.', 'CONTINUAR A GRAVADA': 'CONTINUE SAVED RUN', 'COMEÇAR NOVA': 'START NEW', 'NOVA PARTIDA': 'NEW RUN', 'Saíste do ranking há pouco: podes voltar a partir de {d}.': 'You left the ranking recently: you can come back from {d}.', 'Tens {n} s; depois o jogo escolhe por ti e avança.': 'You have {n} s; then the game picks for you and moves on.', 'O tempo acabou: o jogo escolheu por ti.': 'Time is up: the game picked for you.', 'No co-op, o equipamento muda-se no descanso entre vagas.': 'In co-op, gear is changed during the rest between waves.', 'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
   'Dois jogadores na mesma rede Wi-Fi. Um cria a sala, o outro entra lendo o código com a câmara.': 'Two players on the same Wi-Fi network. One creates the room, the other joins by scanning the code with the camera.',
   'CRIAR SALA': 'CREATE ROOM', 'És o anfitrião: mostras o código ao teu colega.': 'You are the host: you show the code to your partner.', 'Lês o código do anfitrião com a câmara.': 'You scan the host\'s code with the camera.',
   'A câmara só funciona na app (no site do jogo).': 'The camera only works in the app (on the game\'s website).', 'A TUA SALA': 'YOUR ROOM', 'A TUA RESPOSTA': 'YOUR REPLY', 'código de ligação': 'connection code',
@@ -3725,7 +3746,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.14.11', GAME_BUILD = 124;
+const GAME_SEMVER = '0.14.12', GAME_BUILD = 125;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -4102,7 +4123,7 @@ const SK = [
   { disc: 'bat', n: 'Arremesso duplo', ic: 'axe2', snd: 'swing', cd: 4, d: 'Atira 2 lâminas em linha reta: ferem os 2 primeiros inimigos até 4 casas.', f: (...a) => abDuplo(...a) },
   { disc: 'arq', n: 'Flecha', ic: 'arrow', snd: 'arrow', cd: 2, d: 'Tiro forte ao inimigo mais próximo.', f: (...a) => abFlecha(...a) },
   { disc: 'arq', n: 'Tiro perfurante', ic: 'pierce', snd: 'arrow', cd: 4, d: 'Atravessa todos os inimigos em linha reta à tua frente.', f: (...a) => abPerfurante(...a) },
-  { disc: 'arq', n: 'Rolamento', ic: 'roll', snd: 'dash', cd: 5, d: 'Dash de até 3 casas para trás, dispara ao inimigo mais próximo e esquivas-te melhor no turno seguinte.', f: (...a) => abRolamento(...a) },
+  { disc: 'arq', n: 'Rolamento', ic: 'roll', snd: 'roll_flip', cd: 5, d: 'Dash de até 3 casas para trás, dispara ao inimigo mais próximo e esquivas-te melhor no turno seguinte.', f: (...a) => abRolamento(...a) },
   { disc: 'arq', n: 'Chuva de flechas', ic: 'rain', snd: 'rain', cd: 6, d: 'Atinge o alvo e todos num raio de 2 casas.', f: (...a) => abChuva(...a) },
   { disc: 'mag', n: 'Bola de fogo', ic: 'fire', snd: 'fire_cast', cd: 5, mp: 6, d: 'Muito dano ao alvo e um terço a quem estiver encostado.', f: (...a) => abFogo(...a) },
   { disc: 'mag', n: 'Raio gélido', ic: 'ice', snd: 'ice_cast', cd: 5, mp: 5, d: 'Dano e congela o alvo durante 3 turnos.', f: (...a) => abGelo(...a) },
@@ -5290,7 +5311,7 @@ const strikeDot = f => canStrikeNow(f);
 function execDmg(f, d) {
   if (!canExecute(f)) return null;
   if (f.elite) { st.p.shadowT = hasT('ass_escuridao') ? 3 : 2; float(f.x, f.y, _t('GOLPE FURTIVO ×3'), 'crit'); Sound.play('crit'); tip('feroz'); return Math.max(1, d) * 3; } // v94: num feroz não é execução (não mata nem queima), é um golpe furtivo ×3
-  f.executed = true; st.execN = (st.execN || 0) + 1; if (st.fs) st.fs.execs++; Sound.play('execute');
+  f.executed = true; st.execN = (st.execN || 0) + 1; if (st.fs) st.fs.execs++; Sound.play('execute'); Sound.play('exec_thud');
   st.p.shadowT = hasT('ass_escuridao') ? 3 : 2; // Sombra: 1 turno (2 com Da escuridão) em que não contas para os cones
   float(f.x, f.y, _t('EXECUÇÃO'), 'crit');
   return f.hp + 999;
@@ -7520,9 +7541,9 @@ function anchorUse(i) {
   st.foes.forEach(o => { if (o.aware && !o.boss && !o.ally && vis[idx(o.x, o.y)]) { o.aware = false; o.sus = 1; o.inv = { x: ox, y: oy, t: 6 }; } }); // quem te via vai ver de onde saíste
   fxTrail(p, ox, oy, x, y, now); setPos(p, x, y, 60, 0); fov(); pickup();
   p.anchor = null; p.cds[i] = anchorCd(p, i) + (inDanger ? 1 : 0);
-  log(_t(inDanger ? 'Regressas à âncora (estavas em perigo: gastou o turno).' : 'Regressas à âncora, sem ruído.')); Sound.play('anchor_back'); setTimeout(() => Sound.play('anchor_rise'), 110); // v0.14.5 (§16): afundar aos 0, emergir aos 110 ms
+  log(_t(inDanger ? 'Regressas à âncora (estavas em perigo: gastou o turno).' : 'Regressas à âncora, sem ruído.')); Sound.play('anchor_back'); setTimeout(() => Sound.play('anchor_rise'), sndLead(110)); // v0.14.5 (§16): afundar aos 0, emergir aos 110 ms
   if (runeOf(p, i) && runeOf(p, i).id === 'explosao') { // a runa troca o silêncio por dano à volta
-    fxBurst(x, y, 1.3, now, 60, 300); setTimeout(() => Sound.play('blast'), 110); if (p.veilT > 0) p.veilT = 0; makeNoise(x, y, 3); // §9: com a Explosão toca também o 'blast'
+    fxBurst(x, y, 1.3, now, 60, 300); setTimeout(() => Sound.play('blast'), sndLead(110)); if (p.veilT > 0) p.veilT = 0; makeNoise(x, y, 3); // §9: com a Explosão toca também o 'blast'
     st.foes.filter(o => !o.ally && Math.max(Math.abs(o.x - x), Math.abs(o.y - y)) <= 1).forEach(o => { st.cast = { hits: [] }; try { damageFoe(o, Math.max(1, Math.round(atkOf(p) * 0.5)), true); } finally { st.cast = null; } });
   }
   if (inDanger) endTurn(); else { lastAct = 0; ui(); }
@@ -7631,10 +7652,11 @@ const SPIN_AT = [120, 180, 240, 290];
 // sndPend guarda os sons agendados por habilidade: um novo lançamento da mesma corta os pendentes (não se acumulam)
 const sndPend = {};
 const sndClear = ab => { (sndPend[ab] || []).forEach(clearTimeout); sndPend[ab] = []; };
-const sndAt = (ab, name, ms) => { (sndPend[ab] = sndPend[ab] || []).push(setTimeout(() => Sound.play(name), ms)); };
+const sndLead = ms => Math.max(0, ms - (Sound.lead ? Sound.lead() * 1000 : 0)); // v0.14.12: adiantado pela latência de saída do som
+const sndAt = (ab, name, ms) => { (sndPend[ab] = sndPend[ab] || []).push(setTimeout(() => Sound.play(name), sndLead(ms))); };
 // corre fn com os sons atrasados ms (o 'hit' normal fica calado: o som do feitiço já o cobre; o crit, o kill e o execute soam à hora certa)
 function sndLater(ab, ms, fn, drop = ['hit']) {
-  const real = Sound.play; Sound.play = (n, ...r) => { if (drop.includes(n)) return; (sndPend[ab] = sndPend[ab] || []).push(setTimeout(() => real.call(Sound, n, ...r), ms)); };
+  const real = Sound.play; Sound.play = (n, ...r) => { if (drop.includes(n)) return; (sndPend[ab] = sndPend[ab] || []).push(setTimeout(() => real.call(Sound, n, ...r), sndLead(ms))); };
   try { return fn(); } finally { Sound.play = real; }
 }
 function abRodopio(p, bonus, now) {
@@ -7644,9 +7666,9 @@ function abRodopio(p, bonus, now) {
   fx.push({ k: 'spin', x: p.x, y: p.y, t0: now, until: now + 340 });
   SWING.set(p, { t0: now, dur: 340 });
   // v0.14.5 (Mestre do Som §15): cada inimigo soa à hora em que o giro lhe chega (120/180/240/290 ms, até 4): o 'spin_hit' e, se houver, o crit/kill/execute
-  adj.forEach((f, i) => { const at = SPIN_AT[Math.min(i, 3)], real = Sound.play; Sound.play = (n, ...r) => { setTimeout(() => real.call(Sound, n, ...r), at); };
+  adj.forEach((f, i) => { const at = SPIN_AT[Math.min(i, 3)], real = Sound.play; Sound.play = (n, ...r) => { setTimeout(() => real.call(Sound, n, ...r), sndLead(at)); };
     try { damageFoe(f, Math.max(1, atkOf(p) + 2 + bonus + rnd(0, 2) - f.def), Q); if (hasT('bar_varr')) trBleed(f); } finally { Sound.play = real; }
-    if (i < 4) setTimeout(() => Sound.play('spin_hit'), at); });
+    if (i < 4) setTimeout(() => Sound.play('spin_hit'), sndLead(at)); });
   return true;
 }
 function abEsmagar(p, bonus, now) {
@@ -7744,7 +7766,7 @@ function abPasso(p, bonus, now) {
   setPos(p, tx, ty, 80 + land * 25, 0);
   passed.filter(e => e.s < land).forEach(e => { fxBurst(e.f.x, e.f.y, 0.6, now, 60); damageFoe(e.f, Math.max(1, atkOf(p) + 2 + bonus + rnd(0, 2) - e.f.def), Q); });
   fov(); pickup();
-  setTimeout(() => Sound.play('blink_in'), 180); // v0.14.5 (Mestre do Som §15): a chegada; o 'dash' de saída toca aos 0
+  setTimeout(() => Sound.play('blink_in'), sndLead(180)); // v0.14.5 (Mestre do Som §15): a chegada; o 'dash' de saída toca aos 0
   return true;
 }
 function abRaio(p, bonus, now) {
@@ -8568,6 +8590,19 @@ function feelTick(dt) {
   if (FEEL.lag > 250) FEEL.lag = 250;
 }
 const hitStop = ms => { if (smoothOn()) FEEL.hold = Math.max(FEEL.hold, ms); };
+/* v0.14.11 (Imagem, aprovado pelo Sábio): o tremor por «trauma». Cada shakeUntil novo soma trauma (de 0 a 1), que desce sozinho; o tremor é
+   trauma² com ruído suave, quase só na vertical (lê-se como impacto e enjoa menos). Os golpes pequenos quase não se sentem e os grandes sim; em co-op
+   os impactos seguidos já não deixam o ecrã sempre a tremer. Opções › Imagem: tremor normal / suave / desligado; com movimento reduzido, nada */
+const SHAKE = { tr: 0, seen: 0, last: 0 };
+const shakeLvl = () => reduceMotion() || (typeof opts !== 'undefined' && opts.shake === 'off') ? 0 : typeof opts !== 'undefined' && opts.shake === 'suave' ? .5 : 1;
+function shakeOffset(real, now) {
+  const dt = Math.min(100, real - (SHAKE.last || real)); SHAKE.last = real;
+  if (shakeUntil > SHAKE.seen) { const ms = shakeUntil - Math.max(now, SHAKE.seen); SHAKE.tr = Math.min(1, SHAKE.tr + Math.max(.12, Math.min(.85, ms / 400))); SHAKE.seen = shakeUntil; }
+  SHAKE.tr = Math.max(0, SHAKE.tr - dt / 1000 * 1.6);
+  const a = 4 * SHAKE.tr * SHAKE.tr * shakeLvl(); if (a < .35) return [0, 0];
+  const n1 = Math.sin(real / 23) * .6 + Math.sin(real / 37 + 1.3) * .4, n2 = Math.sin(real / 29 + .7) * .6 + Math.sin(real / 41 + 2.1) * .4;
+  return [Math.round(a * .25 * n2), Math.round(a * n1)];
+}
 // capa: 5 pontos presos aos ombros, com gravidade e inércia, em píxeis do mundo
 function capeStep(wx, wy, dir, dt) {
   const ax = wx + (dir === 'r' ? 5 : dir === 'l' ? 10 : 8), ay = wy + 8;
@@ -8866,9 +8901,7 @@ function draw() {
   if (typeof REMAKE !== 'undefined') { if (REMAKE.on()) return REMAKE.draw(); REMAKE.hideOverlay(); }
   const real = performance.now(), dt = Math.min(64, real - (lastFrame || real)); lastFrame = real;
   feelTick(dt); const now = real - FEEL.lag, smooth = smoothOn();
-  // v46: tremor que se desvanece, em x e y (com movimento reduzido fica o antigo, só em x)
-  const shk = now < shakeUntil ? Math.min(1, (shakeUntil - now) / 250) : 0;
-  ctx.setTransform(1, 0, 0, 1, !shk ? 0 : smooth ? Math.round((Math.random() * 2 - 1) * 2.5 * shk) : (Math.floor(now / 40) % 2 ? 2 : -2), shk && smooth ? Math.round((Math.random() * 2 - 1) * 1.5 * shk) : 0);
+  const [sox0, soy0] = shakeOffset(real, now); ctx.setTransform(1, 0, 0, 1, sox0, soy0); // v0.14.11: o tremor por trauma (shakeOffset)
   ctx.imageSmoothingEnabled = false;
   ctx.fillStyle = theme.bg; ctx.fillRect(-4, -4, cv.width + 8, cv.height + 8);
   if (!st.p || !st.map) { ctx.setTransform(1, 0, 0, 1, 0, 0); if (FEEL.tr) { FEEL.tr = ''; cv.style.transform = ''; } return; }
@@ -9118,16 +9151,18 @@ function draw() {
       }
     }
   }
-  floats = floats.filter(f => now - f.t < 800);
+  const dnC = typeof opts !== 'undefined' ? opts.dmgNum || 'normal' : 'normal'; // v0.14.11: números de dano normais / pequenos / desligados; os críticos 1,6× e mais 200 ms
+  floats = floats.filter(f => now - f.t < (f.col === 'crit' ? 1000 : 800));
   ctx.font = '8px "Departure Mono", monospace'; ctx.textAlign = 'center'; ctx.lineJoin = 'round';
   for (const f of floats) {
     if (now < f.t) continue; // v0.14.3: o Rodopio atrasa o número de cada inimigo até o giro lá chegar
-    const k = (now - f.t) / 800, crit = f.col === 'crit', x = (f.x - cx) * TS + 8, y = (f.y - cy) * TS + 2 - k * (crit ? 14 : 10);
+    if (/^-\d/.test(f.txt) && dnC === 'off') continue;
+    const k = (now - f.t) / (f.col === 'crit' ? 1000 : 800), crit = f.col === 'crit', x = (f.x - cx) * TS + 8, y = (f.y - cy) * TS + 2 - k * (crit ? 14 : 10);
     // crítico: letra maior, que salta um pouco ao aparecer
-    if (crit) ctx.font = `${k < 0.15 ? 13 : 11}px "Departure Mono", monospace`;
+    if (crit) ctx.font = `${k < 0.15 ? 15 : 13}px "Departure Mono", monospace`; else if (dnC === 'pequenos' && /^-\d/.test(f.txt)) ctx.font = '6px "Departure Mono", monospace';
     ctx.lineWidth = crit ? 4 : 3; ctx.strokeStyle = colorOf('#'); ctx.strokeText(f.txt, x, y);
     ctx.fillStyle = f.col ? FLOAT_COL[f.col]() : f.txt === '!' ? RED[2] : theme.ink; ctx.fillText(f.txt, x, y);
-    if (crit) ctx.font = '8px "Departure Mono", monospace';
+    if (crit || dnC === 'pequenos') ctx.font = '8px "Departure Mono", monospace';
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
@@ -11299,8 +11334,7 @@ const DEATHS = {
   function drawIn() {
     const real = performance.now(), dt = Math.min(64, real - (lastFrame || real)); lastFrame = real;
     feelTick(dt); fpsWatch(real, real - (fpsWatch.last || real)); fpsWatch.last = real; const now = real - FEEL.lag, smooth = smoothOn(), sdt = FEEL.hold > 0 ? 0 : dt / 1000;
-    const shk = now < shakeUntil ? Math.min(1, (shakeUntil - now) / 250) : 0;
-    const sox = !shk ? 0 : smooth ? Math.round((Math.random() * 2 - 1) * 2.5 * shk) : (Math.floor(now / 40) % 2 ? 2 : -2), soy = shk && smooth ? Math.round((Math.random() * 2 - 1) * 1.5 * shk) : 0;
+    const [sox, soy] = shakeOffset(real, now); /* v0.14.11: o tremor por trauma (render.js) */
     ctx.setTransform(1, 0, 0, 1, sox, soy); ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = '#050407'; ctx.fillRect(-4, -4, cv.width + 8, cv.height + 8);
     if (!st.p || !st.map) { ctx.setTransform(1, 0, 0, 1, 0, 0); hideOverlay(); if (FEEL.tr) { FEEL.tr = ''; cv.style.transform = ''; } return; }
@@ -11864,6 +11898,7 @@ const DEATHS = {
       if (B.snap) { if (!B.cv) { B.cv = B.snap; B.pu = document.createElement('canvas'); B.pu.width = B.snap.width; B.pu.height = B.snap.height; const pg = B.pu.getContext('2d'); pg.drawImage(B.cv, 0, 0); pg.globalCompositeOperation = 'source-in'; pg.fillStyle = '#7a4ac0'; pg.fillRect(0, 0, B.pu.width, B.pu.height); }
         const k = Math.max(0, (q - 180) / 520), Y = feet + B.oy, top0 = Math.max(0, top - Y), cut = Math.round(top0 + k * (B.cv.height - top0)), X = cx + B.ox, hh = B.cv.height - cut; // o corpo arde de cima para baixo e fica roxo
         if (hh > 0) { ctx.globalAlpha = 1 - Math.min(1, k * 1.6); ctx.drawImage(B.cv, 0, cut, B.cv.width, hh, X, Y + cut, B.cv.width, hh); ctx.globalAlpha = Math.min(1, k * 3) * (1 - k * .6); ctx.drawImage(B.pu, 0, cut, B.cv.width, hh, X, Y + cut, B.cv.width, hh); ctx.globalAlpha = 1; } }
+      if (q >= 180 && !B.hs) { B.hs = 1; hitStop(130); shakeUntil = Math.max(shakeUntil, now + 260); } /* v0.14.11: hit-stop pesado no golpe final da execução */
       if (q < 180) { // a alma cai sobre o inimigo
         const G = EXEC_GLYPH.soulA[0], k = q / 180, gy = Math.round(top - 1 - G.length + k * k * (B.h * .5 + G.length)), gx = cx - (G[0].length >> 1);
         for (let yy = 0; yy < G.length; yy++) for (let xx = 0; xx < G[0].length; xx++) { const c = G[yy][xx]; if (c !== '.') mk(gx + xx, gy + yy, 1, 1, c === 'r' ? RED[2] : EXEC_COL[c], 1); }
@@ -11892,6 +11927,7 @@ const DEATHS = {
       const mid = lerp(s.ws, s.we, Math.min(1, q * 1.8)); glows.push([WX(s.x) + Math.cos(mid) * 12, WY(s.y) + Math.sin(mid) * 10, s.frio ? '#9fd8ff' : '#f2c14e', s.frio ? 10 : 16, (s.frio ? .3 : .45) * (1 - q)]);
     }
     // --- partículas ---
+    if (S.parts.length > 220) S.parts.splice(0, S.parts.length - 220); /* v0.14.11 (aprovado pelo Sábio): teto de 220 partículas, saem as mais velhas */
     for (let i = S.parts.length - 1; i >= 0; i--) {
       const q = S.parts[i]; q.life -= sdt || (FEEL.hold > 0 ? 0 : dt / 1000); if (q.life <= 0) { S.parts.splice(i, 1); continue; }
       const s2 = sdt || dt / 1000;
@@ -11967,15 +12003,23 @@ const DEATHS = {
     for (const q of S.parts) if (q.t === 'rsmoke') { lg.globalAlpha = Math.min(1, q.life / q.max * 1.5) * .8; lg.fillStyle = q.col; lg.fillRect(D(Math.round(WX(q.x))), D(Math.round(WY(q.y))), D(1), D(1)); }
     lg.globalAlpha = 1;
     // números de dano (com serifa, como na prova)
-    floats = floats.filter(f => real - f.t < 800);
+    /* v0.14.11 (Imagem, aprovado pelo Sábio): os números de dano. Os críticos ficam ~1,6× maiores e mais 200 ms; o golpe que mata 1,25× maior; os números
+       simples da mesma casa com menos de 400 ms de diferença (os ticks de veneno, sangrar, fogo) mostram-se como um só, com a soma (o registo continua a
+       mostrar cada um). Opções › Imagem: números normais / pequenos / desligados (os desligados continuam no registo) */
+    const dn = typeof opts !== 'undefined' ? opts.dmgNum || 'normal' : 'normal', life = f => f.col === 'crit' ? 1000 : 800, dmg = f => /^-\d+$/.test(f.txt);
+    floats = floats.filter(f => real - f.t < life(f));
     lg.textAlign = 'center'; lg.textBaseline = 'middle'; lg.lineJoin = 'round';
+    const fHide = new Set(), fSum = new Map(), fLast = new Map();
+    for (const f of floats.filter(f => real >= f.t && dmg(f) && f.col !== 'crit').sort((a, c) => a.t - c.t)) { const key = f.x + ',' + f.y, pv = fLast.get(key); if (pv && f.t - pv.t < 400) { fHide.add(pv); fSum.set(f, (fSum.get(pv) || -parseInt(pv.txt, 10)) - parseInt(f.txt, 10)); } fLast.set(key, f); }
     for (const f of floats) {
-      if (real < f.t) continue; /* v0.14.3: o Rodopio atrasa o número de cada inimigo até o giro lá chegar */
-      const k = (real - f.t) / 800, crit = f.col === 'crit', word = /^[A-Za-zÀ-ÿ+]/.test(f.txt) && !/^[+-]?\d/.test(f.txt), rise = easeOut(Math.min(1, k * 1.4)) * 12 + (f.n || 0) * 8; // v65: f.n = números na mesma casa há pouco; cada um sobe 8 px
-      const sz = Math.round(KD * (crit && !word ? 9 : 7) * (k < .1 ? 1 + (0.1 - k) * 4 : 1)), x = D((f.x - cx) * TS + 8), y = D((f.y - cy) * TS + 2 - rise);
+      if (real < f.t || fHide.has(f)) continue; /* v0.14.3: o Rodopio atrasa o número de cada inimigo até o giro lá chegar */
+      const isD = /^-\d/.test(f.txt); if (isD && dn === 'off') continue;
+      const k = (real - f.t) / life(f), crit = f.col === 'crit', word = /^[A-Za-zÀ-ÿ+]/.test(f.txt) && !/^[+-]?\d/.test(f.txt), rise = easeOut(Math.min(1, k * 1.4)) * 12 + (fSum.has(f) ? 0 : (f.n || 0) * 8); // v65: f.n = números na mesma casa há pouco; cada um sobe 8 px
+      const kill = isD && !(f.x === p.x && f.y === p.y) && !st.foes.some(o => o.hp > 0 && o.x === f.x && o.y === f.y), base = (crit && !word ? 11.2 : 7) * (kill ? 1.25 : 1) * (isD && dn === 'pequenos' ? .75 : 1);
+      const sz = Math.round(KD * base * (k < .1 ? 1 + (0.1 - k) * 4 : 1)), x = D((f.x - cx) * TS + 8), y = D((f.y - cy) * TS + 2 - rise), txt = fSum.has(f) ? '-' + fSum.get(f) : f.txt;
       lg.font = `700 ${sz}px Georgia, 'Times New Roman', serif`; lg.globalAlpha = k > .65 ? 1 - (k - .65) / .35 : 1;
-      lg.lineWidth = Math.max(2, KD * .9); lg.strokeStyle = '#0a0810'; lg.strokeText(f.txt, x, y);
-      lg.fillStyle = f.col ? FLOAT_COL[f.col]() : f.txt === '!' ? RED[2] : f.txt.startsWith('-') && f.x === p.x && f.y === p.y ? '#e04a4a' : '#f4ead6'; lg.fillText(f.txt, x, y);
+      lg.lineWidth = Math.max(2, KD * .9); lg.strokeStyle = '#0a0810'; lg.strokeText(txt, x, y);
+      lg.fillStyle = f.col ? FLOAT_COL[f.col]() : f.txt === '!' ? RED[2] : f.txt.startsWith('-') && f.x === p.x && f.y === p.y ? '#e04a4a' : '#f4ead6'; lg.fillText(txt, x, y);
     }
     lg.globalAlpha = 1;
     // setas na borda para inimigos fora do ecrã (como antes, agora na luz)
@@ -12741,6 +12785,7 @@ const EFEITOS = (() => {
   const FXV = window.FXV = window.FXV || { spin: 'B', passo: 'A', anc: 'P' }; // escolha do utilizador (v0.14.3): Rodopio B, Passo arcano A, Âncora P (poça de sombra)
   Object.assign(FXV, { smash: FXV.smash || 'D', shield: FXV.shield || 'B', charge: FXV.charge || 'old', shout: FXV.shout || 'B' }); // v0.14.7, lote 1 (utilizador): Golpe esmagador D (martelo dos céus), Muralha B, Grito B, Investida como estava
   Object.assign(FXV, { fire: FXV.fire || 'B', ice: FXV.ice || 'B', heal: FXV.heal || 'A', zap: FXV.zap || 'A' }); // v0.14.7, lote 2 (utilizador): Bola de fogo B, Raio gélido B, Cura arcana A, Relâmpago A
+  Object.assign(FXV, { arrow: FXV.arrow || 'old', pierce: FXV.pierce || 'old', roll: FXV.roll || 'A', rain: FXV.rain || 'old' }); // v0.14.11, lote 3 (utilizador): Rolamento A, Chuva como estava; a Flecha e o Tiro perfurante ficam como estavam até à escolha
   const RM = () => typeof reduceMotion === 'function' && reduceMotion();
   const VIO = ['#7a3aa0', '#b06ad0', '#e0b8f0'], DARK = ['#1a1024', '#2a1838', '#8a4ac0'];
   let curA = null;
@@ -12801,6 +12846,7 @@ const EFEITOS = (() => {
         if (age < (RM() ? 90 : sink ? 250 : 180) && (!sink || (st.p.x === tr.x1 && st.p.y === tr.y1))) return { hide: true };
       }
       if (L.id === 'spin' && FXV.spin === 'A' && !RM() && age < 50) return { sx: 1.1, sy: .86 };
+      if (L.id === 'roll' && FXV.roll === 'A' && !RM() && age < 200) { const tr = L.fx.find(e => e.k === 'trail'); if (tr && st.p.x === tr.x1 && st.p.y === tr.y1) return { hide: true }; } // a cambalhota desenha o herói a rodar
       if (L.id === 'smash' && FXV.smash === 'A' && !RM() && age < 40) return { sx: 1.12, sy: .86 }; // a antecipação da martelada
       if (L.id === 'smash' && (FXV.smash === 'C' || FXV.smash === 'D') && !RM() && age < 90) return age < 55 ? { sx: 1.14, sy: .82 } : { sx: .92, sy: 1.12 }; // encolhe e estica antes da pancada
       if (L.id === 'shout' && FXV.shout === 'A' && !RM() && age < 80) return { sx: 1.12, sy: 1.1 }; // o herói incha no rugido
@@ -12811,7 +12857,7 @@ const EFEITOS = (() => {
     const f = window[fn]; if (typeof f !== 'function') continue;
     window[fn] = function (...a) {
       const n0 = fx.length, p = st.p, hx = p.x, hy = p.y, t0 = performance.now();
-      const nf0 = floats.length, near = st.foes.filter(o => !o.ally && Math.max(Math.abs(o.x - hx), Math.abs(o.y - hy)) === 1).map(o => ({ x: o.x, y: o.y })); // v0.14.3: para o Rodopio acender cada um pela ordem do giro
+      let pierceLine = null; const nf0 = floats.length, near = st.foes.filter(o => !o.ally && Math.max(Math.abs(o.x - hx), Math.abs(o.y - hy)) === 1).map(o => ({ x: o.x, y: o.y })); // v0.14.3: para o Rodopio acender cada um pela ordem do giro
       const r = f.apply(this, a);
       let mine = fx.slice(n0);
       if (id === 'spin' && FXV.spin !== 'old' && !RM()) for (const fl of floats.slice(nf0)) if (near.some(o => o.x === fl.x && o.y === fl.y)) fl.t += spinAt(hx, hy, fl.x, fl.y, FXV.spin); // v0.14.3: cada número sai quando o giro chega a esse inimigo (só o desenho; o hp já mudou)
@@ -12823,10 +12869,16 @@ const EFEITOS = (() => {
         if (id === 'ice' && fr) late(fr.x, fr.y, fr.t0);
         if (id === 'zap' && zp) zp.pts.slice(1).forEach((q, k) => late(q.x, q.y, zp.t0 + k * 70));
       }
+      if (['arrow', 'pierce', 'rain'].includes(id) && FXV[id] !== 'old' && !RM()) { // v0.14.7: os números saem quando a flecha chega a cada alvo (só o desenho)
+        const pr = mine.find(e => e.k === 'proj'), rn = mine.find(e => e.k === 'rain'), mineF = floats.slice(nf0);
+        if (id === 'arrow' && pr) mineF.forEach(fl => { if (fl.x === pr.x1 && fl.y === pr.y1) fl.t = Math.max(fl.t, pr.until); });
+        if (id === 'pierce' && pr) { const tot = Math.hypot(pr.x1 - pr.x0, pr.y1 - pr.y0) || 1; mineF.forEach(fl => { const u = Math.hypot(fl.x - pr.x0, fl.y - pr.y0) / tot; fl.t = Math.max(fl.t, pr.t0 + (pr.until - pr.t0) * u); }); pierceLine = mineF.map(fl => ({ x: fl.x, y: fl.y, u: Math.hypot(fl.x - pr.x0, fl.y - pr.y0) / tot })); }
+        if (id === 'rain' && rn) mineF.forEach(fl => { fl.t = Math.max(fl.t, rn.t0 + (FXV.rain === 'A' ? 380 : 330) + Math.hypot(fl.x - rn.x, fl.y - rn.y) * 40); });
+      }
       if (id === 'anchor') { mine = mine.filter(e => e.k === 'trail'); if (!mine.length || FXV.anc === 'old') return r; } // v0.14.3: o lançar da âncora e a runa Explosão ficam com o drawFx
       mine.forEach(e => { e.ab = id; });
       const near2 = id === 'shout' ? st.foes.filter(o => !o.ally && Math.abs(o.x - hx) <= 2 && Math.abs(o.y - hy) <= 2).map(o => ({ x: o.x, y: o.y })) : null;
-      if (mine.length || id === 'shield') live.push({ id, t0, fx: mine, hx, hy, near, near2, face: p.dir === 'l' ? -1 : 1, flags: {} });
+      if (mine.length || id === 'shield') live.push({ id, t0, fx: mine, hx, hy, near, near2, line: pierceLine, face: p.dir === 'l' ? -1 : 1, flags: {} });
       return r;
     };
   }
@@ -12880,7 +12932,7 @@ const EFEITOS = (() => {
                 for (let s = 0; s < 30; s++) { const a = rot + off + s / 30 * span; g.globalAlpha = Math.min(1, f * (s / 30) * 1.4); px(g, sx + Math.cos(a) * rx, sy + 3 + Math.sin(a) * ry, 2, w, col); } }
               for (let k = 0; k < 6; k++) { const a = rot * 1.4 + k * Math.PI / 3, r = 15, x0 = sx + Math.cos(a) * r, y0 = sy - 6 + Math.sin(a) * r * .55; g.globalAlpha = .7 * f; for (let s = 0; s < 4; s++) px(g, x0 - Math.sin(a) * s * 1.5, y0 + Math.cos(a) * s * .8, 1, 1, '#ffffff'); }
               g.globalAlpha = 1; }
-            if (once('cascalho', T0 + 40)) { A.shake(120); for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; part({ x: e.x * TS + 8 + Math.cos(a) * 6, y: e.y * TS + 13 + Math.sin(a) * 3, z: 2, vx: -Math.sin(a) * 40 + Math.cos(a) * 20, vy: Math.cos(a) * 16 + Math.sin(a) * 8, vz: R1(20, 50), life: .6, max: .6, col: ['#5d566c', '#8a8f9a', '#3a3448'][k % 3], t: 'debris' }); } }
+            if (once('cascalho', T0 + 40)) { hitStop(75); A.shake(120); /* v0.14.11: classe média */ for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; part({ x: e.x * TS + 8 + Math.cos(a) * 6, y: e.y * TS + 13 + Math.sin(a) * 3, z: 2, vx: -Math.sin(a) * 40 + Math.cos(a) * 20, vy: Math.cos(a) * 16 + Math.sin(a) * 8, vz: R1(20, 50), life: .6, max: .6, col: ['#5d566c', '#8a8f9a', '#3a3448'][k % 3], t: 'debris' }); } }
           }
           for (const [i, n] of (L.near || []).entries()) { // pela ordem do giro: cada inimigo acende quando o crescente passa por ele
             const at2 = spinAt(L.hx, L.hy, n.x, n.y, v);
@@ -12958,7 +13010,7 @@ const EFEITOS = (() => {
             if (v === 'D' && ia < 0) { const u = cl(1 + ia / 90), y = sy - 46 + u * 40, a = .35 + .55 * u; // o martelo enorme cai do alto
               g.globalAlpha = a * .5; for (let s = 1; s < 6; s++) px(g, sx - 6, y - 8 - s * 4, 12, 1, '#fff4d8');
               g.globalAlpha = a; px(g, sx - 1, y - 16, 3, 12, '#b07d22'); px(g, sx - 7, y - 6, 15, 7, '#f2c14e'); px(g, sx - 7, y - 6, 15, 2, '#fff4d8'); px(g, sx - 6, y + 1, 13, 1, '#b07d22'); g.globalAlpha = 1; glow(sx, y - 3, '#f2c14e', 14, .35 * u); }
-            if (ia >= 0 && once('impacto')) { A.shake(v === 'C' ? 300 : 260); L.seed = Math.random() * 9;
+            if (ia >= 0 && once('impacto')) { hitStop(130); A.shake(v === 'C' ? 300 : 260); /* v0.14.11: classe pesada */ L.seed = Math.random() * 9;
               for (let k = 0; k < 24; k++) { const a = k / 24 * Math.PI * 2, sp = R1(30, 55); part({ x: e.x * TS + 8 + Math.cos(a) * 4, y: e.y * TS + 13 + Math.sin(a) * 2, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp * .4, life: R1(.6, .9), max: .9, col: k % 3 ? '#5d566c' : '#7a7088', t: 'dust', s: 2 }); }
               for (let k = 0; k < 14; k++) part({ x: e.x * TS + 8 + R1(-4, 4), y: e.y * TS + 12, z: 2, vx: R1(-55, 55), vy: R1(-20, 20), vz: R1(60, 115), life: R1(.7, 1.1), max: 1.1, col: ['#3a3546', '#58516a', '#7a808a'][k % 3], t: 'debris', s: 2 });
               for (let k = 0; k < 12; k++) { const a = -Math.PI / 2 + R1(-1.4, 1.4), sp = R1(40, 90); part({ x: e.x * TS + 8, y: e.y * TS + 8, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: R1(.15, .3), max: .3, col: k % 2 ? '#ffffff' : '#f2c14e', t: 'spark', add: k < 3 }); } }
@@ -13018,7 +13070,7 @@ const EFEITOS = (() => {
               if (once('pó0')) L.dn = 0; if (q < 1 && (L.dn = (L.dn || 0) + 1) % 2) part({ x: (lerp(tr.x0, tr.x1, f)) * TS + 8, y: lerp(tr.y0, tr.y1, f) * TS + 13, vx: -dx * 20 + R1(-6, 6), vy: -dy * 20 + R1(-4, 2), life: .4, max: .4, col: '#5d566c', t: 'dust', s: 2 }); }
             else { const [x0, y0] = C(tr.x0, tr.y0); g.globalAlpha = .5 * (1 - Math.max(0, q - .8) / .5); for (let s = 0; s <= 10; s++) { const u = s / 10, x = lerp(x0, hx, u), y = lerp(y0, hy, u) - 4; px(g, x - 1, y - 2, 3, 4 + Math.round(u * 3), u > .8 ? '#ffffff' : '#9fd8ff'); } A.ghost(hx, hy + 5, .4 * (1 - Math.max(0, q - 1) / .3), '#c8ecff'); }
             g.globalAlpha = 1; } }
-          if (b) { const ia = now - b.t0, [bx, by] = C(b.x, b.y); if (ia >= 0 && once('choque')) { A.shake(v === 'A' ? 150 : 110); for (let k = 0; k < 9; k++) { const a = Math.atan2(dy, dx) + R1(-.9, .9), s = R1(30, 70); part({ x: b.x * TS + 8 - dx * 6, y: b.y * TS + 8 - dy * 6, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.15, .28), max: .28, col: k % 2 ? '#ffffff' : '#f2c14e', t: 'spark', add: k < 2 }); } }
+          if (b) { const ia = now - b.t0, [bx, by] = C(b.x, b.y); if (ia >= 0 && once('choque')) { hitStop(75); A.shake(v === 'A' ? 150 : 110); for (let k = 0; k < 9; k++) { const a = Math.atan2(dy, dx) + R1(-.9, .9), s = R1(30, 70); part({ x: b.x * TS + 8 - dx * 6, y: b.y * TS + 8 - dy * 6, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.15, .28), max: .28, col: k % 2 ? '#ffffff' : '#f2c14e', t: 'spark', add: k < 2 }); } }
             if (ia >= 0 && ia < 260) { const u = ia / 260; if (v === 'B') { ring(bx - dx * 6, by - dy * 6 - 2, 3 + u * 14, 3 + u * 10, '#c8ecff', 1 - u); ring(bx - dx * 6, by - dy * 6 - 2, 2 + u * 9, 2 + u * 6, '#ffffff', .7 * (1 - u)); } else { const a0 = Math.atan2(dy, dx); g.globalAlpha = 1 - u; g.strokeStyle = '#d2d5da'; g.beginPath(); g.arc(bx - dx * 8, by - dy * 8, 5 + u * 12, a0 - .9, a0 + .9); g.stroke(); g.globalAlpha = 1; } glow(bx, by - 3, '#ffffff', 10, .5 * (1 - u)); } }
           break;
         }
@@ -13047,7 +13099,7 @@ const EFEITOS = (() => {
             const fl = Math.floor(now / 60) % 3; px(g, x - 1 + fl - 1, y - R - 2, 2, 2, '#f2c14e');
             glow(x, y, '#ff9a3c', v === 'A' ? 20 : 14, .6); if (Math.random() < .6) part({ x: x - A.WX(0) - ux * 6, y: y - A.WY(0) - uy * 6, vx: R1(-8, 8), vy: R1(-14, -4), life: R1(.3, .5), max: .5, col: Math.random() < .5 ? '#d8742e' : '#f2c14e', t: 'ember', add: true }); } }
           if (b) { const ia = now - b.t0, [bx, by] = C(b.x, b.y);
-            if (ia >= 0 && once('rebenta')) { A.shake(v === 'A' ? 170 : 150); const wx = b.x * TS + 8, wy = b.y * TS + 8;
+            if (ia >= 0 && once('rebenta')) { hitStop(75); A.shake(v === 'A' ? 170 : 150); /* v0.14.11: classe média */ const wx = b.x * TS + 8, wy = b.y * TS + 8;
               for (let k = 0; k < 18; k++) { const a = Math.random() * Math.PI * 2, s = R1(30, 80); part({ x: wx, y: wy, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.25, .5), max: .5, col: ['#f2c14e', '#d8742e', '#fff4d8'][k % 3], t: 'spark', add: k % 4 === 0 }); }
               for (let k = 0; k < 8; k++) part({ x: wx + R1(-5, 5), y: wy, vx: R1(-6, 6), vy: R1(-24, -10), life: R1(.8, 1.3), max: 1.3, col: k % 2 ? '#3a3546' : '#58516a', t: 'dust', s: 2 }); }
             if (v === 'A') { if (ia >= 0 && ia < 260) { const u = ia / 260, f = 1 - u; for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4 + u * .4, r = 3 + u * 13; px(g, bx + Math.cos(a) * r - 2, by + Math.sin(a) * r * .8 - 2, 4, 4, u < .4 ? '#fff4d8' : u < .7 ? '#f2c14e' : '#d8742e'); } ring(bx, by, 4 + u * 16, 3 + u * 11, '#f2c14e', f); glow(bx, by, '#ffb050', 30, .8 * f); }
@@ -13077,7 +13129,7 @@ const EFEITOS = (() => {
               if (v === 'B') { g.globalAlpha = .6 * (q < .85 ? 1 : (1 - q) / .15); g.fillStyle = '#c8ecff'; g.beginPath(); g.ellipse(fx2, fy2 + 5, 8, 3.2, 0, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1; for (let k = 0; k < 3; k++) { const sh = ((now / 500) + k / 3) % 1; px(g, fx2 - 6 + sh * 12, fy2 + 4, 1, 1, '#ffffff'); } }
               const grow = Math.min(1, q * 5), spikes = v === 'A' ? [[-6, 3, 9], [-2, 3, 14], [2, 4, 16], [6, 3, 10], [-4, 2, 6], [4, 2, 7]] : [[-4, 3, 8], [0, 4, 11], [4, 3, 8]];
               for (const [ox, w, H] of spikes) { const h = Math.round(H * grow); px(g, fx2 + ox - w / 2, fy2 + 5 - h, w, h, '#64b4f4'); px(g, fx2 + ox - w / 2, fy2 + 5 - h, 1, h, '#c8ecff'); px(g, fx2 + ox - (w > 2 ? 0 : .5), fy2 + 4 - h, 1, 1, '#ffffff'); }
-              if (once('geada')) for (let k = 0; k < 10; k++) { const a = Math.random() * Math.PI * 2; part({ x: fr.x * TS + 8 + Math.cos(a) * 6, y: fr.y * TS + 10 + Math.sin(a) * 3, vx: Math.cos(a) * 14, vy: R1(-20, -6), life: R1(.4, .7), max: .7, col: k % 2 ? '#ffffff' : '#c8ecff', t: 'spark', add: k < 2 }); }
+              if (once('geada')) hitStop(40); if (!L.flags.g2 && (L.flags.g2 = 1)) for (let k = 0; k < 10; k++) { const a = Math.random() * Math.PI * 2; part({ x: fr.x * TS + 8 + Math.cos(a) * 6, y: fr.y * TS + 10 + Math.sin(a) * 3, vx: Math.cos(a) * 14, vy: R1(-20, -6), life: R1(.4, .7), max: .7, col: k % 2 ? '#ffffff' : '#c8ecff', t: 'spark', add: k < 2 }); }
             } }
           shatter(); break;
         }
@@ -13109,22 +13161,51 @@ const EFEITOS = (() => {
             else if (fl) { bolt(g, ax, ay, bx2, by2, '#64b4f4', '#ffffff', v === 'B' ? 6 : 4); if (v === 'B') { const mx = (ax + bx2) / 2, my = (ay + by2) / 2; bolt(g, mx, my, mx + R1(-8, 8), my + R1(-10, 4), '#64b4f4', '#c8ecff', 3); } }
             glow(bx2, by2, '#9fd8ff', 12, .6 * f);
             if (v === 'B') for (let s = 0; s < 3; s++) { const an = Math.random() * Math.PI * 2; px(g, bx2 + Math.cos(an) * 7, by2 - 3 + Math.sin(an) * 9, 1, 2, '#ffffff'); }
-            if (once('hop' + k, t0)) { if (k === 0 || v === 'B') A.shake(v === 'A' ? 120 : 70); for (let s = 0; s < 7; s++) { const a = Math.random() * Math.PI * 2, sp = R1(25, 60); part({ x: e.pts[k + 1].x * TS + 8, y: e.pts[k + 1].y * TS + 8, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: R1(.2, .3), max: .3, col: s % 2 ? '#ffffff' : '#9fd8ff', t: 'spark', add: s < 2 }); } } }
+            if (once('hop' + k, t0)) { if (k === 0) hitStop(75); /* v0.14.11: classe média, no 1.º alvo */ if (k === 0 || v === 'B') A.shake(v === 'A' ? 120 : 70); for (let s = 0; s < 7; s++) { const a = Math.random() * Math.PI * 2, sp = R1(25, 60); part({ x: e.pts[k + 1].x * TS + 8, y: e.pts[k + 1].y * TS + 8, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: R1(.2, .3), max: .3, col: s % 2 ? '#ffffff' : '#9fd8ff', t: 'spark', add: s < 2 }); } } }
           break;
         }
         case 'arrow': case 'stun': case 'pierce': case 'roll': {
-          const pr = E('proj');
-          if (L.id === 'roll') { // C: duas silhuetas no ar no recuo e pó a aterrar
-            const tr = E('trail'); if (tr) { const q = (now - tr.t0) / 220; if (q >= 0 && q < 1) for (let k = 1; k <= 2; k++) { const f = Math.max(0, q - k * .15), [gx, gy] = C(lerp(tr.x0, tr.x1, f), lerp(tr.y0, tr.y1, f)); A.ghost(gx, gy + 5 - Math.sin(f * Math.PI) * 6, .3, null); } if (q >= 1 && once('aterra')) for (let k = 0; k < 10; k++) part({ x: tr.x1 * TS + 8, y: tr.y1 * TS + 13, vx: R1(-20, 20), vy: R1(-8, -2), life: .6, max: .6, col: '#5d566c', t: 'dust', s: 2 }); }
+          const pr = E('proj'), v = FXV[L.id] || 'old', rm = RM();
+          if (L.id === 'roll') {
+            const tr = E('trail');
+            if (tr && (v === 'old' || rm)) { const q = (now - tr.t0) / 220; if (q >= 0 && q < 1) for (let k = 1; k <= 2; k++) { const f = Math.max(0, q - k * .15), [gx, gy] = C(lerp(tr.x0, tr.x1, f), lerp(tr.y0, tr.y1, f)); A.ghost(gx, gy + 5 - Math.sin(f * Math.PI) * 6, .3, null); } if (q >= 1 && once('aterra')) for (let k = 0; k < (rm ? 0 : 10); k++) part({ x: tr.x1 * TS + 8, y: tr.y1 * TS + 13, vx: R1(-20, 20), vy: R1(-8, -2), life: .6, max: .6, col: '#5d566c', t: 'dust', s: 2 }); }
+            else if (tr) { const D = 200, q = (now - tr.t0) / D, [ax, ay] = W2(tr.x0 * TS + 8, tr.y0 * TS + 13), [bx, by] = W2(tr.x1 * TS + 8, tr.y1 * TS + 13);
+              if (once('salta')) for (let k = 0; k < 8; k++) part({ x: tr.x0 * TS + 8, y: tr.y0 * TS + 13, vx: R1(-18, 18), vy: R1(-8, -2), life: .5, max: .5, col: '#5d566c', t: 'dust', s: 2 });
+              if (v === 'A' && q >= 0 && q < 1 && A.hc) { const x = lerp(ax, bx, q), y = lerp(ay, by, q) - Math.sin(q * Math.PI) * 8, dir = Math.sign(tr.x1 - tr.x0) || (Math.sign(tr.y1 - tr.y0) || 1); // a cambalhota: o herói dá uma volta no ar
+                g.save(); g.translate(Math.round(x), Math.round(y - 10)); g.rotate(-dir * q * Math.PI * 2); g.drawImage(A.hc, -A.OX / 2, -A.OY / 2 + 10, A.HS, A.HS); g.restore(); }
+              if (v === 'B' && q >= 0 && q < 1.3) { for (let k = 1; k <= 4; k++) { const f = Math.max(0, Math.min(1, q) - k * .12); A.ghost(lerp(ax, bx, f), lerp(ay, by, f), .45 - k * .09, '#c8bba0'); } }
+              if (q >= 1 && once('aterra')) { for (let k = 0; k < 10; k++) part({ x: tr.x1 * TS + 8, y: tr.y1 * TS + 13, vx: R1(-24, 24), vy: R1(-9, -2), life: .6, max: .6, col: '#5d566c', t: 'dust', s: 2 }); L.land = now; }
+              if (v === 'B' && L.land && now - L.land < 900) { const f = 1 - (now - L.land) / 900, dx = Math.sign(tr.x1 - tr.x0), dy = Math.sign(tr.y1 - tr.y0); g.globalAlpha = .55 * f; for (let s = 0; s < 10; s++) px(g, bx - dx * s * 1.2 - 2, by + 1 - dy * s * .8, 1, 1, '#0b0a10'); for (let s = 0; s < 10; s++) px(g, bx - dx * s * 1.2 + 2, by + 1 - dy * s * .8 + 1, 1, 1, '#0b0a10'); g.globalAlpha = 1; } }
           }
-          if (pr) { const q = (now - pr.t0) / (pr.until - pr.t0), [x0, y0] = C(pr.x0, pr.y0), [x1, y1] = C(pr.x1, pr.y1), ang = Math.atan2(y1 - y0, x1 - x0); if (q >= 0 && q < 1) { const x = lerp(x0, x1, q), y = lerp(y0, y1, q); if (L.id === 'pierce') { for (let k = 1; k < 4; k++) ring(x - Math.cos(ang) * k * 9, y - Math.sin(ang) * k * 9, Math.abs(Math.sin(ang)) * (3 + k) + 1.5, Math.abs(Math.cos(ang)) * (3 + k) + 1.5, '#c8ecff', .6 - k * .15); } else if (pr.kind === 'axe') { const rot = now / 45; g.globalAlpha = .35; for (let k = 1; k < 4; k++) axePx(g, x - Math.cos(ang) * k * 4, y - Math.sin(ang) * k * 4, rot - k * .7); g.globalAlpha = 1; axePx(g, x, y, rot); } else { g.globalAlpha = .5; for (let k = 4; k < 14; k++) px(g, x - Math.cos(ang) * k, y - Math.sin(ang) * k, 1, 1, '#e8dcc4'); g.globalAlpha = 1; } if (pr.kind !== 'axe') arrowPx(g, x, y, ang); } // v76: a machadinha roda; a flecha não
-            if (L.id !== 'pierce' && now >= pr.until && once('acerta')) for (let k = 0; k < 6; k++) { const a = Math.random() * Math.PI * 2, s = R1(16, 40); part({ x: pr.x1 * TS + 8, y: pr.y1 * TS + 8, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.15, .3), max: .3, col: k % 2 ? '#f2c14e' : '#ffffff', t: 'spark' }); }
-            if ((L.id === 'arrow' || L.id === 'stun') && pr.kind !== 'axe' && now >= pr.until && now < pr.until + 1300 && st.foes.some(f => f.x === pr.x1 && f.y === pr.y1)) arrowPx(g, x1 - Math.cos(ang) * 3, y1 - Math.sin(ang) * 3, ang); }
+          if (pr) { const q = (now - pr.t0) / (pr.until - pr.t0), [x0, y0] = C(pr.x0, pr.y0), [x1, y1] = C(pr.x1, pr.y1), ang = Math.atan2(y1 - y0, x1 - x0), ca = Math.cos(ang), sa = Math.sin(ang);
+            if (q >= 0 && q < 1) { const x = lerp(x0, x1, q), y = lerp(y0, y1, q);
+              if (pr.kind === 'axe') { const rot = now / 45; g.globalAlpha = .35; for (let k = 1; k < 4; k++) axePx(g, x - ca * k * 4, y - sa * k * 4, rot - k * .7); g.globalAlpha = 1; axePx(g, x, y, rot); }
+              else if (L.id === 'pierce' && (v === 'old' || rm)) { for (let k = 1; k < 4; k++) ring(x - ca * k * 9, y - sa * k * 9, Math.abs(sa) * (3 + k) + 1.5, Math.abs(ca) * (3 + k) + 1.5, '#c8ecff', .6 - k * .15); arrowPx(g, x, y, ang); }
+              else if (L.id === 'pierce' && v === 'A') { g.globalAlpha = .5 * (1 - q * .5); g.strokeStyle = '#d2d5da'; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); g.globalAlpha = 1; for (let k = 1; k < 3; k++) ring(x - ca * k * 8, y - sa * k * 8, Math.abs(sa) * (3 + k) + 1.5, Math.abs(ca) * (3 + k) + 1.5, '#ffffff', .6 - k * .2); arrowPx(g, x, y, ang, '#ffffff'); }
+              else if (L.id === 'pierce' && v === 'B') { g.globalAlpha = .9; g.strokeStyle = '#9fd8ff'; g.lineWidth = 2; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x, y); g.stroke(); g.strokeStyle = '#ffffff'; g.lineWidth = 1; g.stroke(); g.globalAlpha = 1; glow(x, y, '#9fd8ff', 10, .5); arrowPx(g, x, y, ang, '#c8ecff'); }
+              else if (v === 'A' && !rm) { for (let s = 3; s < 15; s++) { g.globalAlpha = .6 * (1 - s / 15); px(g, x - ca * s, y - sa * s, 1, 1, '#ffffff'); } g.globalAlpha = 1; arrowPx(g, x, y, ang); }
+              else if (v === 'B' && !rm) { g.globalAlpha = .45; for (let k = 1; k < 4; k++) arrowPx(g, x - ca * k * 4, y - sa * k * 4, ang, '#f2c14e'); g.globalAlpha = 1; arrowPx(g, x, y, ang, '#f2c14e'); if (Math.floor(now / 60) % 2) { px(g, x - 1, y, 3, 1, '#fff4d8'); px(g, x, y - 1, 1, 3, '#fff4d8'); } glow(x, y, '#f2c14e', 8, .45); }
+              else { g.globalAlpha = .5; for (let k = 1; k < 4; k++) arrowPx(g, x - ca * k * 4, y - sa * k * 4, ang); g.globalAlpha = 1; arrowPx(g, x, y, ang); } }
+            if (L.id === 'arrow' && v === 'A' && !rm && once('solta')) for (let k = 0; k < 4; k++) part({ x: pr.x0 * TS + 8 + ca * 6, y: pr.y0 * TS + 8 + sa * 6, vx: -sa * R1(-20, 20) + ca * 10, vy: ca * R1(-20, 20) + sa * 10, life: .2, max: .2, col: '#d2d5da', t: 'dust' });
+            if (L.id === 'pierce' && v !== 'old' && !rm) for (const [i, n] of (L.line || []).entries()) { const at2 = (pr.until - pr.t0) * n.u; if (once('fura' + i, at2)) { for (let k = 0; k < 6; k++) { const a = ang + R1(-1, 1), s = R1(25, 55); part({ x: n.x * TS + 8, y: n.y * TS + 8, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.15, .28), max: .28, col: k % 2 ? '#ffffff' : (v === 'B' ? '#9fd8ff' : '#d2d5da'), t: 'spark', add: k === 0 }); } } }
+            if (L.id === 'pierce' && v === 'B' && !rm && now >= pr.until) { const u = (now - pr.until) / 260; if (u < 1) { g.globalAlpha = 1 - u; g.strokeStyle = '#9fd8ff'; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); g.globalAlpha = 1; } if (once('estilha')) for (let k = 0; k < 14; k++) { const u2 = Math.random(); part({ x: lerp(pr.x0, pr.x1, u2) * TS + 8, y: lerp(pr.y0, pr.y1, u2) * TS + 8, vx: R1(-12, 12), vy: R1(-16, -4), life: R1(.25, .45), max: .45, col: k % 2 ? '#c8ecff' : '#9fd8ff', t: 'spark' }); } }
+            if (L.id !== 'pierce' && now >= pr.until && once('acerta') && (hitStop(L.id === 'arrow' ? 40 : 75), true)) { const n = v === 'old' || rm ? 6 : 9; for (let k = 0; k < n; k++) { const a = Math.random() * Math.PI * 2, s = R1(16, 45); part({ x: pr.x1 * TS + 8, y: pr.y1 * TS + 8, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: R1(.15, .3), max: .3, col: k % 2 ? '#f2c14e' : '#ffffff', t: 'spark', add: k === 0 && v !== 'old' }); } L.hit = now; }
+            if (L.id === 'arrow' && v === 'B' && !rm && L.hit && now - L.hit < 220) { const u = (now - L.hit) / 220; ring(x1, y1 - 2, 3 + u * 9, 2 + u * 6, '#f2c14e', 1 - u); }
+            if (L.id === 'arrow' && v === 'A' && !rm && L.hit && now - L.hit < 90) glow(x1, y1, '#ffffff', 9, .6 * (1 - (now - L.hit) / 90));
+            if ((L.id === 'arrow' || L.id === 'stun') && pr.kind !== 'axe' && now >= pr.until && now < pr.until + 1300 && st.foes.some(f => f.x === pr.x1 && f.y === pr.y1)) arrowPx(g, x1 - ca * 3, y1 - sa * 3, ang, L.id === 'arrow' && v === 'B' && !rm ? '#f2c14e' : undefined); }
           break;
         }
-        case 'rain': { // B: flechas em arco; as sombras aparecem no chão antes e cada uma levanta pó
-          const e = E('rain'); if (!e) break; const [cx2, cy2] = C(e.x, e.y);
-          for (let k = 0; k < 9; k++) { const tk = e.t0 + 60 + k * 40, q = (now - tk) / 260, x = cx2 - 13 + ((k * 7) % 27), y = cy2 - 12 + ((k * 11) % 28); if (q > -.7 && q < 0) { g.globalAlpha = .45 * (1 + q); px(g, x - 1, y, 3, 1, '#0b0a10'); g.globalAlpha = 1; } if (q >= 0 && q < 1) arrowPx(g, x, lerp(y - 40, y, q), Math.PI / 2 - .2); if (q >= 1 && !L.flags['r' + k]) { L.flags['r' + k] = 1; const [wx, wy] = [x - A.WX(0), y - A.WY(0)]; for (let s = 0; s < 3; s++) part({ x: wx, y: wy, vx: R1(-12, 12), vy: R1(-6, -1), life: .4, max: .4, col: '#5d566c', t: 'dust' }); } if (q >= 1 && q < 6) arrowPx(g, x, y, Math.PI / 2 - .2); }
+        case 'rain': { // v0.14.11: A saraivada (uma flecha sobe ao céu e caem flechas em toda a área 5×5, com sombras primeiro), B chuva dourada (um círculo marca a área e as flechas caem densas)
+          const e = E('rain'); if (!e) break; const [cx2, cy2] = C(e.x, e.y), v = FXV.rain, rm = RM();
+          if (v === 'old' || rm) { /* v0.14.11 (utilizador): o estilo antigo, mas as flechas espalham-se pela área real de 5×5 (2 casas à volta do alvo) */ for (let k = 0; k < 15; k++) { const tk = e.t0 + 60 + k * 26, q = (now - tk) / 260, x = cx2 - 36 + ((k * 0.618) % 1) * 72, y = cy2 - 34 + ((k * 0.381 + .17) % 1) * 72; if (q > -.7 && q < 0) { g.globalAlpha = .45 * (1 + q); px(g, x - 1, y, 3, 1, '#0b0a10'); g.globalAlpha = 1; } if (q >= 0 && q < 1) arrowPx(g, x, lerp(y - 40, y, q), Math.PI / 2 - .2); if (q >= 1 && !L.flags['r' + k]) { L.flags['r' + k] = 1; const [wx, wy] = [x - A.WX(0), y - A.WY(0)]; for (let s = 0; s < (rm ? 0 : 3); s++) part({ x: wx, y: wy, vx: R1(-12, 12), vy: R1(-6, -1), life: .4, max: .4, col: '#5d566c', t: 'dust' }); } if (q >= 1 && q < 6) arrowPx(g, x, y, Math.PI / 2 - .2); } break; }
+          const N = v === 'A' ? 16 : 24, spread = 36, base = v === 'A' ? 140 : 160, gap = v === 'A' ? 20 : 11, fall = v === 'A' ? 240 : 170;
+          if (v === 'A') { const [hx, hy] = C(L.hx, L.hy), u = (now - e.t0) / 140; if (u >= 0 && u < 1) { for (let s = 0; s < 8; s++) px(g, hx + 2, hy - 8 - u * 50 - s * 2, 1, 2, s < 2 ? '#ffffff' : '#d2d5da'); } }
+          if (v === 'B') { const u = cl((now - e.t0) / 150), f = now - e.t0 < 700 ? 1 : Math.max(0, 1 - (now - e.t0 - 700) / 300); if (f > 0) { g.globalAlpha = .7 * f; g.strokeStyle = '#f2c14e'; g.beginPath(); g.ellipse(cx2, cy2 + 5, spread * u, spread * .45 * u, 0, 0, Math.PI * 2); g.stroke(); g.globalAlpha = .12 * f; g.fillStyle = '#f2c14e'; g.fill(); g.globalAlpha = 1; } }
+          for (let k = 0; k < N; k++) { const tk = e.t0 + base + k * gap, q = (now - tk) / fall, h = (k * 0.618) % 1, h2 = (k * 0.381 + .17) % 1, x = cx2 - spread + h * spread * 2, y = cy2 - 16 + h2 * 34;
+            if (q > -.8 && q < 0) { g.globalAlpha = .45 * (1 + q); px(g, x - 1, y, 3, 1, '#0b0a10'); g.globalAlpha = 1; }
+            if (q >= 0 && q < 1) { arrowPx(g, x, lerp(y - 48, y, q), Math.PI / 2 - .15, v === 'B' ? '#f2c14e' : undefined); }
+            if (q >= 1 && !L.flags['r' + k]) { L.flags['r' + k] = 1; const [wx, wy] = [x - A.WX(0), y - A.WY(0)]; for (let s = 0; s < 3; s++) part({ x: wx, y: wy, vx: R1(-14, 14), vy: R1(-7, -1), life: .4, max: .4, col: '#5d566c', t: 'dust' }); if (v === 'B' && k % 3 === 0) part({ x: wx, y: wy - 2, vx: 0, vy: -6, life: .2, max: .2, col: '#fff4d8', t: 'spark', add: true }); }
+            if (q >= 1 && q < 5) { g.globalAlpha = q < 4 ? 1 : 5 - q; arrowPx(g, x, y, Math.PI / 2 - .15, v === 'B' ? '#f2c14e' : undefined); g.globalAlpha = 1; } }
           break;
         }
       }
@@ -15298,6 +15379,8 @@ function renderOverlay() {
         ${theme.souls ? item('LUZ', seg([['tochas', 'TOCHAS'], ['simples', 'SIMPLES']], 'luz', k => k === 'simples' ? opts.luz === 'simples' : opts.luz !== 'simples'), opts.luz === 'simples' ? 'Só uma luz fixa à volta do herói. Mais leve para telemóveis fracos.' : 'As tochas e as fogueiras iluminam a masmorra e tremeluzem.')
           + item('BRILHO', seg([['0', 'NORMAL'], ['1', 'MAIS CLARA']], 'claro', k => k === '1' ? !!opts.claro : !opts.claro), 'Mais clara: a pedra e o escuro sobem um pouco, para jogar ao sol.') : ''}
         ${item('INTERFACE', seg([['classic', 'CLÁSSICO'], ['compact', 'COMPACTO']], 'mode', k => opts.mode === k), MODE_DESC[opts.mode])}
+        ${item('TREMOR', seg([['normal', 'NORMAL'], ['suave', 'SUAVE'], ['off', 'DESLIGADO']], 'shake', k => (opts.shake || 'normal') === k), 'O ecrã treme com os golpes fortes. Suave é metade.')}
+        ${item('NÚMEROS DE DANO', seg([['normal', 'NORMAIS'], ['pequenos', 'PEQUENOS'], ['off', 'DESLIGADOS']], 'dmgnum', k => (opts.dmgNum || 'normal') === k), 'Os números do dano por cima dos inimigos. Desligados, as curas, as palavras e o diário ficam.')}
         ${item('MINI-MAPA', seg([['1', 'SIM'], ['0', 'NÃO']], 'mini', k => k === '1' ? opts.mini !== false : opts.mini === false), 'Mapa pequeno no canto, só no modo compacto. Mostra o que já viste, sem inimigos. Toca nele para abrir o mapa grande.')}
         ${fsOK() ? item('ECRÃ INTEIRO', `<div class="seg"><button data-full="1" aria-pressed="${!!fsEl()}">${_t(fsEl() ? 'SAIR DO ECRÃ INTEIRO' : 'LIGAR')}</button></div>`, 'Esconde as barras do navegador. O jogo fica na vertical.') : ''}`,
       controlos: `${item('TECLAS DE MOVIMENTO', seg([['normal', 'NORMAIS'], ['grande', 'GRANDES'], ['enorme', 'ENORMES']], 'pad', k => opts.pad === k) + `<div style="margin-top:6px">${seg([['esquerda', 'À ESQUERDA'], ['direita', 'À DIREITA']], 'padside', k => opts.padSide === k)}</div>`, 'Tamanho das setas e o lado do ecrã onde ficam. As habilidades passam para o outro lado.')}
@@ -15867,6 +15950,8 @@ function ovAct(d) {
   else if (d.padside) { opts.padSide = d.padside; saveOpts(); applyPad(); Sound.play('menu'); ui(); }
   else if (d.theme) { opts.theme = d.theme; saveOpts(); applyTheme(); Sound.play('menu'); ui(); }
   else if (d.luz) { opts.luz = d.luz; saveOpts(); Sound.play('menu'); ui(); }
+  else if (d.shake) { if (['normal', 'suave', 'off'].includes(d.shake)) opts.shake = d.shake; saveOpts(); Sound.play('menu'); ui(); } // v0.14.12 (Imagem, Sábio)
+  else if (d.dmgnum) { if (['normal', 'pequenos', 'off'].includes(d.dmgnum)) opts.dmgNum = d.dmgnum; saveOpts(); Sound.play('menu'); ui(); }
   else if (d.claro) { opts.claro = d.claro === '1'; saveOpts(); applyTheme(); Sound.play('menu'); ui(); }
   else if (d.mode) { opts.mode = d.mode; saveOpts(); applyMode(); lastToast = st.log ? st.log[0] : ''; Sound.play('menu'); ui(); }
   else if (d.tab) { st.shopTab = d.tab; st.shopMsg = _t(d.tab === 'buy' ? 'Vê o que tenho.' : 'Pago um quarto do valor. Tempos difíceis.'); Sound.play('menu'); ui(); }
