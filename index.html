@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt">
-<!-- GODSPIRE v0.15.0 (build 127). Fontes embutidas:
+<!-- GODSPIRE v0.16.0 (build 128). Fontes embutidas:
 Copyright 2022–2024 Helena Zhang (helenazhang.com).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -1426,6 +1426,30 @@ html.hxopen .eq2-stats > :not(span) { grid-column: 1 / -1; }
 .dl-row b { color: #e8dcc4; margin-bottom: 2px; } .dl-row small { font-size: 13px; color: var(--g2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dl-day .dl-row + .dl-row { border-top: 1px solid var(--g1); border-radius: 0; }
 .dl-end .ar-res { margin-bottom: 0; }
+/* v0.16.0 (Imagem): o arsenal do Treino (.tr-ars), na estrutura dos ecrãs compridos: cabeça fixa, a caixa do meio a rolar, a fila de botões em baixo.
+   Cada .box.menu abre com o nome da secção; a linha equipada (.on) tem a moldura dourada e o ✓ */
+.tr-ars .ov-scroll { display: flex; flex-direction: column; gap: 8px; }
+.tr-ars .ov-scroll > .menu { flex: none; max-height: none; overflow: visible; } /* uma só rolagem (a da caixa do meio), sem caixas a rolar dentro dela */
+.tr-ars .menu > .foot:first-child { text-align: left; font-size: 10px; letter-spacing: .08em; color: #f2c14e; padding: 2px 4px 4px; border-bottom: 1px solid var(--g1); margin-bottom: 2px; }
+.tr-ars .menu > .foot:not(:first-child) { text-align: left; font-family: var(--body); font-size: 14px; line-height: 1.3; padding: 4px; }
+.tr-ars .menu .opt { border-radius: 6px; }
+.tr-ars .menu .opt.on { box-shadow: inset 0 0 0 2px #f2c14e; background: rgba(242, 193, 78, .08); }
+.tr-ars .menu .opt.on b { color: #f2c14e; }
+.tr-ars .menu .opt em { color: #f2c14e; font-size: 12px; }
+.tr-ars .menu .opt small { display: block; font-size: 13px; color: var(--g2); line-height: 1.25; }
+.tr-ars .ov-scroll > .foot { text-align: left; font-family: var(--body); font-size: 13px; line-height: 1.3; padding: 0 4px; }
+.tr-ars > .foot { padding: 4px 0 0; }
+/* v0.16.0 (Imagem, aprovado pelo utilizador): o ouro (.gold-chip) lê-se à primeira: a moeda maior e o número dourado e mais grosso, com contorno escuro.
+   No HUD, nas cabeças da Mochila e do Herói e nas do Mercador e do Ferreiro. O sino do alarme (.bell-hud), dourado, abana de leve enquanto o alarme dura */
+.gold-chip { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; line-height: 1; vertical-align: middle; }
+.gold-chip img.mic { width: 18px; height: 18px; }
+.gold-chip b { font-family: var(--display); font-weight: 400; font-size: 1.15em; color: #f2c14e; text-shadow: 1px 0 #0a0810, -1px 0 #0a0810, 0 1px #0a0810, 0 -1px #0a0810; letter-spacing: .02em; }
+.hx-head .gold-chip, .ov-head.row .gold-chip { margin-left: auto; padding: 2px 8px 2px 5px; border: 1px solid #7a5418; border-radius: 10px; background: #1e150a; }
+.hx-head .gold-chip b, .ov-head.row .gold-chip b { font-size: 12px; }
+.bell-hud { display: inline-flex; align-items: center; } .bell-hud[hidden] { display: none; }
+.bell-hud img.mic { width: 16px; height: 16px; transform-origin: 50% 10%; filter: drop-shadow(0 0 3px rgba(242, 193, 78, .55)); }
+@media (prefers-reduced-motion: no-preference) { .bell-hud img.mic { animation: bellSwing 1.1s ease-in-out infinite; } }
+@keyframes bellSwing { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-14deg); } 40% { transform: rotate(10deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(3deg); } }
 </style>
 
 <div class="app">
@@ -1448,7 +1472,7 @@ html.hxopen .eq2-stats > :not(span) { grid-column: 1 / -1; }
         <div class="chud" id="chud">
           <div class="ch-row"><span id="cLvl">L1</span><div class="track"><i id="cHp" style="width:0"></i></div><span id="cHpT">0</span></div>
           <div class="track xp thin"><i id="cXp" style="width:0"></i></div>
-          <div class="ch-meta"><span id="cFloor">ANDAR 1</span><span class="stealth" id="stealthS" title="Alcance da furtividade: a quantas casas te notam" hidden></span><span id="cGold">0$</span></div>
+          <div class="ch-meta"><span id="cFloor">ANDAR 1</span><span class="stealth" id="stealthS" title="Alcance da furtividade: a quantas casas te notam" hidden></span><span class="bell-hud" id="cBell" title="Alarme: o sino tocou" hidden><img class="mic" data-ic="bell" alt=""></span><span id="cGold">0$</span></div>
         </div>
         <div class="bossbar box" id="bossBar" hidden><span id="bossName">CHEFE</span><div class="track boss"><i id="bossHp" style="width:100%"></i></div></div>
         <div class="boss-intro box" id="bossIntro" hidden></div>
@@ -1461,7 +1485,7 @@ html.hxopen .eq2-stats > :not(span) { grid-column: 1 / -1; }
         <div class="trans" id="trans"><canvas id="transCv" width="64" height="112" aria-hidden="true"></canvas><div class="trans-txt"><b id="transT">ANDAR 1</b><span id="transS"></span></div><div class="tcard" id="tCard" aria-hidden="true"></div><div class="thint" id="tHint">TOCA PARA CONTINUAR</div></div>
       </div>
       <div class="mhud box" id="mhud">
-        <div class="mh-top"><span id="mCls">—</span><span id="mFloor">ANDAR —</span><span class="stealth" title="Alcance da furtividade: a quantas casas te notam" hidden></span><span id="mGold">0$</span></div>
+        <div class="mh-top"><span id="mCls">—</span><span id="mFloor">ANDAR —</span><span class="stealth" title="Alcance da furtividade: a quantas casas te notam" hidden></span><span class="bell-hud" id="mBell" title="Alarme: o sino tocou" hidden><img class="mic" data-ic="bell" alt=""></span><span id="mGold">0$</span></div>
         <div class="meter"><span>HP:</span><div class="track"><i id="mHp" style="width:0"></i></div></div>
         <div class="mh-row"><div class="track xp thin"><i id="mXp" style="width:0"></i></div><span id="mHpTxt">0/0</span></div>
         <p class="mh-log" id="mLog"></p>
@@ -3590,7 +3614,7 @@ LANGS.en = {
   'Câmara: {e}': 'Camera: {e}', 'A ligar…': 'Connecting…', 'A preparar a resposta…': 'Preparing the reply…', 'Mostra este código ao anfitrião, para ele o ler.': 'Show this code to the host so they can scan it.',
   'Código errado: {e}': 'Wrong code: {e}', 'Ligados! Escolhe a tua arma.': 'Connected! Choose your weapon.', 'ARENA CO-OP': 'CO-OP ARENA', '{a} e {b}': '{a} and {b}',
   'Entram os dois na arena. Cada um escolhe a sua ação; o turno passa quando os dois tiverem escolhido.': 'You both enter the arena. Each one picks an action; the turn passes when both have chosen.',
-  'O teu melhor neste aparelho. O ranking global chega quando houver servidor.': 'Your best on this device. The global ranking arrives once there is a server.', 'RANK': 'RANK', 'Escolhe o modo.': 'Choose the mode.', 'ARENA SOLO': 'SOLO ARENA', 'Vagas sem fim, a arma que escolheres': 'Endless waves, the weapon you choose', 'O teu melhor: vaga {n} · {w}': 'Your best: wave {n} · {w}', 'A dois, na mesma rede Wi-Fi': 'Two players, same Wi-Fi network', 'O teu melhor: vaga {n} com {p}': 'Your best: wave {n} with {p}', 'A TUA PERSONAGEM': 'YOUR CHARACTER', 'a tua arma mais usada: {w}': 'your most used weapon: {w}', 'EDITAR': 'EDIT', 'É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).': 'This is how others see you on the podium, in the ranking and in the arena (your co-op partner too).', 'ALCUNHA (3 a 16)': 'NICKNAME (3 to 16)', 'GUARDAR': 'SAVE', 'A alcunha precisa de 3 a 16 letras.': 'The nickname needs 3 to 16 letters.', 'MELHOR VAGA': 'BEST WAVE', 'NO RANKING': 'IN THE RANKING', 'MESMA REDE': 'SAME NETWORK', 'ECOS HOJE': 'ECHOES TODAY', 'JOGAR': 'PLAY', 'TODAS': 'ALL', 'ESTA SEMANA': 'THIS WEEK', '{n}.º': '#{n}', 'AINDA SEM SERVIDOR': 'NO SERVER YET', 'O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.': 'The global ranking is coming soon. For now you only see your records on this device.', 'DUPLA · ARMAS': 'DUO · WEAPONS', 'VAGA': 'WAVE', 'Ainda sem recordes esta semana.': 'No records yet this week.', 'Ainda sem recordes.': 'No records yet.', 'ABANDONAR PARTIDA': 'ABANDON RUN', 'Como queres sair?': 'How do you want to leave?', 'GUARDAR E SAIR': 'SAVE AND QUIT', 'A partida fica gravada; continuas onde estavas.': 'The run is saved; you continue where you left off.', 'DESISTIR': 'GIVE UP', 'Sais da arena; o teu colega continua sozinho.': 'You leave the arena; your partner carries on alone.', 'A partida acaba aqui; o recorde conta até à última vaga.': 'The run ends here; your record counts up to the last wave.', 'A partida acaba como uma morte: o herói vai para a Cripta.': 'The run ends like a death: the hero goes to the Crypt.', 'a desistência': 'giving up', 'Desististe no andar {n}.': 'You gave up on floor {n}.', 'DESISTIR?': 'GIVE UP?', 'Desistir mata {h} para sempre. Tens a certeza?': 'Giving up kills {h} for good. Are you sure?', 'SIM, DESISTIR': 'YES, GIVE UP', 'Desistiu': 'Gave up', 'desistiu no andar {n}': 'gave up on floor {n}', '{n}.º esta semana': '#{n} this week', 'A alcunha precisa de 3 a 16 letras ou números (espaço, _ e - também), sem palavrões.': 'The nickname needs 3 to 16 letters or numbers (space, _ and - too), no swear words.', 'RANKING GLOBAL': 'GLOBAL RANKING', 'Entra para apareceres no ranking de todos os jogadores com a tua alcunha ({n}). Aparece em público: não uses o teu nome verdadeiro.': 'Join to appear in the ranking of all players with your nickname ({n}). It is public: do not use your real name.', 'ENTRAR NO RANKING': 'JOIN THE RANKING', 'MUDAR ALCUNHA': 'CHANGE NICKNAME', 'SEM LIGAÇÃO AO SERVIDOR': 'NO CONNECTION TO THE SERVER', 'Não deu para ler o ranking global (sem internet, ou nesta versão de testes). Por agora vês só os teus recordes neste aparelho.': 'Could not read the global ranking (no internet, or in this test version). For now you only see your records on this device.', 'A carregar o ranking…': 'Loading the ranking…', 'ÉS O {p}.º ESTA SEMANA · DE {n}': 'YOU ARE #{p} THIS WEEK · OF {n}', 'ÉS O {p}.º DE SEMPRE · DE {n}': 'YOU ARE #{p} ALL-TIME · OF {n}', 'Fora do top 100 desta semana: precisas da vaga {n} para entrar.': 'Outside this week\'s top 100: you need wave {n} to get in.', 'Fora do top 100 de sempre: precisas da vaga {n} para entrar.': 'Outside the all-time top 100: you need wave {n} to get in.', 'Ainda ninguém esta semana. Sê o primeiro!': 'Nobody yet this week. Be the first!', 'Ainda ninguém no ranking. Sê o primeiro!': 'Nobody in the ranking yet. Be the first!', 'ALCUNHA · ARMAS': 'NICKNAME · WEAPONS', 'SAIR DO RANKING': 'LEAVE THE RANKING', 'Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).': 'First choose a valid nickname (3 to 16 letters or numbers, no swear words).', 'Colega': 'Partner', 'DESAFIO A MEIO': 'CHALLENGE IN PROGRESS', 'Há um desafio a meio (andar {n}). Começar outro apaga-o.': 'There is a challenge in progress (floor {n}). Starting another deletes it.', 'CONTINUAR O GRAVADO': 'CONTINUE SAVED ONE', 'COMEÇAR OUTRO': 'START ANOTHER', 'Desafiante': 'Challenger', 'Desafio diário (treino do dia: não conta para o resultado).': 'Daily challenge (practice run: it does not count for the result).', 'Desafio diário: esta tentativa conta. Chega ao andar 10 e vence o chefe.': 'Daily challenge: this attempt counts. Reach floor 10 and beat the boss.', 'Regra do dia: {n} ({d}).': 'Rule of the day: {n} ({d}).', 'Andar {n}': 'Floor {n}', 'desafio diário': 'daily challenge', 'Venceste o desafio do dia!': 'You beat the daily challenge!', '{h} caiu no desafio do dia.': '{h} fell in the daily challenge.', 'venceu o chefe · {k} baixas · {t} turnos': 'beat the boss · {k} kills · {t} turns', 'andar {f} · {k} baixas · {t} turnos': 'floor {f} · {k} kills · {t} turns', 'A mesma torre para todos, durante o dia de hoje (UTC). Andares 1 a 10; o chefe do andar 10 é o fim.': 'The same tower for everyone, for today (UTC). Floors 1 to 10; the floor 10 boss is the end.', 'PACTO DO DIA': 'PACT OF THE DAY', 'PRESSÁGIO DO DIA': 'OMEN OF THE DAY', 'Hoje: {r}': 'Today: {r}', 'A tentativa de hoje já começou: o que jogares agora é treino do dia.': 'Today\'s attempt has already started: anything you play now is practice.', 'Só a 1.ª tentativa conta. Sem reviver.': 'Only the first attempt counts. No reviving.', 'Sequência: {n} dias · Ecos: 3 + o andar, no máximo 14, uma vez por dia.': 'Streak: {n} days · Echoes: 3 + the floor, up to 14, once a day.', 'ÚLTIMOS DIAS': 'LAST DAYS', 'TREINO DO DIA': 'PRACTICE RUN', 'COMEÇAR': 'START', 'DESAFIO VENCIDO': 'CHALLENGE BEATEN', 'CAÍSTE NO DESAFIO': 'YOU FELL IN THE CHALLENGE', 'treino do dia': 'practice run', '10 ✓': '10 ✓', 'Treino do dia: não conta para o resultado nem dá Ecos.': 'Practice run: it does not count for the result or give Echoes.', 'Sequência: {n} dias.': 'Streak: {n} days.', 'O TEU MELHOR DIA': 'YOUR BEST DAY', 'VOLTAR AO DESAFIO': 'BACK TO THE CHALLENGE', 'andar {f}': 'floor {f}', 'Hoje: venceste · sequência {n}': 'Today: beaten · streak {n}', 'Hoje: andar {f} · sequência {n}': 'Today: floor {f} · streak {n}', 'Hoje: {w} · {m}': 'Today: {w} · {m}', 'Recarga: {n} turnos': 'Cooldown: {n} turns', '{n} de mana': '{n} mana', 'pronta daqui a {n}': 'ready in {n}', 'Bebe para recuperar vida. Sem cargas, come a comida que tiveres. Enche-se nas fogueiras.': 'Drink to recover health. With no charges, you eat any food you carry. It refills at campfires.', 'Cargas: {a}/{b} · comida {c}': 'Charges: {a}/{b} · food {c}', 'TREMOR': 'SCREEN SHAKE', 'SUAVE': 'SOFT', 'DESLIGADO': 'OFF', 'O ecrã treme com os golpes fortes. Suave é metade.': 'The screen shakes on heavy hits. Soft is half.', 'NÚMEROS DE DANO': 'DAMAGE NUMBERS', 'PEQUENOS': 'SMALL', 'DESLIGADOS': 'OFF', 'Os números do dano por cima dos inimigos. Desligados, as curas, as palavras e o diário ficam.': 'The damage numbers above enemies. When off, heals, words and the journal stay.', 'Continuar: {n} · andar {f}': 'Continue: {n} · floor {f}', '{h} heróis prontos · {c} na Cripta': '{h} heroes ready · {c} in the Crypt', 'Cria o teu primeiro herói.': 'Create your first hero.', 'A MEIO': 'IN PROGRESS', 'vaga {n} · {w}': 'wave {n} · {w}', 'Melhor: vaga {n} · {p}.º esta semana': 'Best: wave {n} · #{p} this week', 'Melhor: vaga {n} · {w}': 'Best: wave {n} · {w}', 'Desce os 25 andares até ao Rei.': 'Descend the 25 floors to the King.', 'A mesma torre para todos.': 'The same tower for everyone.', 'uma arma por dia': 'one weapon per day', 'Experimenta armas e habilidades.': 'Try out weapons and abilities.', 'sem morrer': 'no dying', 'O ranking atualiza a cada 5 minutos.': 'The ranking updates every 5 minutes.', 'Saíste do ranking há pouco: voltas a aparecer quando o servidor deixar (até 7 dias depois de saíres).': 'You left the ranking recently: you will show up again when the server allows it (up to 7 days after leaving).', 'OK': 'OK', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro. Podes desligar isto em Opções › Privacidade.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name. You can turn this off in Options › Privacy.', 'PRIVACIDADE': 'PRIVACY', 'Mostra a tua alcunha e os teus recordes da arena no ranking de todos os jogadores. Com NÃO, os teus recordes saem do ranking (ficam só neste aparelho); para voltar, espera 7 dias.': 'Shows your nickname and your arena records in the ranking of all players. With NO, your records leave the ranking (they stay only on this device); to come back, wait 7 days.', 'POLÍTICA DE PRIVACIDADE': 'PRIVACY POLICY', 'LER': 'READ', 'O que o jogo guarda, onde e os teus direitos. Para apagar os teus dados do ranking, escreve para godspire.game@gmail.com.': 'What the game stores, where, and your rights. To delete your ranking data, write to godspire.game@gmail.com.', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name.', 'Versões diferentes: este aparelho tem a {a} e o outro a {b}. Fechem e abram o jogo nos dois para atualizar.': 'Different versions: this device has {a} and the other has {b}. Close and reopen the game on both to update.', 'O outro aparelho tem uma versão antiga do jogo. Fechem e abram o jogo nos dois para atualizar.': 'The other device has an old version of the game. Close and reopen the game on both to update.', 'PARTIDA A MEIO': 'RUN IN PROGRESS', 'Tens uma partida na vaga {n} ({w}). Começar outra apaga-a.': 'You have a run on wave {n} ({w}). Starting another deletes it.', 'CONTINUAR A GRAVADA': 'CONTINUE SAVED RUN', 'COMEÇAR NOVA': 'START NEW', 'NOVA PARTIDA': 'NEW RUN', 'Saíste do ranking há pouco: podes voltar a partir de {d}.': 'You left the ranking recently: you can come back from {d}.', 'Tens {n} s; depois o jogo escolhe por ti e avança.': 'You have {n} s; then the game picks for you and moves on.', 'O tempo acabou: o jogo escolheu por ti.': 'Time is up: the game picked for you.', 'No co-op, o equipamento muda-se no descanso entre vagas.': 'In co-op, gear is changed during the rest between waves.', 'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
+  'O teu melhor neste aparelho. O ranking global chega quando houver servidor.': 'Your best on this device. The global ranking arrives once there is a server.', 'RANK': 'RANK', 'Escolhe o modo.': 'Choose the mode.', 'ARENA SOLO': 'SOLO ARENA', 'Vagas sem fim, a arma que escolheres': 'Endless waves, the weapon you choose', 'O teu melhor: vaga {n} · {w}': 'Your best: wave {n} · {w}', 'A dois, na mesma rede Wi-Fi': 'Two players, same Wi-Fi network', 'O teu melhor: vaga {n} com {p}': 'Your best: wave {n} with {p}', 'A TUA PERSONAGEM': 'YOUR CHARACTER', 'a tua arma mais usada: {w}': 'your most used weapon: {w}', 'EDITAR': 'EDIT', 'É assim que te veem no pódio, no ranking e na arena (o colega no co-op também).': 'This is how others see you on the podium, in the ranking and in the arena (your co-op partner too).', 'ALCUNHA (3 a 16)': 'NICKNAME (3 to 16)', 'GUARDAR': 'SAVE', 'A alcunha precisa de 3 a 16 letras.': 'The nickname needs 3 to 16 letters.', 'MELHOR VAGA': 'BEST WAVE', 'NO RANKING': 'IN THE RANKING', 'MESMA REDE': 'SAME NETWORK', 'ECOS HOJE': 'ECHOES TODAY', 'JOGAR': 'PLAY', 'TODAS': 'ALL', 'ESTA SEMANA': 'THIS WEEK', '{n}.º': '#{n}', 'AINDA SEM SERVIDOR': 'NO SERVER YET', 'O ranking global chega em breve. Por agora vês só os teus recordes neste aparelho.': 'The global ranking is coming soon. For now you only see your records on this device.', 'DUPLA · ARMAS': 'DUO · WEAPONS', 'VAGA': 'WAVE', 'Ainda sem recordes esta semana.': 'No records yet this week.', 'Ainda sem recordes.': 'No records yet.', 'ABANDONAR PARTIDA': 'ABANDON RUN', 'Como queres sair?': 'How do you want to leave?', 'GUARDAR E SAIR': 'SAVE AND QUIT', 'A partida fica gravada; continuas onde estavas.': 'The run is saved; you continue where you left off.', 'DESISTIR': 'GIVE UP', 'Sais da arena; o teu colega continua sozinho.': 'You leave the arena; your partner carries on alone.', 'A partida acaba aqui; o recorde conta até à última vaga.': 'The run ends here; your record counts up to the last wave.', 'A partida acaba como uma morte: o herói vai para a Cripta.': 'The run ends like a death: the hero goes to the Crypt.', 'a desistência': 'giving up', 'Desististe no andar {n}.': 'You gave up on floor {n}.', 'DESISTIR?': 'GIVE UP?', 'Desistir mata {h} para sempre. Tens a certeza?': 'Giving up kills {h} for good. Are you sure?', 'SIM, DESISTIR': 'YES, GIVE UP', 'Desistiu': 'Gave up', 'desistiu no andar {n}': 'gave up on floor {n}', '{n}.º esta semana': '#{n} this week', 'A alcunha precisa de 3 a 16 letras ou números (espaço, _ e - também), sem palavrões.': 'The nickname needs 3 to 16 letters or numbers (space, _ and - too), no swear words.', 'RANKING GLOBAL': 'GLOBAL RANKING', 'Entra para apareceres no ranking de todos os jogadores com a tua alcunha ({n}). Aparece em público: não uses o teu nome verdadeiro.': 'Join to appear in the ranking of all players with your nickname ({n}). It is public: do not use your real name.', 'ENTRAR NO RANKING': 'JOIN THE RANKING', 'MUDAR ALCUNHA': 'CHANGE NICKNAME', 'SEM LIGAÇÃO AO SERVIDOR': 'NO CONNECTION TO THE SERVER', 'Não deu para ler o ranking global (sem internet, ou nesta versão de testes). Por agora vês só os teus recordes neste aparelho.': 'Could not read the global ranking (no internet, or in this test version). For now you only see your records on this device.', 'A carregar o ranking…': 'Loading the ranking…', 'ÉS O {p}.º ESTA SEMANA · DE {n}': 'YOU ARE #{p} THIS WEEK · OF {n}', 'ÉS O {p}.º DE SEMPRE · DE {n}': 'YOU ARE #{p} ALL-TIME · OF {n}', 'Fora do top 100 desta semana: precisas da vaga {n} para entrar.': 'Outside this week\'s top 100: you need wave {n} to get in.', 'Fora do top 100 de sempre: precisas da vaga {n} para entrar.': 'Outside the all-time top 100: you need wave {n} to get in.', 'Ainda ninguém esta semana. Sê o primeiro!': 'Nobody yet this week. Be the first!', 'Ainda ninguém no ranking. Sê o primeiro!': 'Nobody in the ranking yet. Be the first!', 'ALCUNHA · ARMAS': 'NICKNAME · WEAPONS', 'SAIR DO RANKING': 'LEAVE THE RANKING', 'Escolhe primeiro uma alcunha válida (3 a 16 letras ou números, sem palavrões).': 'First choose a valid nickname (3 to 16 letters or numbers, no swear words).', 'Colega': 'Partner', 'não morres': 'no dying', 'SAIR DO TREINO': 'LEAVE TRAINING', 'O treino não grava nada. Voltas ao menu principal.': 'Training saves nothing. You go back to the main menu.', 'Podes voltar quando quiseres.': 'You can come back any time.', 'Não morres no treino.': 'You cannot die in training.', 'Bem-vindo ao treino. Aqui não morres: a vida não baixa de 1 e o frasco enche-se sozinho.': 'Welcome to training. You cannot die here: your HP never drops below 1 and the flask refills by itself.', 'À esquerda, os bonecos-alvo. Ao meio, o Lutador lento. À direita, o Vigia de treino.': 'On the left, the training dummies. In the middle, the Slow Fighter. On the right, the Training Sentry.', 'O suporte à entrada é o arsenal: armas, peças, relíquias, runas e ARRUMAR. Para sair, MENU.': 'The rack at the entrance is the armoury: weapons, gear, relics, runes and ARRANGE. To leave, MENU.', 'Rodopio do {f}': '{f} Spin', 'Pancada do {f}': '{f} Slam', '{f} prepara o golpe: tens 2 turnos para sair das casas marcadas.': '{f} winds up: you have 2 turns to leave the marked tiles.', '{f} toca o sino! No treino ninguém vem. Volta a vigiar daqui a 3 turnos.': '{f} rings the bell! In training nobody comes. It goes back on watch in 3 turns.', '{f} caiu! Volta daqui a 3 turnos.': '{f} fell! It comes back in 3 turns.', 'recupera': 'recovers', 'Na mão: {n}.': 'In hand: {n}.', 'Vestido: {n}.': 'Wearing: {n}.', '{n} guardada.': '{n} stored.', 'Só {n} relíquias ativas: guarda uma primeiro.': 'Only {n} active relics: store one first.', '{n} ativa.': '{n} active.', 'As runas estão na mochila → RUNAS.': 'The runes are in the bag → RUNES.', 'ARSENAL': 'ARMOURY', 'Na mão: {w} · disciplina {d}.': 'In hand: {w} · discipline {d}.', 'Escolhe uma arma.': 'Pick a weapon.', 'ARMAS': 'WEAPONS', 'ARMADURAS': 'ARMOUR', 'As relíquias que encontrares na torre aparecem aqui.': 'The relics you find in the tower show up here.', 'RECEBER AS 7 RUNAS': 'GET THE 7 RUNES', 'Ficam na mochila; encaixa-as em ARRUMAR → RUNAS.': 'They go in the bag; slot them in ARRANGE → RUNES.', 'As variantes de armas e armaduras que encontrares na torre juntam-se ao arsenal.': 'The weapon and armour variants you find in the tower join the armoury.', 'MANUAL': 'MANUAL', 'Boneco-alvo': 'Training Dummy', 'Lutador lento': 'Slow Fighter', 'Vigia de treino': 'Training Sentry', 'DESAFIO A MEIO': 'CHALLENGE IN PROGRESS', 'Há um desafio a meio (andar {n}). Começar outro apaga-o.': 'There is a challenge in progress (floor {n}). Starting another deletes it.', 'CONTINUAR O GRAVADO': 'CONTINUE SAVED ONE', 'COMEÇAR OUTRO': 'START ANOTHER', 'Desafiante': 'Challenger', 'Desafio diário (treino do dia: não conta para o resultado).': 'Daily challenge (practice run: it does not count for the result).', 'Desafio diário: esta tentativa conta. Chega ao andar 10 e vence o chefe.': 'Daily challenge: this attempt counts. Reach floor 10 and beat the boss.', 'Regra do dia: {n} ({d}).': 'Rule of the day: {n} ({d}).', 'Andar {n}': 'Floor {n}', 'desafio diário': 'daily challenge', 'Venceste o desafio do dia!': 'You beat the daily challenge!', '{h} caiu no desafio do dia.': '{h} fell in the daily challenge.', 'venceu o chefe · {k} baixas · {t} turnos': 'beat the boss · {k} kills · {t} turns', 'andar {f} · {k} baixas · {t} turnos': 'floor {f} · {k} kills · {t} turns', 'A mesma torre para todos, durante o dia de hoje (UTC). Andares 1 a 10; o chefe do andar 10 é o fim.': 'The same tower for everyone, for today (UTC). Floors 1 to 10; the floor 10 boss is the end.', 'PACTO DO DIA': 'PACT OF THE DAY', 'PRESSÁGIO DO DIA': 'OMEN OF THE DAY', 'Hoje: {r}': 'Today: {r}', 'A tentativa de hoje já começou: o que jogares agora é treino do dia.': 'Today\'s attempt has already started: anything you play now is practice.', 'Só a 1.ª tentativa conta. Sem reviver.': 'Only the first attempt counts. No reviving.', 'Sequência: {n} dias · Ecos: 3 + o andar, no máximo 14, uma vez por dia.': 'Streak: {n} days · Echoes: 3 + the floor, up to 14, once a day.', 'ÚLTIMOS DIAS': 'LAST DAYS', 'TREINO DO DIA': 'PRACTICE RUN', 'COMEÇAR': 'START', 'DESAFIO VENCIDO': 'CHALLENGE BEATEN', 'CAÍSTE NO DESAFIO': 'YOU FELL IN THE CHALLENGE', 'treino do dia': 'practice run', '10 ✓': '10 ✓', 'Treino do dia: não conta para o resultado nem dá Ecos.': 'Practice run: it does not count for the result or give Echoes.', 'Sequência: {n} dias.': 'Streak: {n} days.', 'O TEU MELHOR DIA': 'YOUR BEST DAY', 'VOLTAR AO DESAFIO': 'BACK TO THE CHALLENGE', 'andar {f}': 'floor {f}', 'Hoje: venceste · sequência {n}': 'Today: beaten · streak {n}', 'Hoje: andar {f} · sequência {n}': 'Today: floor {f} · streak {n}', 'Hoje: {w} · {m}': 'Today: {w} · {m}', 'Recarga: {n} turnos': 'Cooldown: {n} turns', '{n} de mana': '{n} mana', 'pronta daqui a {n}': 'ready in {n}', 'Bebe para recuperar vida. Sem cargas, come a comida que tiveres. Enche-se nas fogueiras.': 'Drink to recover health. With no charges, you eat any food you carry. It refills at campfires.', 'Cargas: {a}/{b} · comida {c}': 'Charges: {a}/{b} · food {c}', 'TREMOR': 'SCREEN SHAKE', 'SUAVE': 'SOFT', 'DESLIGADO': 'OFF', 'O ecrã treme com os golpes fortes. Suave é metade.': 'The screen shakes on heavy hits. Soft is half.', 'NÚMEROS DE DANO': 'DAMAGE NUMBERS', 'PEQUENOS': 'SMALL', 'DESLIGADOS': 'OFF', 'Os números do dano por cima dos inimigos. Desligados, as curas, as palavras e o diário ficam.': 'The damage numbers above enemies. When off, heals, words and the journal stay.', 'Continuar: {n} · andar {f}': 'Continue: {n} · floor {f}', '{h} heróis prontos · {c} na Cripta': '{h} heroes ready · {c} in the Crypt', 'Cria o teu primeiro herói.': 'Create your first hero.', 'A MEIO': 'IN PROGRESS', 'vaga {n} · {w}': 'wave {n} · {w}', 'Melhor: vaga {n} · {p}.º esta semana': 'Best: wave {n} · #{p} this week', 'Melhor: vaga {n} · {w}': 'Best: wave {n} · {w}', 'Desce os 25 andares até ao Rei.': 'Descend the 25 floors to the King.', 'A mesma torre para todos.': 'The same tower for everyone.', 'uma arma por dia': 'one weapon per day', 'Experimenta armas e habilidades.': 'Try out weapons and abilities.', 'sem morrer': 'no dying', 'O ranking atualiza a cada 5 minutos.': 'The ranking updates every 5 minutes.', 'Saíste do ranking há pouco: voltas a aparecer quando o servidor deixar (até 7 dias depois de saíres).': 'You left the ranking recently: you will show up again when the server allows it (up to 7 days after leaving).', 'OK': 'OK', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro. Podes desligar isto em Opções › Privacidade.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name. You can turn this off in Options › Privacy.', 'PRIVACIDADE': 'PRIVACY', 'Mostra a tua alcunha e os teus recordes da arena no ranking de todos os jogadores. Com NÃO, os teus recordes saem do ranking (ficam só neste aparelho); para voltar, espera 7 dias.': 'Shows your nickname and your arena records in the ranking of all players. With NO, your records leave the ranking (they stay only on this device); to come back, wait 7 days.', 'POLÍTICA DE PRIVACIDADE': 'PRIVACY POLICY', 'LER': 'READ', 'O que o jogo guarda, onde e os teus direitos. Para apagar os teus dados do ranking, escreve para godspire.game@gmail.com.': 'What the game stores, where, and your rights. To delete your ranking data, write to godspire.game@gmail.com.', 'A tua alcunha e os teus recordes da arena aparecem no ranking global. Não uses o teu nome verdadeiro.': 'Your nickname and your arena records appear in the global ranking. Do not use your real name.', 'Versões diferentes: este aparelho tem a {a} e o outro a {b}. Fechem e abram o jogo nos dois para atualizar.': 'Different versions: this device has {a} and the other has {b}. Close and reopen the game on both to update.', 'O outro aparelho tem uma versão antiga do jogo. Fechem e abram o jogo nos dois para atualizar.': 'The other device has an old version of the game. Close and reopen the game on both to update.', 'PARTIDA A MEIO': 'RUN IN PROGRESS', 'Tens uma partida na vaga {n} ({w}). Começar outra apaga-a.': 'You have a run on wave {n} ({w}). Starting another deletes it.', 'CONTINUAR A GRAVADA': 'CONTINUE SAVED RUN', 'COMEÇAR NOVA': 'START NEW', 'NOVA PARTIDA': 'NEW RUN', 'Saíste do ranking há pouco: podes voltar a partir de {d}.': 'You left the ranking recently: you can come back from {d}.', 'Tens {n} s; depois o jogo escolhe por ti e avança.': 'You have {n} s; then the game picks for you and moves on.', 'O tempo acabou: o jogo escolheu por ti.': 'Time is up: the game picked for you.', 'No co-op, o equipamento muda-se no descanso entre vagas.': 'In co-op, gear is changed during the rest between waves.', 'Ação escolhida. À espera do teu colega…': 'Action chosen. Waiting for your partner…', 'Estado acertado com o anfitrião.': 'Game state synced with the host.', '{h} saiu. Continuas sozinho.': '{h} left. You carry on alone.',
   'Dois jogadores na mesma rede Wi-Fi. Um cria a sala, o outro entra lendo o código com a câmara.': 'Two players on the same Wi-Fi network. One creates the room, the other joins by scanning the code with the camera.',
   'CRIAR SALA': 'CREATE ROOM', 'És o anfitrião: mostras o código ao teu colega.': 'You are the host: you show the code to your partner.', 'Lês o código do anfitrião com a câmara.': 'You scan the host\'s code with the camera.',
   'A câmara só funciona na app (no site do jogo).': 'The camera only works in the app (on the game\'s website).', 'A TUA SALA': 'YOUR ROOM', 'A TUA RESPOSTA': 'YOUR REPLY', 'código de ligação': 'connection code',
@@ -3775,7 +3799,7 @@ const store = {
    (duplo clique) não há window.claude e nada acontece. Uma falha aqui nunca interrompe o jogo. */
 // v97 (utilizador, pelo Sábio): versão visível em SemVer; o número inteiro é o build interno (versionCode da Play Store, gravações, «publicada»).
 // Lote com coisas novas: sobe o do meio (0.11.0); só correções: sobe o último (0.11.1); lançamento público: 1.0.0. O build sobe 1 a cada publicação.
-const GAME_SEMVER = '0.15.0', GAME_BUILD = 127;
+const GAME_SEMVER = '0.16.0', GAME_BUILD = 128;
 window.GAME_SEMVER_TXT = GAME_SEMVER + ' (' + GAME_BUILD + ')'; // a caixa de erros do index.html lê isto
 const GAME_VER = 'v' + GAME_BUILD;
 function reportRun(r) {
@@ -4971,6 +4995,7 @@ function sentryAct(f, seenNow, veiled) {
   if (f.rang) return;
   if (f.alarm > 0) {
     if (--f.alarm === 0) { // o sino toca: acorda toda a gente perto
+      if (f.drillBell) { drillBellRing(f); return; } // v0.16.0: o sino do Vigia de treino não chama ninguém
       f.rang = true; f.cone = []; f.ringT = performance.now() + 800; Sound.play('vigia_alarm');
       log(_t('{f} toca o sino! A sala acorda.', { f: fname(f) })); float(f.x, f.y, '!', 'red');
       st.foes.forEach(o => { if (!o.boss && Math.max(Math.abs(o.x - f.x), Math.abs(o.y - f.y)) <= 8) { o.aware = true; o.provoked = true; } });
@@ -5414,7 +5439,7 @@ const coreDodge = (p, base) => { const v = 0.03 * ((p.core || {}).vigor || 0); r
 function coreAdd(k, n) {
   const p = st.p; p.core = p.core || {};
   // v96 (OBS 41, Sábio): fora da fogueira só se GASTA (nunca se tira), nunca em combate e sem passar do limite
-  if (!st.coresAtCamp && (n < 0 || coreBusy() || (p.core[k] || 0) >= coreCap(p))) { st.coreMsg = _t(n < 0 ? 'Tirar pontos só na fogueira.' : coreBusy() ? 'Em combate não dá para gastar Núcleos.' : 'Passar do limite só na fogueira.'); Sound.play('error'); ui(); return; }
+  if (!st.coresAtCamp && !(typeof isTraining === 'function' && isTraining()) && (n < 0 || coreBusy() || (p.core[k] || 0) >= coreCap(p))) { st.coreMsg = _t(n < 0 ? 'Tirar pontos só na fogueira.' : coreBusy() ? 'Em combate não dá para gastar Núcleos.' : 'Passar do limite só na fogueira.'); Sound.play('error'); ui(); return; }
   if (n > 0 && !(p.corePts > 0)) { Sound.play('error'); return; }
   if (n < 0 && !(p.core[k] > 0)) { Sound.play('error'); return; }
   st.coreMsg = n > 0 && (p.core[k] || 0) >= coreCap(p) ? _t('Velha das Brasas: «{l}»', { l: _t('Tens estrelas a mais no mesmo ramo, criança. Vai rachar.') }) : ''; // v97: fala do Sábio
@@ -6234,6 +6259,7 @@ function kingPhase(f) {
 // Ecos: moeda da conta, guardada logo (não se perde ao morrer)
 function earnEcos(n, why) {
   if (!n) return;
+  if (typeof isTraining === 'function' && isTraining()) return; // v0.16.0: o treino não dá Ecos
   if (typeof isDaily === 'function' && isDaily() && !earnEcos.force) return; // v0.15.0: no Diário os Ecos são só os do resultado (3 + andar, uma vez por dia)
   if (!earnEcos.force) n = Math.round(n * pactMult(st.pacts)); // pactos ativos dão mais Ecos (v0.15.0, Sábio: a recompensa do Diário não multiplica: no máximo 14)
   acct.ecos += n; saveAcct();
@@ -6241,6 +6267,7 @@ function earnEcos(n, why) {
   log(_t('+{n} Ecos: {w}.', { n, w: why }));
 }
 function codexKill(f) {
+  if (typeof isTraining === 'function' && isTraining()) return; // v0.16.0: as baixas do treino não contam para o Codex (sem farm)
   if (f.head != null || f.kamikaze || f.feeder) return; // cabeças da Hidra, cogumelos filhos e servos da Ceia
   const book = f.boss ? acct.codex.bosses : acct.codex.foes, key = f.boss ? f.btype : f.id;
   const first = !book[key];
@@ -6256,6 +6283,7 @@ function killFoe(f) {
   codexKill(f);
   st.foes = st.foes.filter(o => o !== f);
   st.attacks = st.attacks.filter(a => a.own !== f.fid);
+  if (typeof isTraining === 'function' && isTraining()) { trainDead(f); return; } // v0.16.0: sem EXP, ouro, saque nem Domínio; volta em 3 turnos
   if (st.fs && !f.ally && !f.summoned) st.fs.kills++; // v67: cartão do andar
   // cabeças da Hidra: voltam a crescer, por isso não dão EXP, ouro nem baixas (senão dava para fazer farm na arena)
   if (!f.executed) makeNoise(f.x, f.y, 4); // v63: o grito de quem morre (a execução é silenciosa); v72: raio 4
@@ -6310,7 +6338,7 @@ function killFoe(f) {
   } else if (rand() < 0.12 || f.elite) { const k = f.elite && rand() < 0.4 && !st.heroes ? 'chest' : 'gold'; st.items.push({ x: f.x, y: f.y, k, v: rnd(1, 3) + (st.floor >> 1), elite: !!f.elite, drop: k === 'chest' }); } // v80: o saque do feroz fica no corpo (drop)
   gainXp(f.xp);
 }
-function gainXp(n) { if (st.heroes) { eachHero(() => gainXpOne(n)); return; } gainXpOne(n); } // v0.12.0 (co-op): a EXP é partilhada
+function gainXp(n) { if (typeof isTraining === 'function' && isTraining()) return; if (st.heroes) { eachHero(() => gainXpOne(n)); return; } gainXpOne(n); } // v0.12.0 (co-op): a EXP é partilhada
 function gainXpOne(n) {
   const p = st.p;
   p.xp += Math.round(n * (1 + tal(p, 'xp')));
@@ -6352,6 +6380,7 @@ function hurtPlayer(d, what, who) {
   const over = coreOver(p); if (over) d = Math.round(d * (1 + 0.1 * over)); // v59: Núcleos acima da capacidade
   if (d > 0 && st.directHit && coreMs(p, 'vigor', 6) && !st.msG6) { st.msG6 = true; d = Math.ceil(d / 2); float(p.x, p.y, _t('fôlego'), 'resist'); } // v96: VIGOR 6 «Segundo fôlego» (só golpes, não veneno nem fogo)
   p.hp -= d; p.flash = now + 300; float(p.x, p.y, '-' + d, 'red');
+  if (p.hp < 1 && typeof isTraining === 'function' && isTraining()) { p.hp = 1; float(p.x, p.y, _t('não morres'), 'gold'); } // v0.16.0: no treino a vida não baixa de 1
   if (st.fs) { st.fs.dmg += d; st.fs.lastHp = p.hp; } // v67: cartão do andar
   if (p.hp <= 0 && hasRelic('asa') && !st.asaUsed) { p.hp = 1; st.asaUsed = true; float(p.x, p.y, _t('asa!'), 'gold'); log(_t('A Asa de fantasma segura-te a 1 HP!')); Sound.play('asa'); buzz([30, 50, 30]); } // v55
   shakeUntil = Math.max(shakeUntil, now + 220);
@@ -6726,6 +6755,8 @@ function foesAct() {
     if (f.boss && !st.arena && seenNow && !f.seen) { f.seen = true; f.aware = true; bossIntro(f); }
     if (f.id === 'wraith') { f.bubT = (f.bubT || 0) + 1; f.bubble = f.bubT % 5 < 3; } // v73: bolha 3 turnos ligada, 2 desligada
     if (f.immuneT > 0) f.immuneT--;
+    if (f.dummy) continue; // v0.16.0: os bonecos-alvo do treino não fazem nada
+    if (f.drill) { drillAct(f); continue; } // v0.16.0: o Lutador lento do treino
     if (f.stun > 0) { f.stun--; continue; } // v66: congelado ou atordoado não age nem vigia (antes a furtividade ainda o virava)
     if (!f.boss && !f.sentry && !f.dormant && !f.ally && !f.lock && f.head == null && !f.passive && !f.feeder && stealthAct(f)) continue; // v63: furtividade (fase 3a)
     if (f.btype === 'king' && f.phase === 3 && st.turn % 2) continue; // v56: na Última Ceia o Rei só age em turnos alternados
@@ -6908,6 +6939,7 @@ function endTurnCore() {
   });
   if (st.heroes) { coopDowns(); if (!anyHeroUp()) { coopAllDown(); return; } }
   const p = st.p;
+  if (typeof isTraining === 'function') { if (isTraining()) trainTick(); else seeRun(); } // v0.16.0: treino (frasco, bonecos, regressos) e o que já viste para o arsenal
   if (!st.heroes && p.hp <= 0) { p.hp = 0; die(); return; }
   checkTrial(); checkArenaWave(); // v0.11.0: fim da vaga da arena (v0.14.0: nome próprio, já não apaga o checkArena das grades)
   const live = st.attacks.filter(a => !a.frozen); // v66: os avisos parados (chefe congelado) não tocam
@@ -7070,6 +7102,7 @@ function act(dx, dy) {
   if (urn) { bump(p, dx, dy); breakUrn(urn); endTurn(); return; }
   if (f) attackFoe(f, dx, dy);
   else if (npc) {
+    if (npc.k === 'rack') { trainOpen(); return; } // v0.16.0: o suporte do arsenal do treino
     if (npc.k === 'merchant') { openShop(st.npcs.indexOf(npc)); return; }
     if (npc.k === 'smith') {
       if (npc.scared) { // salvá-lo: a partir daqui (só nesta partida) está nos acampamentos
@@ -8443,6 +8476,7 @@ function die() {
   if (st.screen === 'dead' || st.dying) return;
   if (isArena()) { if (!st.av.over) arenaDie(); return; } // v0.11.0: a arena não vai para a Cripta
   if (typeof isDaily === 'function' && isDaily()) { dailyEnd(false); return; } // v0.15.0: o Diário também não
+  if (typeof isTraining === 'function' && isTraining()) { st.p.hp = 1; return; } // v0.16.0: no treino não se morre
   updateBest();
   const ch = charOf(st.charId), p = st.p;
   if (st.floor >= 3) earnEcos(Math.floor(st.floor / (st.floor >= 16 ? 2 : 3)), _t('coragem de descer fundo')); // v62: andar/2 a partir do 16
@@ -8532,6 +8566,10 @@ function abandonOpen() {
 }
 function abandonBack() { st.screen = st.abBack || 'play'; st.abBack = null; st.abSure = false; Sound.play('menu'); ui(); }
 function abandonHtml() {
+  if (typeof isTraining === 'function' && isTraining()) return `<div class="ov-in ab-ask">
+      <div class="box ov-head"><h2>${_t('SAIR DO TREINO')}</h2><p>${_t('O treino não grava nada. Voltas ao menu principal.')}</p></div>
+      <div class="box menu"><button class="opt mm-go" data-abquit="1"><span><b>${_t('SAIR DO TREINO')}</b><small>${_t('Podes voltar quando quiseres.')}</small></span><em>›</em></button></div>
+      <div class="btn-row"><button class="box again" data-abno="1">${_t('CANCELAR')}</button></div></div>`; // v0.16.0
   const co = typeof isCoop === 'function' && isCoop(), ar = isArena();
   // v0.13.1 (Sábio): na torre, desistir mata o herói para sempre; pede uma 2.ª confirmação, com o NÃO em destaque e do lado do polegar
   if (st.abSure) return `<div class="ov-in ab-ask">
@@ -8551,6 +8589,7 @@ function abandonKeep() {
   toMenu();
 }
 function abandonQuit(sure) {
+  if (typeof isTraining === 'function' && isTraining()) { trainExit(); return; } // v0.16.0
   if (!sure && !isArena() && !(typeof isCoop === 'function' && isCoop())) { st.abSure = true; Sound.play('menu'); ui(); return; }
   st.screen = st.abBack || 'play'; st.abBack = null; st.abSure = false;
   if (typeof isCoop === 'function' && isCoop()) { coopEnd(); return; }
@@ -9011,6 +9050,7 @@ function draw() {
     const k = n.k === 'fire' ? (n.lit ? (flick ? 'fire1' : 'fire2') : 'campOff') : n.k === 'portal' ? (flick ? 'portal1' : 'portal2') : n.k === 'smith' ? 'merchant' : n.k; // ferreiro: nos temas sem o remake usa o desenho do mercador
     if (n.k === 'merchant' && !calm) { const [mx, my] = at(n.x, n.y); breathe(S[k], mx, my, TS, idle(n.x * 7 + n.y, now, 1900)); }
     else if (S[k]) spr(S[k], ...at(n.x, n.y)); // v56: o trono e os estandartes só têm desenho no visual.js
+    else if (n.k === 'rack') { const [rx, ry] = at(n.x, n.y), c = (x, y, w, h, col) => { ctx.fillStyle = vis[i] ? col : '#2a2430'; ctx.fillRect(rx + x, ry + y, w, h); }; c(1, 2, 2, 13, '#5e4a36'); c(13, 2, 2, 13, '#5e4a36'); c(0, 1, 16, 2, '#7a5a40'); c(1, 12, 14, 2, '#4a3424'); c(5, 3, 1, 9, '#a3a9b1'); c(4, 5, 3, 1, '#b07d22'); c(9, 3, 1, 10, '#6a4c30'); c(10, 3, 2, 3, '#7a808a'); } /* v0.16.0: o suporte de armas do Treino, no tema clássico */
     if (vis[i] && ((n.k === 'fire' && n.lit) || n.k === 'portal')) fires.push([...at(n.x, n.y), k, n.k === 'fire' ? 52 : 30]);
   }
   for (const it of st.items) if (vis[idx(it.x, it.y)]) spr(CACHE[it.opened ? 'chestOpen' : it.k === 'gold' ? 'coins' : it.k], ...at(it.x, it.y));
@@ -9938,6 +9978,23 @@ const REMAKE = (() => {
     if (e.hitT && t < e.hitT) { R(6, -12, 1, 1, '#fff4d8'); R(-7, -9, 1, 1, '#fff4d8'); }
   }
   DRAW.book = drawBook; DRAW.lock = drawLock; REST.book = 0; REST.lock = 0;
+  /* v0.16.0 (Imagem): o boneco-alvo do Treino (f.dummy): um espantalho de palha num poste, com um alvo pintado no peito (sem vermelho: não é perigo).
+     Abana quando leva um golpe (P.lean) e solta palha */
+  DRAW.dummy = (R, P, t, e) => { /* em blocos de 2 px, para sobreviver à redução a metade */
+    const l = Math.round((P.lean || 0) / 2) * 2, w = e.hitT && t < e.hitT ? (Math.floor(t / 60) % 2 ? 2 : -2) : 0, s = l + w;
+    R(-8, -2, 16, 2, '#2a1e14'); R(-2, -12, 4, 10, '#5e4a36'); R(0, -12, 2, 10, '#3a2a1c');
+    R(-14 + s, -22, 28, 4, '#6a4c30'); R(-14 + s, -22, 28, 2, '#8a6a48');
+    R(-16 + s, -24, 4, 8, '#e0c070'); R(12 + s, -24, 4, 8, '#e0c070'); R(-16 + s, -18, 2, 2, '#8a6a2e'); R(14 + s, -18, 2, 2, '#8a6a2e');
+    R(-8 + s, -24, 16, 14, '#1a120c'); R(-6 + s, -24, 12, 14, '#c8a050'); R(-6 + s, -24, 4, 14, '#9a7a3a');
+    R(-6 + s, -20, 12, 2, '#5e4022'); R(-6 + s, -14, 12, 2, '#5e4022');
+    R(-6 + s, -10, 2, 4, '#e0c070'); R(-2 + s, -10, 2, 4, '#c8a050'); R(2 + s, -10, 2, 4, '#e0c070'); R(-4 + s, -10, 2, 2, '#8a6a2e'); R(0 + s, -10, 2, 2, '#8a6a2e'); R(4 + s, -10, 2, 2, '#8a6a2e');
+    R(-2 + s, -18, 6, 4, '#f4ead6'); R(0 + s, -18, 2, 2, '#3a2a1c');
+    R(-6 + s, -34, 12, 10, '#1a120c'); R(-4 + s, -34, 8, 10, '#d8c08a'); R(-4 + s, -34, 2, 10, '#b09868');
+    R(-2 + s, -30, 2, 2, '#2a1e14'); R(2 + s, -30, 2, 2, '#2a1e14'); R(-2 + s, -26, 6, 2, '#7a5a30');
+    R(-8 + s, -36, 16, 2, '#7a5a30'); R(-4 + s, -40, 8, 4, '#6a4c30'); R(-4 + s, -40, 8, 2, '#8a6a48');
+    if (w) { R(-10 + s, -28, 2, 2, '#e0c070'); R(8 + s, -12, 2, 2, '#e0c070'); R(8 + s, -30, 2, 2, '#c8a050'); }
+  };
+  REST.dummy = 0; HEADH.dummy = 36;
   Object.assign(HEADH, { knightF: 31, knightBk: 31 }); Object.assign(REST, { knightF: 1.15, knightBk: 1.15 });
   /* ---- v54 (ronda 5): inimigos redesenhados (esqueleto B, arqueiro C, cogumelo C, cobra B, Mímico C, cabeça da Hidra B, Hidra C, Rei Rato B) ---- */
   const BONE = '#c8bba0', BONE2 = '#e9dfc3', BONED = '#a0937c', HOLE = '#141018';
@@ -10894,6 +10951,7 @@ const DEATHS = {
   function foeSpec(f) { const sp = foeSpec0(f); if (FOE_X && sp && FOE_XK[sp.k]) { sp.k0 = sp.k; sp.k = FOE_XK[sp.k]; } return sp; }
   function foeSpec0(f) {
     const tn = st.p && biome().tint && biome().tint[f.id], ov = tn && tn.ov;
+    if (f.dummy) return { k: 'dummy' }; /* v0.16.0: o boneco-alvo do Treino (base esqueleto) */
     switch (f.id) {
       case 'skel': return { k: 'skelB' };
       case 'skelarcher': return { k: 'archC' };
@@ -11650,6 +11708,18 @@ const DEATHS = {
           P(1, 9, 5, 3, '#626873'); P(1, 9, 5, 1, '#9aa0a8'); P(2, 10, 1, 1, '#0a0810'); for (let k = 0; k < 9; k++) P(13 - Math.round(k / 4.5), 4 + k, 1, 1, '#a3a9b1'); P(11, 6, 4, 1, '#b07d22');
           if (!n.used && lit) { const sy = py - 4 + (calm ? 0 : Math.round(Math.sin(now / 500) * 2)); ctx.fillStyle = '#9fd8ff'; ctx.fillRect(px + 7, sy, 3, 4); ctx.fillStyle = '#64b4f4'; ctx.fillRect(px + 8, sy + 4, 1, 2); glows.push([px + 8, sy + 2, '#9fd8ff', 6, .35]); }
         } });
+      } else if (n.k === 'rack') {
+        // v0.16.0 (Imagem): o suporte de armas do Treino (abre o arsenal ao encostar): madeira, com uma espada, um machado, um cajado e um arco pendurados
+        draws.push({ y: py + 14, f: () => {
+          const P = (x, y, w, h, c) => { ctx.fillStyle = lit ? c : mix(c, '#000000', .45); ctx.fillRect(px + x, py + y, w, h); };
+          P(0, 14, 16, 2, 'rgba(0,0,0,.4)'); P(1, -9, 2, 23, '#5e4a36'); P(13, -9, 2, 23, '#5e4a36'); P(2, -9, 1, 23, '#3a2a1c'); P(14, -9, 1, 23, '#3a2a1c');
+          P(0, -10, 16, 2, '#7a5a40'); P(0, -10, 16, 1, '#a07a50'); P(1, 9, 14, 2, '#4a3424'); P(1, 9, 14, 1, '#6a4c30');
+          P(4, -8, 1, 14, '#a3a9b1'); P(5, -8, 1, 13, '#d2d5da'); P(3, -5, 4, 1, '#b07d22'); P(4, -8, 2, 2, '#6a4c30');
+          P(8, -8, 1, 16, '#6a4c30'); P(9, -7, 2, 4, '#7a808a'); P(9, -7, 2, 1, '#a3a9b1'); P(8, -9, 1, 1, '#4a3424');
+          P(11, -8, 1, 17, '#5a3a28'); P(10, -9, 3, 2, '#64b4f4'); P(11, -9, 1, 1, '#9fd8ff');
+          for (let k = 0; k < 9; k++) P(2 + Math.round(Math.sin(k / 8 * Math.PI) * 2), -6 + k * 2, 1, 2, '#8a6a48');
+        } });
+        if (lit) glows.push([px + 11.5, py - 8, '#64b4f4', 3, .25]);
       } else if (n.k === 'bedroll') {
         // v54 (ronda 6, descanso C): uma pequena tenda de pano ao lado da fogueira
         draws.push({ y: py + 14, f: () => {
@@ -11802,11 +11872,16 @@ const DEATHS = {
         if (f.tox > 0) for (let k = 0; k < 3; k++) { const q = ((now / 700) + k / 3 + (f.fid || 0) * .13) % 1, gx = px + 4 + k * 4, gy = top - 2 + Math.round(q * 9); ctx.globalAlpha = q < .8 ? 1 : (1 - q) * 5; ctx.fillStyle = '#2e5a1c'; ctx.fillRect(gx, gy, 2, 3); ctx.fillStyle = '#8fd06a'; ctx.fillRect(gx, gy, 1, 2); ctx.globalAlpha = 1; } // v84: Lâmina envenenada — gotas verdes a escorrer do alvo enquanto f.tox > 0 (v86: era f.venom, que a Cobra usa para a mordida)
         if (f.capBuff) { const cx0 = px + 3, cy0 = Math.round(top) + 4; for (const [x, y, c] of [[0, 1, '#0a0810'], [1, 0, '#0a0810'], [2, 1, '#0a0810'], [0, 2, '#0a0810'], [2, 2, '#0a0810'], [1, 1, '#f2c14e'], [0, 3, '#b07d22'], [1, 2, '#f2c14e'], [2, 3, '#b07d22']]) { ctx.fillStyle = c; ctx.fillRect(cx0 + x, cy0 + y, 1, 1); S.marks.push([cx0 + x, cy0 + y, 1, 1, c]); } } // v94: reforço comandado pelo Capitão do sino — divisa dourada pequena junto ao ombro esquerdo
         { const ik = intentOf(f), ic = ik && INTENT[ik]; if (ic) { const ix = px + 8 - (ic[0].length >> 1) + 5, iy = top - 4 - ic.length; ic.forEach((row, yy) => { for (let xx = 0; xx < row.length; xx++) if (row[xx] === '#') { S.marks.push([ix + xx, iy + yy, 1, 1]); ctx.fillStyle = RED[2]; ctx.fillRect(ix + xx, iy + yy, 1, 1); } }); } if (f.boss && f.stun > 0) { const fx2 = ic ? px + 8 + (ic[0].length >> 1) + 7 : px + 12, fy2 = ic ? top - 4 - ic.length + 1 : top - 8; ctx.fillStyle = '#0a0810'; ctx.fillRect(fx2 - 3, fy2 - 1, 7, 3); ctx.fillRect(fx2 - 1, fy2 - 3, 3, 7); ctx.fillStyle = '#bfe8ff'; ctx.fillRect(fx2 - 2, fy2, 5, 1); ctx.fillRect(fx2, fy2 - 2, 1, 5); ctx.fillStyle = '#ffffff'; ctx.fillRect(fx2, fy2, 1, 1); ctx.fillRect(fx2 - 1, fy2 - 1, 1, 1); ctx.fillRect(fx2 + 1, fy2 + 1, 1, 1); ctx.fillRect(fx2 + 1, fy2 - 1, 1, 1); ctx.fillRect(fx2 - 1, fy2 + 1, 1, 1); } } // v66: floco de neve junto ao ícone do chefe congelado/atordoado. ícone da intenção, a vermelho (perigo), ao lado do «!»
+        if (f.captain && !f.wind && !f.dormant && !intentOf(f)) { /* v0.16.0 (utilizador): a intenção do Capitão do sino. Martelo (perigo, vermelho) = o golpe pesado está pronto, se encostares ele prepara-o; ampulheta (cinza-lilás) = a recarregar. Com o aviso marcado (f.wind) fica só o aviso */
+          const ready = !(f.capCd > 0), G = ready ? ['#####', '#####', '..#..', '..#..', '..#..'] : ['#####', '.###.', '..#..', '.###.', '#####'], col = ready ? RED[2] : '#c8c0dc', ix = px + 11, iy = top - 9;
+          ctx.fillStyle = '#0a0810'; G.forEach((r, yy) => { for (let xx = 0; xx < 5; xx++) if (r[xx] === '#') ctx.fillRect(ix + xx - 1, iy + yy - 1, 3, 3); });
+          G.forEach((r, yy) => { for (let xx = 0; xx < 5; xx++) if (r[xx] === '#') { ctx.fillStyle = ready && yy < 2 ? col : ready ? '#a3a9b1' : col; ctx.fillRect(ix + xx, iy + yy, 1, 1); S.marks.push([ix + xx, iy + yy, 1, 1, ctx.fillStyle]); } });
+        }
         { // v63 furtividade: ? a desconfiar, ! ao acordar (OBS 49: sem o zZ, já ninguém dorme) (sem ícone de intenção); com o Sexto sentido, o ponto vermelho no canto de cima
           if (f.aware) { if (!AWT.has(f)) AWT.set(f, st.turn > 0 ? now : -1e9); } else AWT.delete(f); // o «!» só aparece ~1 s depois de acordar
           const ik2 = intentOf(f), gl = (rows, x0, y0, col) => { ctx.fillStyle = '#0a0810'; rows.forEach((r, yy) => { for (let xx = 0; xx < r.length; xx++) if (r[xx] === '#') ctx.fillRect(x0 + xx - 1, y0 + yy - 1, 3, 3); }); ctx.fillStyle = col; rows.forEach((r, yy) => { for (let xx = 0; xx < r.length; xx++) if (r[xx] === '#') ctx.fillRect(x0 + xx, y0 + yy, 1, 1); }); };
           const dot = typeof strikeDot === 'function' ? strikeDot(f) : null; // v88 (OBS 48): com 'exec', a bola vermelha substitui o zZ, o ? e o ! (era um ponto de 5 px no canto, tapado pelo zZ)
-          if (dot !== 'exec') {
+          if (dot !== 'exec' && !f.dummy) { /* v0.16.0: o boneco-alvo não desconfia nem dá por ti (sem ? nem !) */
             if (f.sus > 0 && !ik2) gl(['###', '..#', '.#.', '...', '.#.'], px + 7, top - 8 - (f.sus > 1 && Math.floor(now / 200) % 2 ? 1 : 0), '#f4e6a0');
             else if (f.aware && !ik2 && !f.dormant && now - (AWT.get(f) || now) < 1200) gl(['#', '#', '#', '.', '#'], px + 8, top - 8, '#fff4d8');
           }
@@ -13362,6 +13437,7 @@ const ICONES = (() => {
     map: [a => { a.poly([[5, 7], [12, 5], [20, 8], [27, 6], [27, 25], [20, 27], [12, 24], [5, 26]], C.b1); a.poly([[7, 9], [12, 7], [20, 10], [25, 8], [25, 23], [20, 25], [12, 22], [7, 24]], C.b2); for (const [x, y] of [[9, 20], [12, 17], [15, 15], [18, 13]]) a.rect(x, y, 2, 1, C.l1); a.line(20, 10, 23, 13, C.f0, 1.5); a.line(23, 10, 20, 13, C.f0, 1.5); }, null],
     log: [a => { a.rect(7, 5, 18, 23, C.l1); a.rect(9, 6, 15, 21, C.b2); a.rect(7, 5, 3, 23, C.l0); for (let y = 10; y < 24; y += 3) a.rect(12, y, 9, 1, C.b0); a.rect(19, 4, 3, 8, C.f1); }, null],
     wait: [a => { a.rect(8, 4, 16, 3, C.w1); a.rect(8, 25, 16, 3, C.w1); a.poly([[10, 7], [22, 7], [17, 16], [22, 25], [10, 25], [15, 16]], C.i0); a.poly([[12, 8], [20, 8], [16, 15]], C.b2); a.poly([[12, 24], [20, 24], [16, 19]], C.b2); a.line(16, 15, 16, 21, C.b2, 1); }, C.i1],
+    bell: [a => { a.arc(16, 6, 3, 0, Math.PI * 2, C.g0, 2); a.poly([[16, 7], [22, 10], [23, 21], [27, 25], [5, 25], [9, 21], [10, 10]], C.g1); a.poly([[15, 9], [11, 11], [11, 21], [14, 21]], C.g2); a.poly([[17, 9], [21, 11], [22, 21], [19, 21]], C.g0); a.rect(5, 24, 22, 3, C.g0); a.rect(6, 24, 20, 1, C.g2); a.circ(16, 28.5, 2.5, C.g0); }, C.g2], /* v0.16.0: o sino do alarme no HUD */
     opts: [a => { for (let k = 0; k < 8; k++) { const an = k / 8 * Math.PI * 2; a.rect(16 + Math.cos(an) * 10 - 2, 16 + Math.sin(an) * 10 - 2, 4, 4, C.s2); } a.circ(16, 16, 9, C.s2); a.circ(16, 16, 7, C.s3); a.circ(16, 16, 3.5, C.s0); }, null],
     knock: [a => { a.rect(20, 3, 10, 26, C.s1); a.rect(20, 3, 10, 1, C.s2); [9, 16, 23].forEach(y => a.rect(20, y, 10, 1, C.s0)); a.rect(25, 4, 1, 5, C.s0); a.rect(23, 10, 1, 6, C.s0); a.rect(27, 17, 1, 6, C.s0); a.rect(24, 24, 1, 5, C.s0); a.rect(2, 12, 6, 9, C.w1); a.rect(2, 12, 6, 2, C.w2); a.ell(12, 16.5, 6, 5.5, C.b1); a.ell(11, 15, 4.5, 3.5, C.b2); [12, 15.5, 19].forEach(y => a.circ(17, y, 2, C.b2)); a.line(16, 13.5, 13, 13.5, C.b0, 1); a.line(16, 17, 13, 17, C.b0, 1); a.line(19, 6, 16, 2, C.i2, 1.5); a.line(19, 27, 16, 31, C.i2, 1.5); a.line(17, 9, 13, 7, C.i2, 1.2); }, C.i1], // v67: punho a bater na parede (botão BATER)
     range: [a => { a.arc(6, 16, 14, -1.0, 1.0, C.w1, 3); a.arc(6, 16, 14, -1.0, -0.7, C.w2, 3); a.line(13.5, 4, 13.5, 28, C.b2, 1); arrowShape(a, 10, 16, 24, 16); a.arc(26, 16, 4.5, 0, Math.PI * 2, C.g2, 1.5); }, C.g2],
@@ -13373,6 +13449,7 @@ const ICONES = (() => {
     mmtreino: [a => { a.rect(15, 14, 3, 15, C.w1); a.rect(7, 15, 18, 3, C.w1); a.rect(7, 15, 18, 1, C.w2); a.circ(16, 9, 5, C.b1); a.circ(16, 9, 3.5, C.b2); a.line(13, 7, 19, 11, C.w0, 1); a.line(19, 7, 13, 11, C.w0, 1); a.rect(10, 28, 12, 2, C.w0); a.rect(12, 18, 9, 8, C.b1); a.rect(12, 18, 9, 1, C.b2); }, null],
   };
   const ITEMS = {
+    gold: [a => { a.circ(16, 17, 12, C.g0); a.circ(16, 16, 11, C.g1); a.circ(16, 16, 8, C.g2); a.arc(16, 16, 8, 0, Math.PI * 2, C.g0, 1.5); a.rect(14, 11, 4, 10, C.g0); a.rect(12, 11, 8, 2, C.g0); a.rect(12, 19, 8, 2, C.g0); a.arc(16, 16, 10, 3.6, 4.6, C.g3, 1.5); }, C.g2], /* v0.16.0 (utilizador): a moeda dourada (o ouro lê-se à primeira) */
     potion: [a => { a.rect(13, 4, 6, 3, C.b0); a.rect(14, 7, 4, 4, C.s3); a.circ(16, 19, 9, C.r0); a.circ(16, 20, 7, C.r1); a.ell(13, 16, 2, 3, C.r2); a.px(12, 14, C.g3); }, C.r2],
     food: [a => { a.ell(15, 18, 11, 8, C.w1); a.ell(15, 16, 10, 6, C.w2); for (const x of [9, 14, 19]) a.line(x, 13, x + 2, 18, C.w0, 1); a.ell(13, 14, 3, 1.5, C.b2); }, null],
   };
@@ -15144,12 +15221,198 @@ function dailyEndHtml() {
 
 </script>
 <script>
+/* GODSPIRE · js/treino.js (v0.16.0): modo TREINO. Desenho do Sábio (PROPOSTA-modos §3), aprovado pelo utilizador.
+   - Herói temporário (st.mode = 'treino', st.charId = null): não grava, não toca nos heróis, na Cripta nem na conta (sem Ecos, EXP, ouro nem Codex).
+   - Uma sala sempre igual com 3 zonas: Bonecos-alvo (à esquerda), o Lutador lento (ao meio) e o Vigia de treino (à direita). A entrada fica em baixo, com o suporte do arsenal.
+   - Sem risco: a vida não baixa de 1 e o frasco enche-se sozinho. Quem cai volta ao fim de 3 turnos.
+   - O arsenal (o ecrã 'camp' do treino) dá as 7 armas comuns, as peças e relíquias que já viste (acct.seen), as runas e o ARRUMAR (Núcleos trocam-se à vontade). */
+const TR_LVL = 8, TR_TIER = 2, TR_W = 21, TR_H = 13;
+const isTraining = () => !!(typeof st !== 'undefined' && st && st.mode === 'treino');
+
+// o que já viste na torre: armas (tipo:variante), armaduras (peso:variante) e relíquias. Começou a contar na v0.16.0 (escolha do utilizador)
+function seenAcct() { const s = acct.seen = acct.seen || {}; s.w = s.w || {}; s.a = s.a || {}; s.r = s.r || {}; return s; }
+function seeRun() {
+  if (!st || !st.p || isTraining()) return;
+  const S = seenAcct(), p = st.p; let n = 0;
+  for (const it of p.inv || []) {
+    const k = it.t === 'w' ? it.kind + ':' + (it.var || 0) : it.t === 'a' ? armorWt(it) + ':' + (it.var || 0) : null;
+    const b = it.t === 'w' ? S.w : S.a;
+    if (k && !b[k]) { b[k] = 1; n++; }
+  }
+  for (const id of [...(p.relics || []), ...(p.relicBag || [])]) if (RELIC[id] && !RELIC[id].conta && !S.r[id]) { S.r[id] = 1; n++; }
+  if (n) saveAcct();
+}
+
+function startTraining() {
+  const c = CLASSES.heroi, seed = RNG_FORCE != null ? RNG_FORCE : newSeed(), me = arenaMe();
+  st = { ver: SAVE_VER, mode: 'treino', seed, rng: rngSeed(seed), screen: 'play', charId: null, nome: me.nick, look: { ...me.look }, cls: 'heroi', floor: 1, turn: 0, boss: false, killer: null, log: [], uidN: 0, fidN: 0, npcs: [], attacks: [], foes: [], items: [], map: null,
+    p: { x: 0, y: 0, hp: c.hp, max: c.hp, atk: c.atk, def: c.def, lvl: 1, xp: 0, next: 10, gold: 0, pot: 3, food: 0,
+      cds: SK.map(() => 0), slots: [null, null, null], alloc: [], pts: 0, buffT: 0, rollT: 0, dir: 'd', streak: 0,
+      eq: { w: null, h: null, a: null, g: null, b: null }, kills: 0, inv: [], relics: [], relicBag: [], vida4: true, extra: {}, omenFx: {} },
+    tr: { back: [], msg: '' } };
+  const p = st.p; st.pacts = {}; st.ecoLog = []; st.startAt = Date.now(); st.potFloor = 0;
+  discInit(p, 'heroi');
+  for (let k = 2; k <= TR_LVL; k++) { p.lvl = k; p.max += 2; p.hp += 2; p.corePts = (p.corePts || 0) + coreGain(k); if (k >= SLOT4_LVL && p.slots.length < 4) p.slots.push(null); }
+  // habilidades e traços: todos na coleção (escolha do utilizador); equipam-se em ARRUMAR
+  p.coll.sk = SK.map((a, i) => a.disc ? i : null).filter(i => i != null);
+  p.coll.tr = Object.keys(TRT); p.ascOpen = true; p.asc2 = true;
+  const gear = [makeWeapon('espada', TR_TIER, 0), trArmor('media', 0), makeGear('h', TR_TIER), makeGear('g', TR_TIER), makeGear('b', TR_TIER)];
+  for (const it of gear) { p.inv.push(it); p.eq[it.t] = it.uid; }
+  syncGearHp(p); p.hp = p.max; p.pot = flaskMax(p);
+  transitionTo(_t('TREINO'), _t('Não morres no treino.'), () => {
+    buildTraining();
+    log(_t('Bem-vindo ao treino. Aqui não morres: a vida não baixa de 1 e o frasco enche-se sozinho.'));
+    log(_t('À esquerda, os bonecos-alvo. Ao meio, o Lutador lento. À direita, o Vigia de treino.'));
+    log(_t('O suporte à entrada é o arsenal: armas, peças, relíquias, runas e ARRUMAR. Para sair, MENU.'));
+    Sound.music(floorTrack()); ui();
+  }, { load: true });
+}
+function trArmor(wt, k) {
+  const [nome, look] = ARMS_WT[wt][TR_TIER], V = ARMOR_VARIANTS[wt][k] || ARMOR_VARIANTS[wt][0];
+  return { uid: uid(), t: 'a', wt, var: k, look, nome: k ? `${V.nome} ${QUAL[TR_TIER]}` : nome, v: TR_TIER + 1 };
+}
+// a sala: 21×13; em cima as 3 zonas (separadas por duas paredes até meio), em baixo o átrio da entrada com o suporte do arsenal
+function buildTraining() {
+  const map = new Array(W * H).fill(0), x0 = (W - TR_W) >> 1, y0 = (H - TR_H) >> 1;
+  for (let y = y0; y < y0 + TR_H; y++) for (let x = x0; x < x0 + TR_W; x++) map[idx(x, y)] = 1;
+  for (let y = y0; y < y0 + 7; y++) { map[idx(x0 + 7, y)] = 0; map[idx(x0 + 13, y)] = 0; }
+  for (const [x, y] of [[x0 + 16, y0 + 2], [x0 + 18, y0 + 5]]) map[idx(x, y)] = 0; // pilares da zona do Vigia (cobertura e bater na parede)
+  st.map = map; st.arena = null; st.trial = null; st.bookShelves = []; st.reinfPend = null; st.reinfN = 0; st.reinfAt = null; st.traps = [];
+  st.rooms = [{ x: x0, y: y0, w: TR_W, h: TR_H }];
+  st.tr.zones = { boneco: { x: x0, y: y0, w: 7, h: 9 }, lutador: { x: x0 + 8, y: y0, w: 5, h: 9 }, vigia: { x: x0 + 14, y: y0, w: 7, h: 9 } };
+  st.seen = new Array(W * H).fill(false); st.souls = {};
+  for (let y = y0 - 1; y <= y0 + TR_H; y++) for (let x = x0 - 1; x <= x0 + TR_W; x++) st.seen[idx(x, y)] = true;
+  st.foes = []; st.items = []; st.attacks = []; st.safe = []; st.boss = false;
+  st.npcs = [{ k: 'rack', x: x0 + 10, y: y0 + TR_H - 1 }];
+  st.tr.spots = [
+    { k: 'boneco', x: x0 + 1, y: y0 + 3 }, { k: 'boneco', x: x0 + 3, y: y0 + 1 }, { k: 'boneco', x: x0 + 5, y: y0 + 3 },
+    { k: 'lutador', x: x0 + 10, y: y0 + 2 }, { k: 'vigia', x: x0 + 17, y: y0 + 1 }];
+  for (const s of st.tr.spots) trSpawn(s);
+  st.p.x = x0 + 10; st.p.y = y0 + TR_H - 3;
+  applyBiome(biomeOf(st.floor));
+  ANIM.delete(st.p); cam.snap = true;
+  fov();
+}
+function trSpawn(s) {
+  const id = s.k === 'boneco' ? 'skel' : s.k === 'lutador' ? 'brute' : 'sentry', f = makeFoe(FOES.find(o => o.id === id), s.x, s.y, { noElite: true });
+  f.tr = s.k; f.home = [s.x, s.y];
+  if (s.k === 'boneco') { f.dummy = true; f.rooted = true; f.nome = 'Boneco-alvo'; f.atk = 0; f.def = 0; f.hp = f.max = 300; f.face = 1; }
+  if (s.k === 'lutador') { f.drill = true; f.nome = 'Lutador lento'; f.atk = 4; f.hp = f.max = 80; }
+  if (s.k === 'vigia') { f.drillBell = true; f.nome = 'Vigia de treino'; f.hp = f.max = 14; }
+  f.lastHp = f.hp; f.xp = 0;
+  st.foes.push(f); return f;
+}
+const trIn = (o, Z) => Z && o.x >= Z.x && o.y >= Z.y && o.x < Z.x + Z.w && o.y < Z.y + Z.h;
+
+// o Lutador lento: só ataca com golpes avisados (2 turnos de aviso) e só a quem entra na zona dele; anda 1 casa a cada 2 turnos
+function drillAct(f) {
+  const p = st.p, Z = st.tr.zones.lutador;
+  if (f.recover) { f.recover = false; return; }
+  if (f.wind) return;
+  const inZ = trIn(p, Z), cheb = Math.max(Math.abs(f.x - p.x), Math.abs(f.y - p.y));
+  if (inZ && cheb <= 2) {
+    f.wind = true; f.pat = (f.pat || 0) + 1;
+    const spin = f.pat % 2 === 0, tiles = spin ? area(f.x, f.y, 1, true) : [[p.x, p.y], ...area(p.x, p.y, 1, true).filter(([x, y]) => x === p.x || y === p.y)];
+    if (telegraph(f, tiles, 2, 1, _t(spin ? 'Rodopio do {f}' : 'Pancada do {f}', { f: fname(f) }), { snd: 'slam' })) { float(f.x, f.y, '!', 'red'); log(_t('{f} prepara o golpe: tens 2 turnos para sair das casas marcadas.', { f: fname(f) })); }
+    return;
+  }
+  if (st.turn % 2) return;
+  const [tx, ty] = inZ ? [p.x, p.y] : f.home;
+  if (f.x === tx && f.y === ty) return;
+  const ok = (x, y) => trIn({ x, y }, Z) && free0(f)(x, y), d = (x, y) => Math.abs(x - tx) + Math.abs(y - ty);
+  const best = dirs.map(([dx, dy]) => [f.x + dx, f.y + dy]).filter(([x, y]) => ok(x, y) && d(x, y) < d(f.x, f.y)).sort((a, b) => d(...a) - d(...b))[0];
+  if (best) { faceTo(f, best[0], best[1]); setPos(f, best[0], best[1], STEP_MS, HOP_PX); }
+}
+// o sino do Vigia de treino não chama ninguém; 3 turnos depois volta a vigiar
+function drillBellRing(f) {
+  f.rang = true; f.cone = []; f.ringT = performance.now() + 800; f.rangAt = st.turn; Sound.play('vigia_alarm');
+  log(_t('{f} toca o sino! No treino ninguém vem. Volta a vigiar daqui a 3 turnos.', { f: fname(f) })); float(f.x, f.y, '!', 'red');
+}
+// quem cai no treino volta ao fim de 3 turnos
+function trainDead(f) {
+  if (f.tr) st.tr.back.push({ k: f.tr, x: f.home[0], y: f.home[1], at: st.turn + 3 });
+  Sound.play('kill'); log(_t('{f} caiu! Volta daqui a 3 turnos.', { f: fname(f) }));
+}
+// fim de cada turno: frasco cheio, bonecos que recuperam, sino que volta e quem regressa
+function trainTick() {
+  const p = st.p; if (!p) return;
+  if (p.hp < 1) p.hp = 1;
+  p.pot = flaskMax(p);
+  for (const f of st.foes) {
+    if (f.hp < f.lastHp) f.hitAt = st.turn;
+    if (f.dummy) { f.aware = false; f.sus = 0; } // (Imagem) um boneco não dá por ti
+    if (f.dummy && f.hp < f.max && st.turn - (f.hitAt || 0) >= 3) { f.hp = f.max; float(f.x, f.y, _t('recupera'), 'green'); }
+    if (f.drillBell && f.rang && st.turn - (f.rangAt || 0) >= 3) { f.rang = false; f.alarm = 0; f.face = f.face || 1; }
+    f.lastHp = f.hp;
+  }
+  st.tr.back = st.tr.back.filter(b => {
+    if (st.turn < b.at || foeAt(b.x, b.y) || heroAt(b.x, b.y)) return true;
+    const f = trSpawn(b); if (typeof fxBurst === 'function') fxBurst(f.x, f.y, 0.7, performance.now()); return false;
+  });
+}
+function trainOpen() { st.screen = 'camp'; st.campAt = 0; st.tr.msg = ''; Sound.play('menu'); ui(); }
+function trainExit() { st = { screen: 'menu' }; app.ask = null; Sound.play('back'); Sound.music('title'); ui(); }
+
+// arsenal: trocar a arma, a armadura, as relíquias ativas e receber as runas
+function trWeapon(kind, k) {
+  const p = st.p, old = getW(p), it = makeWeapon(kind, TR_TIER, k);
+  if (old) p.inv = p.inv.filter(i => i !== old);
+  p.inv.push(it); p.eq.w = it.uid; delete p.talC; syncGearHp(p);
+  st.tr.msg = _t('Na mão: {n}.', { n: itemTxt(it) }); Sound.play('equip'); ui();
+}
+function trArmorSet(wt, k) {
+  const p = st.p, old = getEq(p, 'a'), it = trArmor(wt, k);
+  if (old) p.inv = p.inv.filter(i => i !== old);
+  p.inv.push(it); p.eq.a = it.uid; delete p.talC; syncGearHp(p); p.hp = Math.min(p.hp, p.max);
+  st.tr.msg = _t('Vestido: {n}.', { n: itemTxt(it) }); Sound.play('equip'); ui();
+}
+function trRelic(id) {
+  const p = st.p, R = RELIC[id]; if (!R) return;
+  if (p.relics.includes(id)) { p.relics = p.relics.filter(r => r !== id); st.tr.msg = _t('{n} guardada.', { n: _t(R.nome) }); Sound.play('back'); }
+  else if (relicUsed(p) >= relicSlots()) { st.tr.msg = _t('Só {n} relíquias ativas: guarda uma primeiro.', { n: relicSlots() }); Sound.play('error'); }
+  else { p.relics.push(id); st.tr.msg = _t('{n} ativa.', { n: _t(R.nome) }); Sound.play('relic2'); }
+  syncGearHp(p); p.hp = Math.min(p.hp, p.max); delete p.talC; ui();
+}
+function trRunes() {
+  const p = st.p, eq = Object.values(p.runes || {}).filter(Boolean).map(r => r.id);
+  p.runeBag = RUNE_KEYS.filter(k => !eq.includes(k)).map(makeRune);
+  st.tr.msg = _t('As runas estão na mochila → RUNAS.'); Sound.play('learn'); ui();
+}
+function trainCampHtml() {
+  const p = st.p, S = seenAcct(), w = getW(p), a = getEq(p, 'a'), D = w ? discOf(w.kind) : null;
+  const icw = kind => { const u = ICON_URL['i_' + kind]; return u ? `<img class="ico" src="${u}" alt="">` : ''; };
+  const weapons = KINDS.flatMap(kind => VARIANTS[kind].map((V, k) => (k === 0 || S.w[kind + ':' + k]) ? [kind, k, V] : null).filter(Boolean));
+  const wRow = ([kind, k, V]) => { const on = w && w.kind === kind && (w.var || 0) === k; return `<button class="opt ic${on ? ' on' : ''}" data-trw="${kind}:${k}">${icw(kind)}<span><b>${esc(_t(V.nome).toUpperCase())}</b><small>${esc(_t(TRAITS[kind].nome))}${V.txt ? ' · ' + esc(_t(V.txt)) : ''}</small></span><em>${on ? '✓' : ''}</em></button>`; };
+  const armors = WT.flatMap(wt => ARMOR_VARIANTS[wt].map((V, k) => (k === 0 || S.a[wt + ':' + k]) ? [wt, k, V] : null).filter(Boolean));
+  const aRow = ([wt, k, V]) => { const on = a && armorWt(a) === wt && (a.var || 0) === k, it = trArmor(wt, k); return `<button class="opt ic${on ? ' on' : ''}" data-tra="${wt}:${k}">${ico(it)}<span><b>${esc(itemTxt(it).toUpperCase())}</b><small>${esc(statTxt(it))}</small></span><em>${on ? '✓' : ''}</em></button>`; };
+  const rel = RELICS.filter(R => !R.conta && S.r[R.id]);
+  const rRow = R => { const on = p.relics.includes(R.id); return `<button class="opt ic${on ? ' on' : ''}" data-trr="${R.id}">${ico({ t: 'relic', id: R.id })}<span><b>${esc(_t(R.nome).toUpperCase())}</b><small>${esc(statTxt({ t: 'relic', id: R.id }))}</small></span><em>${on ? '✓' : ''}</em></button>`; };
+  return `<div class="ov-in tr-ars">
+      <div class="box ov-head"><h2>${_t('ARSENAL')}</h2><p>${D ? _t('Na mão: {w} · disciplina {d}.', { w: esc(itemTxt(w)), d: esc(_t(D.nome)) }) : _t('Escolhe uma arma.')}</p></div>
+      <div class="ov-scroll">
+        <div class="box menu"><p class="foot">${_t('ARMAS')}</p>${weapons.map(wRow).join('')}</div>
+        <div class="box menu"><p class="foot">${_t('ARMADURAS')}</p>${armors.map(aRow).join('')}</div>
+        <div class="box menu"><p class="foot">${_t('RELÍQUIAS')} ${relicUsed(p)}/${relicSlots()}</p>${rel.length ? rel.map(rRow).join('') : `<p class="foot">${_t('As relíquias que encontrares na torre aparecem aqui.')}</p>`}</div>
+        <div class="box menu"><p class="foot">${_t('RUNAS')}</p><button class="opt" data-trrunes="1"><span><b>${_t('RECEBER AS 7 RUNAS')}</b><small>${_t('Ficam na mochila; encaixa-as em ARRUMAR → RUNAS.')}</small></span><em>›</em></button></div>
+        <p class="foot">${_t('As variantes de armas e armaduras que encontrares na torre juntam-se ao arsenal.')}</p>
+      </div>
+      <p class="foot">${esc(st.tr.msg || `HP ${p.hp}/${p.max} · ${_t('NÍVEL {n}', { n: p.lvl })}`)}</p>
+      <div class="btn-row hx-camp"><button class="box again" data-trman="1">${_t('MANUAL')}</button><button class="box again hx-arr" data-arrumar="1">${_t('ARRUMAR')}</button><button class="box again go" data-campleave="1">${_t('VOLTAR')}</button></div>
+    </div>`;
+}
+
+</script>
+<script>
 /* Tower of God · js/ui.js: HUD e barra (ui), cartões de herói.
    Scripts normais (não módulos), carregados por ordem no index.html; partilham o âmbito global. */
 /* ---------- interface ---------- */
 let toastT = null, lastToast = '';
 // v61: nunca pôr src=undefined (o browser pedia /undefined e dava 404 no arranque)
 const setSrc = (img, s) => { if (!img) return; if (s) { if (img.src !== s) img.src = s; } else img.removeAttribute("src"); };
+// v0.16.0 (utilizador, pelo Sábio): o ouro lê-se à primeira: moeda e número em dourado (CSS da Imagem: .gold-chip)
+const goldChip = n => `<span class="gold-chip"><img class="mic" src="${ICON_URL.gold || ''}" alt=""><b>${n}</b></span>`;
+// v0.16.0 (Reddit): o alarme dura desde que um Vigia te vê até o Capitão do sino cair
+const alarmOn = () => !!(st && st.foes && st.foes.some(f => f.alarm > 0 || (f.captain && !f.arenaFoe)));
 // v84 (Mestre do Som §13, aprovado pelo utilizador): corredor calmo antes do chefe. A ≤4 casas da porta da arena (ainda aberta,
 // com o chefe vivo e sem inimigos acordados à vista) a música desce e abafa; a ≥6 volta (histerese). A arena fecha → volta já.
 // No ecrã "entrar na Provação?" também acalma. A fogueira manda (o ecrã 'camp').
@@ -15233,14 +15496,15 @@ function ui() {
     [['bHero', 'equip'], ['bBag', 'bag'], ['bMap', 'map'], ['bLog', 'log']].forEach(([id, s]) => $(id).classList.toggle('on', st.screen === s || (s === 'equip' && ['disc', 'runes', 'attrs', 'cores', 'relics'].includes(st.screen))));
     $('mCls').textContent = `${HERO()} · ${_t('NÍVEL {n}', { n: p.lvl })}`;
     $('mFloor').textContent = where;
-    $('mGold').textContent = `${p.gold}$`;
+    $('mGold').innerHTML = goldChip(p.gold); // v0.16.0 (utilizador): o ouro em dourado, com a moeda
+    const bell = alarmOn(); for (const id of ['cBell', 'mBell']) { const e = $(id); if (e) e.hidden = !bell; } // v0.16.0 (Reddit): sino enquanto o alarme dura
     $('mHp').style.width = hpPct; $('mXp').style.width = xpPct;
     $('mHpTxt').textContent = `${p.hp}/${p.max}`;
     $('mLog').textContent = st.log[0] || '';
     $('cLvl').textContent = _t('NÍVEL {n}', { n: p.lvl }); $('cHp').style.width = hpPct; $('cXp').style.width = xpPct;
     // lembrete dos Pactos ativos, para o jogador saber porque está mais difícil
     const np = Object.values(st.pacts || {}).filter(Boolean).length;
-    $('cHpT').textContent = Math.max(0, p.hp); $('cFloor').textContent = np ? `${where} · ${_t('PACTOS {n}', { n: np })}` : where; $('cGold').textContent = `${p.gold}$`;
+    $('cHpT').textContent = Math.max(0, p.hp); $('cFloor').textContent = np ? `${where} · ${_t('PACTOS {n}', { n: np })}` : where; $('cGold').innerHTML = goldChip(p.gold);
     $('mapLbl').textContent = where;
     // orbes do modo compacto: vida à esquerda, mana à direita (vazio para quem não é mago)
     const oh = $('orbHp'), om = $('orbMp');
@@ -15353,7 +15617,7 @@ function heroTabs(cur) {
   // v96 (OBS 41 parte 5): na fogueira, ARRUMAR abre o HERÓI em modo de edição (st.heroEdit): sem o aviso de cadeado e o ✕ volta à fogueira
   const edit = !!st.heroEdit;
   const lock = edit ? '' : cur === 'build' ? `${_t('Vês tudo.')} <b>${_t('Traços e habilidades: mudam-se na fogueira (ARRUMAR). Runas: fora de combate.')}</b>` : cur === 'cores' ? `${_t('Gastar pontos: em qualquer altura, fora de combate.')} <b>${_t('Tirar e passar do limite: na fogueira.')}</b>` : '';
-  return `<div class="hx" data-tab="${cur}" data-edit="${edit ? 1 : 0}"><div class="hx-head"><h2>${_t(edit ? 'ARRUMAR' : 'HERÓI')}</h2><button class="hx-x" ${edit ? 'data-arrumarback="1"' : 'data-closemap="1"'} aria-label="${_t('Fechar')}">✕</button></div>
+  return `<div class="hx" data-tab="${cur}" data-edit="${edit ? 1 : 0}"><div class="hx-head"><h2>${_t(edit ? 'ARRUMAR' : 'HERÓI')}</h2>${goldChip(st.p.gold)}<button class="hx-x" ${edit ? 'data-arrumarback="1"' : 'data-closemap="1"'} aria-label="${_t('Fechar')}">✕</button></div>
     <div class="hx-tabs" role="tablist">${T.map(([k, n, c]) => `<button role="tab" class="hx-tab" data-htab="${k}" aria-selected="${k === cur}">${_t(n)}<span class="hx-n"${c ? '' : ' hidden'}>${c}</span></button>`).join('')}</div>
     ${lock ? `<p class="hx-lock">${lock}</p>` : ''}</div>`;
 }
@@ -15411,7 +15675,7 @@ function renderOverlay() {
         <button class="opt mm-go mmx" data-arena="1">${ic('m_arena')}<span><b>${_t('ARENA')}</b><small class="mm-d">${_t('Vagas sem fim numa sala fechada.')}</small>${arena}</span><em>›</em></button>
         ${(() => { const S = dailySpec(), a = dailyAcct(), h = a.hist.find(x => x.d === S.key), sv = dailySaved(); // v0.15.0: o Desafio diário abriu
           const stt = sv ? `<span class="mm-st hot"><i class="mm-tag">${_t('A MEIO')}</i>${_t('andar {f}', { f: sv.floor })}</span>` : h ? `<span class="mm-st">${_t(h.won ? 'Hoje: venceste · sequência {n}' : 'Hoje: andar {f} · sequência {n}', { f: h.floor, n: a.streak })}</span>` : `<span class="mm-st hot">${_t('Hoje: {w} · {m}', { w: _t(TRAITS[S.kind].nome), m: dailyModName(S.mod) })}</span>`;
-          return `<button class="opt mm-go mmx" data-daily="1">${ic('m_diario')}<span><b>${_t('DESAFIO DIÁRIO')}</b><small class="mm-d">${_t('A mesma torre para todos.')}</small>${stt}</span><em>›</em></button>`; })()}${mode('train', 'm_treino', 'TREINO', 'Experimenta armas e habilidades.', 'sem morrer')}
+          return `<button class="opt mm-go mmx" data-daily="1">${ic('m_diario')}<span><b>${_t('DESAFIO DIÁRIO')}</b><small class="mm-d">${_t('A mesma torre para todos.')}</small>${stt}</span><em>›</em></button>`; })()}<button class="opt mm-go mmx" data-train="1">${ic('m_treino')}<span><b>${_t('TREINO')}</b><small class="mm-d">${_t('Experimenta armas e habilidades.')}</small><span class="mm-st">${_t('sem morrer')}</span></span><em>›</em></button>
       </div>
       <div class="btn-row"><button class="box again go" data-altar="1">${_t('ALTAR DOS ECOS')} · ${acct.ecos}</button><button class="box again" data-crypt="1">${_t('CRIPTA')}</button><button class="box again" data-codex="1">${_t('CODEX')}</button><button class="box again" data-manual="1">${_t('COMO JOGAR')}</button><button class="box again" data-openopts="1">${_t('OPÇÕES')}</button></div>
     </div>`;
@@ -15603,7 +15867,7 @@ function renderOverlay() {
         }).join('') : (p.food ? '' : `<p class="empty">${_t('Não tens nada para vender.')}</p>`));
     const ok = T.after >= 0 && T.bagAfter <= bagMax() && (T.cost || T.gain);
     html = `<div class="ov-in">
-      <div class="box ov-head row"><span>BENTO · ${_t('MERCADOR')}</span><span>${_t('OURO')} ${p.gold}$</span></div>
+      <div class="box ov-head row"><span>BENTO · ${_t('MERCADOR')}</span>${goldChip(p.gold)}</div>
       <div class="tabs"><button data-tab="buy" aria-pressed="${buyTab}">${_t('COMPRAR')}</button><button data-tab="sell" aria-pressed="${!buyTab}">${_t('VENDER')}</button></div>
       ${buyTab && !m.restocked ? `<div class="btn-row"><button class="box again" data-restock="1" aria-disabled="${p.gold < restockCost()}">${_t('RENOVAR STOCK')} · ${restockCost()}$</button></div>` : ''}
       <div class="box menu">${list}</div>
@@ -15708,6 +15972,7 @@ function renderOverlay() {
   } else if (st.screen === 'dailyend') { html = dailyEndHtml();
   } else if (st.screen === 'abandon') { html = abandonHtml(); // v0.12.3
   } else if (st.screen === 'arenaend') { html = arenaEndHtml();
+  } else if (st.screen === 'camp' && typeof isTraining === 'function' && isTraining()) { html = trainCampHtml(); // v0.16.0: o arsenal do treino
   } else if (st.screen === 'camp' && isArena()) { html = arenaCampHtml(); // v0.11.0: descanso entre vagas
   } else if (st.screen === 'camp') {
     const fire = st.npcs[st.campAt], used = fire && fire.used;
@@ -15737,7 +16002,7 @@ function renderOverlay() {
     // v44 (Sábio): o Ferreiro melhora uma peça equipada (+1 de cada vez, até +5): o escoadouro do ouro que sobrava
     const list = SLOTS.map(([s]) => getEq(p, s)).filter(Boolean);
     html = `<div class="ov-in">
-      <div class="box ov-head row"><span>${_t('MESTRE ILÍDIO')} · ${_t('FERREIRO')}</span><span>${p.gold}$</span></div>
+      <div class="box ov-head row"><span>${_t('MESTRE ILÍDIO')} · ${_t('FERREIRO')}</span>${goldChip(p.gold)}</div>
       <div class="box"><p class="lead">${_t('Melhora uma peça equipada: +1 ao ATQ ou à DEF da peça de cada vez, até +{n}. O preço sobe a cada melhoria.', { n: SMITH_MAX })}</p></div>
       <div class="box menu">${list.length ? list.map(it => {
         const up = it.up || 0, c = smithCost(it), max = up >= SMITH_MAX;
@@ -15763,8 +16028,8 @@ function renderOverlay() {
     // v90 (utilizador): a MOCHILA tem o seu botão na barra (HERÓI · MOCHILA · MAPA · DIÁRIO), fora do HERÓI
     const bagDet = st.bagSel != null ? p.inv.find(i => i.uid === st.bagSel) : null;
     html = `<div class="ov-in">
-      <div class="hx" data-tab="bag"><div class="hx-head"><h2>${_t('MOCHILA')}</h2><button class="hx-x" data-closemap="1" aria-label="${_t('Fechar')}">✕</button></div></div>
-      <div class="hx-sec"><span>${p.inv.length}/${bagMax()} · ${_t('OURO')} ${p.gold}$</span></div>
+      <div class="hx" data-tab="bag"><div class="hx-head"><h2>${_t('MOCHILA')}</h2>${goldChip(p.gold)}<button class="hx-x" data-closemap="1" aria-label="${_t('Fechar')}">✕</button></div></div>
+      <div class="hx-sec"><span>${p.inv.length}/${bagMax()}</span></div>
       ${bagDet ? `<div class="box bag-det">
         <div class="bag-det-top">${ico(bagDet).replace('class="ico', 'class="ico big')}<span><b>${isEq(p, bagDet.uid) ? 'E · ' : ''}${iname(bagDet)}</b><small>${esc(statTxt(bagDet))}</small></span></div>
         <div class="btn-row">${isEq(p, bagDet.uid) ? `<button class="box again" data-equip="${bagDet.uid}">${_t('TIRAR')}</button>` : canUse(st.cls, bagDet) ? `<button class="box again go" data-equip="${bagDet.uid}">${_t('EQUIPAR')}</button>` : ''}
@@ -16201,6 +16466,12 @@ function ovAct(d) {
   else if (d.aredit) arenaEditOpen();
   else if (d.rkjoin) rkJoin(); // v0.14.0: ranking global
   else if (d.daily) openDaily(); // v0.15.0: Desafio diário
+  else if (d.train) startTraining(); // v0.16.0: Treino
+  else if (d.trw) { const [k, v] = d.trw.split(':'); trWeapon(k, +v); }
+  else if (d.tra) { const [k, v] = d.tra.split(':'); trArmorSet(k, +v); }
+  else if (d.trr) trRelic(d.trr);
+  else if (d.trrunes) trRunes();
+  else if (d.trman) { app.manBack = st.screen; app.manOpen = 2; st.screen = 'manual'; Sound.play('menu'); ui(); manScroll(); } // a secção A ARMA FAZ A CLASSE
   else if (d.dailygo) dailyGo();
   else if (d.dailynew) startDaily();
   else if (d.dailyload) dailyLoad();
